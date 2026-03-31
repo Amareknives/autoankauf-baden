@@ -1,0 +1,161 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Mitarbeiter {
+  id           String           @id @default(cuid())
+  createdAt    DateTime         @default(now())
+  vorname      String
+  nachname     String
+  email        String           @unique
+  passwortHash String           @default("")
+  kuerzel      String?
+  telefon      String?
+  whatsapp     String?
+  waApiKey     String?
+  farbe                 String           @default("#0369A1")
+  istDefault            Boolean          @default(false)
+  aktiv                 Boolean          @default(true)
+  benachrichtigungKanal String           @default("beide")
+  anfragen              Anfrage[]
+  aktivitaeten AktivitaetsLog[]
+}
+
+model Anfrage {
+  id                   String    @id @default(cuid())
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  status               String    @default("neu")
+  // neu → kontaktiert → angebot_gesendet →
+  // termin_vereinbart → abgeschlossen → abgelehnt
+  marke                String
+  modell               String
+  erstzulassungMonat   Int
+  erstzulassungJahr    Int
+  kraftstoff           String
+  schadstoffklasse     String
+  leistungKw           Int
+  hubraum              Int?
+  getriebe             String
+  bauform              String
+  anzahlTueren         String
+  anzahlSitze          Int
+  huBis                String
+  farbe                String
+  kilometerstand       Int
+  deutscheZulassung    Boolean
+  papiere              Boolean
+  finanziert           Boolean
+  optischerZustand     Int
+  unfallfahrzeug       String
+  repariert            Boolean?
+  fahrbereitschaft     String
+  roststellen          Boolean
+  maengel              Boolean
+  maengelText          String?
+  gewerblich           Boolean
+  firmenname           String?
+  preisvorstellung     String?
+  verkaufszeitpunkt    String
+  abmeldung            Boolean
+  weitereInfos         String?
+  ausstattung          Json
+  sonstigeAusstattung  String?
+  fotos                Json
+  vorname              String
+  nachname             String
+  plz                  String
+  email                String
+  telefon              String?
+  kontaktWeg           String    @default("email_telefon")
+  newsletter           Boolean   @default(false)
+  dsgvoAkzeptiert      Boolean
+  angebotspreis        Float?
+  abschlussPreis       Float?
+  ablehnungsGrund      String?
+  angebotArt           String?
+  angebotNachricht     String?
+  angebotGueltigBis    DateTime?
+  angebotGesendetAm    DateTime?
+  terminVorschlag1     DateTime?
+  terminVorschlag2     DateTime?
+  abholadresse         String?
+  abholAdresseZusatz   String?
+  abholart             String?
+  terminToken          String?   @unique @default(cuid())
+  terminBestaetigt     DateTime?
+  terminBestaetigtAm   DateTime?
+  notizen              String?
+  archiviert           Boolean   @default(false)
+  bearbeiterId         String?
+  bearbeiter           Mitarbeiter? @relation(fields: [bearbeiterId], references: [id])
+  zweiteMailGesendetAm DateTime?
+  aktivitaeten         AktivitaetsLog[]
+  @@index([status])
+  @@index([createdAt])
+  @@index([plz])
+}
+
+model HaendlerAnfrage {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  status          String   @default("neu")
+  firmenname      String
+  ansprechpartner String
+  email           String
+  telefon         String
+  anzahlFahrzeuge String
+  fahrzeugarten   String
+  nachricht       String?
+  notizen         String?
+}
+
+model AktivitaetsLog {
+  id            String       @id @default(cuid())
+  createdAt     DateTime     @default(now())
+  anfrageId     String
+  anfrage       Anfrage      @relation(fields: [anfrageId], references: [id], onDelete: Cascade)
+  mitarbeiterId String?
+  mitarbeiter   Mitarbeiter? @relation(fields: [mitarbeiterId], references: [id], onDelete: SetNull)
+  aktion        String
+  details       String?
+}
+
+model NewsletterAbonnent {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  email     String   @unique
+  vorname   String
+  nachname  String
+  plz       String?
+  quelle    String   @default("formular") // formular | manuell
+
+  @@index([createdAt])
+}
+
+model Einstellung {
+  id        String   @id
+  wert      String
+  updatedAt DateTime @updatedAt
+}
+
+model MailLog {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  anfrageId String?
+  typ       String
+  empfaenger String
+  betreff   String
+  htmlBody  String?
+  status    String   @default("gesendet") // gesendet | fehler
+  fehler    String?
+  @@index([createdAt])
+  @@index([anfrageId])
+}

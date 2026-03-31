@@ -1,0 +1,360 @@
+@import "tailwindcss";
+
+@theme {
+  /* Farben */
+  --color-primary: #0369A1;
+  --color-primary-light: #0EA5E9;
+  --color-primary-bg: #E8F4FD;
+  --color-primary-subtle: #F0F7FF;
+  --color-coral: #FB6F6F;
+  --color-coral-light: #FFE4E4;
+  --color-background: #F8FAFC;
+  --color-card: #FFFFFF;
+  --color-border: #E2EDF7;
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #64748B;
+  --color-text-hint: #94A3B8;
+  --color-sidebar: #0F172A;
+  --color-sidebar-darker: #0A0F1A;
+  --color-success: #22C55E;
+  --color-error: #EF4444;
+
+  /* Typografie */
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+
+  /* Transitions */
+  --transition-base: 200ms ease;
+}
+
+:root {
+  --background: #F8FAFC;
+  --foreground: #0F172A;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* Verhindert dass Mausrad den Wert von number-inputs ändert (spin-buttons) */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Focus styles */
+.focus-ring:focus {
+  outline: 2px solid #0369A1;
+  outline-offset: 2px;
+}
+
+/* Formularfelder — CI-Styling */
+.form-field {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  background: #ffffff;
+  font-size: 15px;
+  color: var(--color-text-primary);
+  outline: none;
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.form-field::placeholder {
+  color: var(--color-text-hint);
+}
+.form-field:hover {
+  border-color: var(--color-primary);
+}
+.form-field:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.15);
+}
+.form-field.error {
+  border-color: var(--color-error);
+}
+.form-field.error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+.form-field option {
+  background-color: #ffffff;
+  color: #0F172A;
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Hero overlay */
+.hero-overlay {
+  background: linear-gradient(90deg,
+    rgba(3,105,161,0.88) 0%,
+    rgba(3,105,161,0.82) 45%,
+    rgba(3,105,161,0.30) 100%);
+}
+
+/* Form autosave indicator */
+.autosave-indicator {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #22C55E;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.autosave-indicator.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Chat widget */
+.chat-widget {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 50;
+}
+
+.chat-widget button {
+  background: #0369A1;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.chat-widget button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* WhatsApp button */
+.whatsapp-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 40;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Anruf button */
+.call-button {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  z-index: 40;
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Dashboard sidebar */
+.dashboard-sidebar {
+  background: #0F172A;
+  color: white;
+  min-height: 100vh;
+}
+
+.dashboard-content {
+  background: #F8FAFC;
+  min-height: 100vh;
+}
+
+/* Form progress bar */
+.progress-bar {
+  height: 4px;
+  background: #E2EDF7;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: #0369A1;
+  transition: width 0.3s ease;
+}
+
+/* Star rating */
+.star-rating {
+  display: flex;
+  gap: 4px;
+}
+
+.star-rating svg {
+  width: 24px;
+  height: 24px;
+  fill: #FB6F6F;
+}
+
+/* File dropzone */
+.dropzone {
+  border: 2px dashed #E2EDF7;
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.dropzone:hover,
+.dropzone.drag-active {
+  border-color: #0369A1;
+  background: #F0F7FF;
+}
+
+/* Toast notifications */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #22C55E;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  animation: slideIn 0.3s ease;
+}
+
+.toast.error {
+  background: #EF4444;
+}
+
+.toast.warning {
+  background: #F59E0B;
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .chat-widget {
+    bottom: 80px;
+    left: 20px;
+  }
+
+  .whatsapp-button,
+  .call-button {
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .call-button {
+    bottom: 100px;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
