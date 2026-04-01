@@ -1,47 +1,152 @@
 /** Modell-Vorschläge pro Marke – für Datalist im Formular */
 export const MODELLE_PRO_MARKE: Record<string, string[]> = {
   'Audi': [
-    'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8',
-    'Q2', 'Q3', 'Q4 e-tron', 'Q5', 'Q6 e-tron', 'Q7', 'Q8', 'Q8 e-tron',
-    'TT', 'TTS', 'TT RS',
-    'R8',
-    'e-tron', 'e-tron GT', 'e-tron S',
-    'RS3', 'RS4', 'RS5', 'RS6', 'RS7', 'RS Q3', 'RS Q8',
-    'S3', 'S4', 'S5', 'S6', 'S7', 'S8',
-    'Allroad',
+    // A1
+    'A1 1.0 TFSI', 'A1 1.4 TFSI', 'A1 1.6 TDI', 'A1 25 TFSI', 'A1 30 TFSI', 'A1 35 TFSI', 'A1 40 TFSI',
+    // A2
+    'A2',
+    // A3
+    'A3 1.0 TFSI', 'A3 1.2 TFSI', 'A3 1.4 TFSI', 'A3 1.5 TFSI', 'A3 1.6 TDI', 'A3 2.0 TDI', 'A3 2.0 TFSI',
+    'A3 25 TFSI', 'A3 30 TFSI', 'A3 30 TDI', 'A3 35 TFSI', 'A3 35 TDI', 'A3 40 TFSI', 'A3 40 TDI', 'A3 45 TFSI', 'A3 45 TFSI e',
+    'S3', 'RS3',
+    // A4
+    'A4 1.4 TFSI', 'A4 1.8 TFSI', 'A4 2.0 TFSI', 'A4 2.0 TDI', 'A4 3.0 TDI',
+    'A4 30 TFSI', 'A4 30 TDI', 'A4 35 TFSI', 'A4 35 TDI', 'A4 40 TFSI', 'A4 40 TDI', 'A4 45 TFSI', 'A4 50 TDI',
+    'A4 Allroad', 'S4', 'RS4',
+    // A5
+    'A5 1.8 TFSI', 'A5 2.0 TFSI', 'A5 2.0 TDI', 'A5 3.0 TDI',
+    'A5 30 TDI', 'A5 35 TFSI', 'A5 35 TDI', 'A5 40 TFSI', 'A5 40 TDI', 'A5 45 TFSI', 'A5 50 TDI',
+    'S5', 'RS5',
+    // A6
+    'A6 1.8 TFSI', 'A6 2.0 TDI', 'A6 2.0 TFSI', 'A6 3.0 TDI',
+    'A6 30 TDI', 'A6 35 TFSI', 'A6 35 TDI', 'A6 40 TFSI', 'A6 40 TDI', 'A6 45 TFSI', 'A6 45 TDI', 'A6 50 TDI', 'A6 55 TFSI',
+    'A6 Allroad', 'S6', 'RS6',
+    // A7
+    'A7 45 TFSI', 'A7 50 TDI', 'A7 55 TFSI', 'S7', 'RS7',
+    // A8
+    'A8 50 TDI', 'A8 55 TFSI', 'A8 60 TFSI e', 'S8',
+    // Q-Reihe
+    'Q2', 'Q2 25 TFSI', 'Q2 30 TFSI', 'Q2 30 TDI', 'Q2 35 TFSI', 'Q2 35 TDI',
+    'Q3', 'Q3 30 TFSI', 'Q3 30 TDI', 'Q3 35 TFSI', 'Q3 35 TDI', 'Q3 40 TFSI', 'Q3 45 TFSI', 'RS Q3',
+    'Q4 e-tron', 'Q4 Sportback e-tron',
+    'Q5', 'Q5 30 TDI', 'Q5 35 TFSI', 'Q5 35 TDI', 'Q5 40 TFSI', 'Q5 40 TDI', 'Q5 45 TFSI', 'Q5 50 TFSI e', 'SQ5', 'RS Q5',
+    'Q6 e-tron',
+    'Q7', 'Q7 45 TFSI', 'Q7 50 TDI', 'Q7 55 TFSI e', 'SQ7',
+    'Q8', 'Q8 45 TFSI', 'Q8 50 TDI', 'Q8 55 TFSI', 'SQ8', 'RS Q8',
+    'Q8 e-tron', 'Q8 Sportback e-tron',
+    // TT / R8
+    'TT', 'TT 1.8 TFSI', 'TT 2.0 TFSI', 'TT 2.0 TDI', 'TTS', 'TT RS',
+    'R8', 'R8 V10', 'R8 V10 Plus',
+    // e-tron
+    'e-tron', 'e-tron 50', 'e-tron 55', 'e-tron S', 'e-tron GT', 'RS e-tron GT',
   ],
   'BMW': [
-    '1er', '2er', '3er', '4er', '5er', '6er', '7er', '8er',
+    // 1er (F20/F21/F40)
+    '114i', '116i', '116d', '118i', '118d', '120i', '120d', '123d',
+    '125i', '125d', '128ti', '130i', '130e', 'M135i',
+    // 2er (F22/F44/G42/U06)
+    '216i', '218i', '218d', '220i', '220d', '223i', '225xe', '228i',
+    '230i', '230e', 'M235i', 'M240i',
+    // 3er (E90/F30/G20)
+    '316i', '316d', '318i', '318d', '320i', '320d', '320e',
+    '323i', '325i', '325d', '328i', '330i', '330d', '330e',
+    '335i', '335d', '340i', 'M340i',
+    // 4er (F32/G22)
+    '418i', '418d', '420i', '420d', '420e', '425d', '428i',
+    '430i', '430d', '435i', '440i', 'M440i',
+    // 5er (E60/F10/G30)
+    '518d', '520i', '520d', '523i', '525i', '525d', '528i',
+    '530i', '530d', '530e', '535i', '535d', '540i', '540d',
+    '545e', '550i', 'M550i',
+    // 6er (E63/F06/G32)
+    '620d', '630i', '630d', '635d', '640i', '640d', '650i',
+    // 7er (E65/F01/G11)
+    '725d', '728i', '730i', '730d', '735i', '740i', '740d',
+    '740e', '745e', '750i', '760i', 'M760i',
+    // 8er (G14/G15/G16)
+    '840i', '840d', 'M850i',
+    // X-Reihe
     'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X7', 'XM',
+    // Z-Reihe
     'Z3', 'Z4',
+    // M-Modelle
     'M2', 'M3', 'M4', 'M5', 'M6', 'M8',
-    'M135i', 'M235i', 'M340i', 'M440i', 'M550i',
-    'iX', 'iX1', 'iX2', 'iX3', 'i3', 'i4', 'i5', 'i7',
-    '116i', '118i', '120i', '316i', '318i', '320i', '330i', '530i', '730i',
+    // i-Reihe (Elektro)
+    'i3', 'i4', 'i5', 'i7', 'iX', 'iX1', 'iX2', 'iX3',
   ],
   'Mercedes-Benz': [
-    'A-Klasse', 'B-Klasse', 'C-Klasse', 'E-Klasse', 'S-Klasse',
-    'CLA', 'CLS', 'GLA', 'GLB', 'GLC', 'GLE', 'GLS',
-    'G-Klasse', 'GT', 'SL', 'SLC',
-    'AMG GT', 'C 43', 'C 63', 'E 43', 'E 53', 'E 63', 'G 63',
-    'EQA', 'EQB', 'EQC', 'EQE', 'EQS',
+    // A-Klasse
+    'A 160', 'A 180', 'A 180d', 'A 200', 'A 200d', 'A 220', 'A 220d', 'A 250', 'A 250e', 'A 35 AMG', 'A 45 AMG', 'A 45 S AMG',
+    // B-Klasse
+    'B 160', 'B 180', 'B 180d', 'B 200', 'B 200d', 'B 220', 'B 220d', 'B 250', 'B 250e',
+    // C-Klasse
+    'C 180', 'C 200', 'C 200d', 'C 220d', 'C 230', 'C 250', 'C 250d', 'C 300', 'C 300d', 'C 300e', 'C 320', 'C 350', 'C 350e', 'C 400', 'C 43 AMG', 'C 63 AMG', 'C 63 S AMG',
+    // E-Klasse
+    'E 200', 'E 200d', 'E 220d', 'E 250', 'E 300', 'E 300d', 'E 300e', 'E 320', 'E 350', 'E 350d', 'E 350e', 'E 400', 'E 400d', 'E 43 AMG', 'E 450', 'E 53 AMG', 'E 63 AMG', 'E 63 S AMG',
+    // S-Klasse
+    'S 350d', 'S 400', 'S 400d', 'S 450', 'S 500', 'S 500e', 'S 560', 'S 580', 'S 63 AMG', 'S 65 AMG',
+    // Kompakt-SUV
+    'GLA 180', 'GLA 200', 'GLA 200d', 'GLA 220d', 'GLA 250', 'GLA 35 AMG', 'GLA 45 AMG',
+    'GLB 180', 'GLB 200', 'GLB 200d', 'GLB 220d', 'GLB 250', 'GLB 35 AMG',
+    'GLC 200', 'GLC 200d', 'GLC 220d', 'GLC 250', 'GLC 300', 'GLC 300d', 'GLC 300e', 'GLC 350e', 'GLC 43 AMG', 'GLC 63 AMG',
+    'GLE 300d', 'GLE 350', 'GLE 350d', 'GLE 400', 'GLE 400d', 'GLE 450', 'GLE 500', 'GLE 53 AMG', 'GLE 63 AMG',
+    'GLS 350d', 'GLS 400d', 'GLS 450', 'GLS 500', 'GLS 580', 'GLS 63 AMG',
+    // CLA / CLS
+    'CLA 180', 'CLA 200', 'CLA 200d', 'CLA 220d', 'CLA 250', 'CLA 35 AMG', 'CLA 45 AMG',
+    'CLS 300d', 'CLS 350', 'CLS 350d', 'CLS 400d', 'CLS 450', 'CLS 53 AMG',
+    // G-Klasse / GT / SL / SLC
+    'G 350d', 'G 400d', 'G 500', 'G 63 AMG',
+    'AMG GT', 'AMG GT S', 'AMG GT C', 'AMG GT R',
+    'SL 400', 'SL 500', 'SL 550', 'SL 55 AMG', 'SL 63 AMG',
+    'SLC 180', 'SLC 200', 'SLC 250d', 'SLC 300',
+    // ML / GL (alt)
+    'ML 250', 'ML 300', 'ML 350', 'ML 400', 'ML 500', 'ML 63 AMG',
+    'GL 350d', 'GL 500', 'GL 63 AMG',
+    // Elektro EQ
+    'EQA 250', 'EQA 300', 'EQA 350',
+    'EQB 250', 'EQB 300', 'EQB 350',
+    'EQC 400',
+    'EQE 300', 'EQE 350', 'EQE 350+', 'EQE 500', 'EQE 53 AMG',
+    'EQS 350', 'EQS 450+', 'EQS 500', 'EQS 580', 'EQS 53 AMG',
+    // Transporter
     'Sprinter', 'Vito', 'V-Klasse', 'Citan',
-    'ML', 'GL',
   ],
   'Volkswagen': [
-    'Golf', 'Golf Plus', 'Golf Sportsvan', 'Golf Variant',
-    'Polo', 'Polo GTI',
-    'Passat', 'Passat Variant', 'Passat Alltrack',
-    'Tiguan', 'Tiguan Allspace',
-    'Touareg', 'Touran',
-    'T-Roc', 'T-Cross',
-    'ID.3', 'ID.4', 'ID.5', 'ID.7',
+    // Golf
+    'Golf 1.0 TSI', 'Golf 1.2 TSI', 'Golf 1.4 TSI', 'Golf 1.5 TSI', 'Golf 2.0 TSI',
+    'Golf 1.6 TDI', 'Golf 2.0 TDI',
+    'Golf GTI', 'Golf GTD', 'Golf GTE', 'Golf R', 'e-Golf',
+    'Golf Plus', 'Golf Sportsvan', 'Golf Variant',
+    'Golf Alltrack',
+    // Polo
+    'Polo 1.0', 'Polo 1.0 TSI', 'Polo 1.2 TSI', 'Polo 1.4 TSI', 'Polo 1.6 TDI', 'Polo 2.0 TSI',
+    'Polo GTI',
+    // Passat
+    'Passat 1.4 TSI', 'Passat 1.5 TSI', 'Passat 1.6 TDI', 'Passat 1.8 TSI', 'Passat 2.0 TDI', 'Passat 2.0 TSI',
+    'Passat GTE', 'Passat R-Line',
+    'Passat Variant', 'Passat Variant GTE', 'Passat Alltrack',
+    // Tiguan
+    'Tiguan 1.4 TSI', 'Tiguan 1.5 TSI', 'Tiguan 2.0 TSI', 'Tiguan 2.0 TDI',
+    'Tiguan Allspace', 'Tiguan R',
+    // Touareg / Touran
+    'Touareg', 'Touareg 3.0 TDI', 'Touareg 3.0 V6 TSI',
+    'Touran 1.2 TSI', 'Touran 1.4 TSI', 'Touran 1.5 TSI', 'Touran 1.6 TDI', 'Touran 2.0 TDI',
+    // T-Roc / T-Cross
+    'T-Roc', 'T-Roc 1.0 TSI', 'T-Roc 1.5 TSI', 'T-Roc 2.0 TDI', 'T-Roc 2.0 TSI', 'T-Roc R',
+    'T-Cross', 'T-Cross 1.0 TSI',
+    // ID.
+    'ID.3', 'ID.3 Pure', 'ID.3 Pro', 'ID.3 Pro S',
+    'ID.4', 'ID.4 Pure', 'ID.4 Pro', 'ID.4 GTX',
+    'ID.5', 'ID.5 Pro', 'ID.5 GTX',
+    'ID.7', 'ID.7 Pro',
+    // Arteon / Up / CC
     'Arteon', 'Arteon Shooting Brake',
-    'Up', 'e-up',
-    'Sharan', 'Caddy', 'Transporter', 'Multivan',
-    'Phaeton', 'Amarok',
-    'Scirocco', 'Eos', 'CC',
-    'Beetle', 'Lupo', 'Fox',
+    'Up', 'Up GTI', 'e-up',
+    'CC',
+    // Nutzfahrzeuge
+    'Sharan', 'Caddy', 'Transporter', 'Transporter Kombi', 'Multivan', 'Crafter',
+    // Sonstige
+    'Phaeton', 'Amarok', 'Scirocco', 'Eos', 'Beetle', 'Lupo', 'Fox',
   ],
   'Opel': [
     'Astra', 'Astra Sports Tourer',

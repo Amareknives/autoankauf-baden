@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { MARKEN_BELIEBTESTE, MARKEN_ALLE } from '@/constants/marken'
+import { MODELLE_PRO_MARKE } from '@/constants/modelle'
 import { ChevronRight } from 'lucide-react'
 
 const ALLE_MARKEN = [...MARKEN_BELIEBTESTE, ...MARKEN_ALLE, 'Sonstige']
@@ -81,7 +82,7 @@ export default function WertRechner() {
                       list="rechner-marken"
                       placeholder="z.B. VW, BMW"
                       value={marke}
-                      onChange={e => setMarke(e.target.value)}
+                      onChange={e => { setMarke(e.target.value); setModell('') }}
                       autoCapitalize="words"
                       autoComplete="off"
                       className={INPUT_CLASS}
@@ -95,14 +96,19 @@ export default function WertRechner() {
                   <div>
                     <label className="block text-xs font-semibold text-white/80 mb-1.5">Modell</label>
                     <input
-                      type="text"
-                      placeholder="z.B. Golf, A4, 3er"
+                      list="rechner-modelle"
+                      placeholder="z.B. Golf, A4, 130i"
                       value={modell}
                       onChange={e => setModell(e.target.value)}
                       autoCapitalize="words"
                       autoComplete="off"
                       className={INPUT_CLASS}
                     />
+                    <datalist id="rechner-modelle">
+                      {(MODELLE_PRO_MARKE[marke] ?? []).map(m => (
+                        <option key={m} value={m} />
+                      ))}
+                    </datalist>
                   </div>
 
                   {/* Baujahr */}
