@@ -67,8 +67,8 @@ export async function POST(request: NextRequest) {
   }
 
   // ── Ausführung ───────────────────────────────────────────────────────────────
-  const leadIds = zuLoeschendeLeads.map(a => a.id)
-  const kaufIds = zuAnonymisierendeKaeufe.map(a => a.id)
+  const leadIds = zuLoeschendeLeads.map((a: { id: string }) => a.id)
+  const kaufIds = zuAnonymisierendeKaeufe.map((a: { id: string }) => a.id)
 
   // Phase 1: Leads vollständig löschen (Cascade löscht Logs)
   if (leadIds.length > 0) {

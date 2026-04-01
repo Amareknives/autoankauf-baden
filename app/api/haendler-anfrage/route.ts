@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
         `👉 ${baseUrl}/dashboard`
 
       const subject = `[AAB] Neue Händleranfrage: ${data.firma}`
-      const maPromises = mitarbeiter.map(m =>
+      const maPromises = mitarbeiter.map((m: import('@/lib/notify').MitarbeiterForNotify) =>
         notifyMitarbeiter(m, message, subject, { dashboardPath: '/dashboard' })
       )
 
