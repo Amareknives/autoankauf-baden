@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
         });
         const aktiveMitarbeiter = await prismaWa.mitarbeiter.findMany({ where: { aktiv: true } });
         const subject = `[AAB] Neue Anfrage: ${data.marke} ${data.modell} (${data.vorname} ${data.nachname})`;
-        await Promise.allSettled(aktiveMitarbeiter.map(m => notifyMitarbeiter(m, msg, subject, { anfrageId })));
+        await Promise.allSettled(aktiveMitarbeiter.map((m: import('@/lib/notify').MitarbeiterForNotify) => notifyMitarbeiter(m, msg, subject, { anfrageId })));
       } catch {
         // Benachrichtigungsfehler nicht an User weitergeben
       }
