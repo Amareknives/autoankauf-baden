@@ -18,6 +18,32 @@ import { verifySessionToken } from '@/lib/auth'
  *   Abonnenten ohne jede Aktivität seit 36 Monaten werden gelöscht.
  */
 
+export async function GET(request: NextRequest) {
+  const cookieStore = await cookies()
+  const token = cookieStore.get('aab_session')?.value
+  if (!token || !(await verifySessionToken(token))) {
+    return NextResponse.json({ error: 'Nicht autorisiert' }, { status: 401 })
+  }
+
+  const { prisma } = await import('@/lib/prisma')
+  const jetzt = new Date()
+  const cutoff24Monate = new Date(jetzt)
+  cutoff24Monate.setMonth(cutoff24Monate.getMonth() - 24)
+  const cutoff10Jahre = new Date(jetzt)
+  cutoff10Jahre.setFullYear(cutoff10Jahre.getFullYear() - 10)
+
+  const [zuLoeschendeLeads, zuAnonymisierendeKaeufe] = await Promise.all([
+    prisma.anfrage.findMany({ where: { createdAt: { lt: cutoff24Monate }, status: { notIn: ['abgeschlossen'] } }, select: { id: true } }),
+    prisma.anfrage.findMany({ where: { createdAt: { lt: cutoff10Jahre }, status: 'abgeschlossen' }, select: { id: true } }),
+  ])
+
+  return NextResponse.json({
+    dryRun: true,
+    leadsZuLoeschen: zuLoeschendeLeads.length,
+    kaeufeZuAnonymisieren: zuAnonymisierendeKaeufe.length,
+  })
+}
+
 export async function POST(request: NextRequest) {
   const cookieStore = await cookies()
   const token = cookieStore.get('aab_session')?.value
