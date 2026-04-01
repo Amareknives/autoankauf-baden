@@ -163,12 +163,13 @@ const INP = 'w-full px-3 py-2 border border-[#E2EDF7] rounded-xl text-sm text-[#
 
 function MitarbeiterVerwaltung() {
   const [liste, setListe] = useState<MitarbeiterTyp[]>([])
+  const [ichId, setIchId] = useState<string | null>(null)
   const [neu, setNeu] = useState({ vorname: '', nachname: '', email: '', passwort: '', kuerzel: '', telefon: '', farbe: FARBEN[0] })
   const [adding, setAdding] = useState(false)
   const [saving, setSaving] = useState(false)
   const [editPw, setEditPw] = useState<{ id: string; pw: string } | null>(null)
   const [editEmail, setEditEmail] = useState<{ id: string; email: string } | null>(null)
-  const [editProfil, setEditProfil] = useState<{ id: string; vorname: string; nachname: string; kuerzel: string; farbe: string } | null>(null)
+  const [editProfil, setEditProfil] = useState<{ id: string; vorname: string; nachname: string; kuerzel: string; telefon: string; farbe: string } | null>(null)
   const [transferModal, setTransferModal] = useState<{ id: string; name: string; offeneAnfragen: number } | null>(null)
   const [transferZiel, setTransferZiel] = useState('')
 
@@ -177,7 +178,12 @@ function MitarbeiterVerwaltung() {
     if (res.ok) setListe(await res.json() as MitarbeiterTyp[])
   }
 
-  useEffect(() => { void load() }, [])
+  useEffect(() => {
+    void load()
+    void fetch('/api/dashboard/me').then(r => r.ok ? r.json() : null).then((d: { id: string } | null) => { if (d) setIchId(d.id) })
+  }, [])
+
+  const ichBinDefault = liste.find(m => m.id === ichId)?.istDefault ?? false
 
   const handleAdd = async () => {
     if (!neu.vorname.trim() || !neu.nachname.trim() || !neu.email.trim() || !neu.passwort.trim()) return
@@ -293,7 +299,7 @@ function MitarbeiterVerwaltung() {
     const res = await fetch(`/api/dashboard/mitarbeiter/${editProfil.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ vorname: editProfil.vorname.trim(), nachname: editProfil.nachname.trim(), kuerzel: editProfil.kuerzel.trim() || null, farbe: editProfil.farbe }),
+      body: JSON.stringify({ vorname: editProfil.vorname.trim(), nachname: editProfil.nachname.trim(), kuerzel: editProfil.kuerzel.trim() || null, telefon: editProfil.telefon.trim() || null, farbe: editProfil.farbe }),
     })
     if (res.ok) { setEditProfil(null); await load(); toast.success('Profil gespeichert') }
     else toast.error('Fehler beim Speichern')
@@ -337,30 +343,38 @@ function MitarbeiterVerwaltung() {
                   <p className="text-xs text-[#64748B] truncate">{m.email}</p>
                 </div>
                 <div className="flex items-center gap-1 shrink-0 flex-wrap justify-end">
-                  {!m.istDefault && m.aktiv && (
+                  {ichBinDefault && !m.istDefault && m.aktiv && (
                     <button onClick={() => void handleDefault(m.id)} className="text-xs text-[#64748B] hover:text-[#0369A1] px-2 py-1 rounded-lg hover:bg-[#EFF6FF] transition-colors">
                       Standard
                     </button>
                   )}
-                  <button onClick={() => { setEditProfil({ id: m.id, vorname: m.vorname, nachname: m.nachname, kuerzel: m.kuerzel ?? '', farbe: m.farbe }); setEditPw(null); setEditEmail(null) }} className="text-xs text-[#64748B] hover:text-[#0369A1] px-2 py-1 rounded-lg hover:bg-[#EFF6FF] transition-colors">
-                    Bearbeiten
-                  </button>
-                  <button onClick={() => { setEditEmail({ id: m.id, email: m.email }); setEditPw(null); setEditProfil(null) }} className="text-xs text-[#64748B] hover:text-[#0369A1] px-2 py-1 rounded-lg hover:bg-[#EFF6FF] transition-colors">
-                    E-Mail
-                  </button>
-                  <button onClick={() => { setEditPw({ id: m.id, pw: '' }); setEditEmail(null) }} className="text-xs text-[#64748B] hover:text-[#0369A1] px-2 py-1 rounded-lg hover:bg-[#EFF6FF] transition-colors">
-                    Passwort
-                  </button>
-                  <button onClick={() => void (m.aktiv ? handleDelete(m.id) : handleToggleAktiv(m.id, m.aktiv))} className="text-xs text-[#64748B] hover:text-[#D97706] px-2 py-1 rounded-lg hover:bg-[#FFF7ED] transition-colors">
-                    {m.aktiv ? 'Deaktivieren' : 'Aktivieren'}
-                  </button>
-                  {!m.aktiv && (
+                  {(ichBinDefault || m.id === ichId) && (
+                    <button onClick={() => { setEditProfil({ id: m.id, vorname: m.vorname, nachname: m.nachname, kuerzel: m.kuerzel ?? '', telefon: m.telefon ?? '', farbe: m.farbe }); setEditPw(null); setEditEmail(null) }} className="text-xs text-[#64748B] hover:text-[#0369A1] px-2 py-1 rounded-lg hover:bg-[#EFF6FF] transition-colors">
+                      Bearbeiten
+                    </button>
+                  )}
+                  {(ichBinDefault || m.id === ichId) && (
+                    <button onClick={() => { setEditEmail({ id: m.id, email: m.email }); setEditPw(null); setEditProfil(null) }} className="text-xs text-[#64748B] hover:text-[#0369A1] px-2 py-1 rounded-lg hover:bg-[#EFF6FF] transition-colors">
+                      E-Mail
+                    </button>
+                  )}
+                  {(ichBinDefault || m.id === ichId) && (
+                    <button onClick={() => { setEditPw({ id: m.id, pw: '' }); setEditEmail(null); setEditProfil(null) }} className="text-xs text-[#64748B] hover:text-[#0369A1] px-2 py-1 rounded-lg hover:bg-[#EFF6FF] transition-colors">
+                      Passwort
+                    </button>
+                  )}
+                  {ichBinDefault && !m.istDefault && (
+                    <button onClick={() => void (m.aktiv ? handleDelete(m.id) : handleToggleAktiv(m.id, m.aktiv))} className="text-xs text-[#64748B] hover:text-[#D97706] px-2 py-1 rounded-lg hover:bg-[#FFF7ED] transition-colors">
+                      {m.aktiv ? 'Deaktivieren' : 'Aktivieren'}
+                    </button>
+                  )}
+                  {ichBinDefault && !m.istDefault && !m.aktiv && (
                     <button onClick={() => {
                       if (confirm(`${m.vorname} ${m.nachname} endgültig löschen? Dies kann nicht rückgängig gemacht werden.`)) {
                         void fetch(`/api/dashboard/mitarbeiter/${m.id}?permanent=true`, { method: 'DELETE' })
                           .then(r => { if (r.ok) { void load(); toast.success('Mitarbeiter gelöscht') } else toast.error('Fehler beim Löschen') })
                       }
-                    }} className="text-xs text-[#DC2626] hover:text-[#DC2626] px-2 py-1 rounded-lg hover:bg-[#FEF2F2] transition-colors">
+                    }} className="text-xs text-[#DC2626] px-2 py-1 rounded-lg hover:bg-[#FEF2F2] transition-colors">
                       Löschen
                     </button>
                   )}
@@ -401,26 +415,43 @@ function MitarbeiterVerwaltung() {
               {/* Profil-Bearbeiten Inline */}
               {editProfil?.id === m.id && (
                 <div className="mt-3 pt-3 border-t border-[#E2EDF7] space-y-3">
-                  <div className="flex gap-2">
-                    <input type="text" placeholder="Vorname" value={editProfil.vorname} onChange={e => setEditProfil(p => p ? { ...p, vorname: e.target.value } : null)} className={`${INP} flex-1`} />
-                    <input type="text" placeholder="Nachname" value={editProfil.nachname} onChange={e => setEditProfil(p => p ? { ...p, nachname: e.target.value } : null)} className={`${INP} flex-1`} />
-                    <input type="text" placeholder="Kürzel" maxLength={3} value={editProfil.kuerzel} onChange={e => setEditProfil(p => p ? { ...p, kuerzel: e.target.value.toUpperCase() } : null)} className={`${INP} w-20`} />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-[#64748B] mb-1 uppercase tracking-wide">Vorname *</label>
+                      <input value={editProfil.vorname} onChange={e => setEditProfil(p => p ? { ...p, vorname: e.target.value } : null)} className={INP} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-[#64748B] mb-1 uppercase tracking-wide">Nachname *</label>
+                      <input value={editProfil.nachname} onChange={e => setEditProfil(p => p ? { ...p, nachname: e.target.value } : null)} className={INP} />
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-[#64748B]">Farbe:</span>
-                    <div className="flex gap-1.5 flex-1">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-[#64748B] mb-1 uppercase tracking-wide">Telefon</label>
+                      <input value={editProfil.telefon} onChange={e => setEditProfil(p => p ? { ...p, telefon: e.target.value } : null)} className={INP} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-[#64748B] mb-1 uppercase tracking-wide">Kürzel (2–3 Buchst.)</label>
+                      <input value={editProfil.kuerzel} onChange={e => setEditProfil(p => p ? { ...p, kuerzel: e.target.value.toUpperCase() } : null)} maxLength={3} className={INP} />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-[#64748B] mb-1 uppercase tracking-wide">Farbe</label>
+                    <div className="flex gap-2 flex-wrap">
                       {FARBEN.map(f => (
                         <button key={f} onClick={() => setEditProfil(p => p ? { ...p, farbe: f } : null)}
-                          className="w-6 h-6 rounded-full border-2 transition-all shrink-0"
-                          style={{ backgroundColor: f, borderColor: editProfil.farbe === f ? '#0F172A' : 'transparent' }} />
+                          className={`w-7 h-7 rounded-full border-2 transition-transform ${editProfil.farbe === f ? 'border-[#0F172A] scale-110' : 'border-transparent hover:scale-105'}`}
+                          style={{ backgroundColor: f }} />
                       ))}
                     </div>
                   </div>
-                  <div className="flex gap-2 justify-end">
-                    <button onClick={() => setEditProfil(null)} className="px-3 py-2 border border-[#E2EDF7] text-xs rounded-xl text-[#64748B]">Abbrechen</button>
+                  <div className="flex gap-2 pt-1">
                     <button onClick={() => void handleProfilChange()} disabled={saving || !editProfil.vorname.trim() || !editProfil.nachname.trim()}
-                      className="px-4 py-2 bg-[#0369A1] text-white text-xs font-bold rounded-xl disabled:opacity-40">
-                      Speichern
+                      className="flex-1 px-4 py-2 bg-[#0369A1] text-white text-sm font-semibold rounded-xl hover:bg-[#0284c7] disabled:bg-[#94A3B8] transition-colors">
+                      {saving ? 'Speichern…' : 'Speichern'}
+                    </button>
+                    <button onClick={() => setEditProfil(null)} className="px-4 py-2 border border-[#E2EDF7] text-sm font-semibold rounded-xl text-[#64748B] hover:border-[#0369A1] transition-colors">
+                      Abbrechen
                     </button>
                   </div>
                 </div>
