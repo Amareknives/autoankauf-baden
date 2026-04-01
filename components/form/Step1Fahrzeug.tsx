@@ -2,6 +2,7 @@
 
 import { AnfrageFormData } from '@/types/anfrage';
 import { MARKEN_BELIEBTESTE, MARKEN_ALLE } from '@/constants/marken';
+import { MODELLE_PRO_MARKE } from '@/constants/modelle';
 import {
   KRAFTSTOFF_OPTIONS,
   SCHADSTOFFKLASSE_OPTIONS,
@@ -114,16 +115,26 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
           {errors.marke && <span className="text-xs text-[#EF4444]">{errors.marke}</span>}
         </div>
 
-        <Input
-          label="Modell"
-          required
-          placeholder="z.B. A4, Golf, 3er"
-          value={data.modell ?? ''}
-          error={errors.modell}
-          autoCapitalize="words"
-          autoComplete="off"
-          onChange={(e) => onChange({ modell: e.target.value })}
-        />
+        <div className="flex flex-col gap-1">
+          <label className="text-[11px] font-semibold text-[#0F172A] uppercase tracking-wide flex items-center gap-1">
+            Modell
+          </label>
+          <input
+            list="modell-list"
+            value={data.modell ?? ''}
+            onChange={(e) => onChange({ modell: e.target.value })}
+            placeholder="z.B. Golf, 3er, A4"
+            autoCapitalize="words"
+            autoComplete="off"
+            className={SELECT_CLASS}
+          />
+          <datalist id="modell-list">
+            {(MODELLE_PRO_MARKE[data.marke ?? ''] ?? []).map((m) => (
+              <option key={m} value={m} />
+            ))}
+          </datalist>
+          {errors.modell && <span className="text-xs text-[#EF4444]">{errors.modell}</span>}
+        </div>
       </div>
 
       {/* Erstzulassung */}

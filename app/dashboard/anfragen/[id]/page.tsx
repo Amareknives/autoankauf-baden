@@ -746,8 +746,13 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
           setAngebotSperreFreigegeben(false)
           void checkMailStatus('angebot')
         } else if (patch.sendeTerminMail) void checkMailStatus('termin_bestaetigung')
-        else if (patch.terminLoeschenGrund === 'wir_sagen_ab') void checkMailStatus('termin_abgesagt')
-        else if (patch.terminLoeschenGrund === 'kunde_andertermin') void checkMailStatus('termin_abgesagt')
+        else if (patch.terminLoeschenGrund === 'wir_sagen_ab') {
+          setTerminKommentar(''); setErsatztermin1(''); setErsatztermin2('')
+          void checkMailStatus('termin_abgesagt')
+        } else if (patch.terminLoeschenGrund === 'kunde_andertermin') {
+          setTerminKommentar('')
+          void checkMailStatus('termin_abgesagt')
+        }
       } else {
         toast.error('Fehler beim Speichern')
       }
@@ -1848,12 +1853,22 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
             <button
               onClick={() => {
                 setShowOhneAdresseWarnung(false)
-                void update({
+                const isEdit = editingTermin && !!anfrage.terminVorschlag1
+                const updateParams = {
                   terminVorschlag1: terminVorschlag || undefined,
                   abholadresse: undefined,
                   abholAdresseZusatz: null,
                   status: anfrage.status === 'neu' || anfrage.status === 'kontaktiert' || anfrage.status === 'angebot_gesendet'
                     ? 'termin_vereinbart' : undefined,
+                  bearbeiterId: terminMitarbeiterId || null,
+                  terminBearbeiterWechsel: true,
+                }
+                const previewParams = isEdit
+                  ? { typ: 'termin_verschoben', termin: terminVorschlag, alterTermin: anfrage.terminVorschlag1, adresse: undefined, adresseZusatz: null, terminMitarbeiterId: terminMitarbeiterId || null }
+                  : { typ: 'termin_bestaetigung', termin: terminVorschlag, adresse: undefined, adresseZusatz: null, terminMitarbeiterId: terminMitarbeiterId || null }
+                void holeVorschau(previewParams, () => {
+                  void update(updateParams)
+                  if (isEdit) setEditingTermin(false)
                 })
               }}
               className="flex-1 px-4 py-2.5 bg-[#0369A1] hover:bg-[#0284c7] text-white text-sm font-bold rounded-xl transition-colors"
