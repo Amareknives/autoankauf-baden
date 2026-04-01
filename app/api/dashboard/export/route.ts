@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
         select: { createdAt: true, vorname: true, nachname: true, email: true, plz: true, quelle: true },
       })
       const header = ['Anmeldedatum', 'Vorname', 'Nachname', 'E-Mail', 'PLZ', 'Quelle'].join(';')
-      const rows = abonnenten.map(a => [
+      const rows = abonnenten.map((a: { createdAt: Date; vorname: string; nachname: string; email: string; plz: string | null; quelle: string }) => [
         new Date(a.createdAt).toLocaleDateString('de-DE'),
         a.vorname, a.nachname, a.email, a.plz ?? '', a.quelle,
       ].map(csvEscape).join(';'))
@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
       'Termin', 'Adresse', 'Notizen', 'Newsletter',
     ].join(';')
 
-    const rows = anfragen.map(a => [
+    const rows = anfragen.map((a: typeof anfragen[number]) => [
       new Date(a.createdAt).toLocaleDateString('de-DE'),
       a.vorname, a.nachname, a.email, a.telefon ?? '', a.plz,
       a.marke, a.modell, a.erstzulassungJahr, a.erstzulassungMonat,
