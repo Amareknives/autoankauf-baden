@@ -8,7 +8,7 @@ const anfrageSchema = z.object({
   erstzulassungJahr: z.number().min(1990).max(new Date().getFullYear()),
   kraftstoff: z.string().min(1),
   schadstoffklasse: z.string().min(1),
-  leistungKw: z.number().min(1),
+  leistungKw: z.number().min(0),
   hubraum: z.number().optional(),
   getriebe: z.string().min(1),
   bauform: z.string().min(1),
