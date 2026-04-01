@@ -138,9 +138,9 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
       </div>
 
       {/* Erstzulassung */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4 items-end">
         <Select
-          label="Erstzulassung Monat"
+          label="Erstzulassung Monat (optional)"
           placeholder="Monat"
           value={data.erstzulassungMonat ? String(data.erstzulassungMonat) : ''}
           options={MONTHS}
