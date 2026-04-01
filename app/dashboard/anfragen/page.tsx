@@ -306,8 +306,8 @@ export default function AnfragenPage() {
                     <button
                       onClick={e => { e.stopPropagation(); const r = e.currentTarget.getBoundingClientRect(); setDropdown(d => d?.anfrageId === a.id ? null : { anfrageId: a.id, x: r.right, y: r.bottom + 4 }) }}
                       title={a.bearbeiter ? `${a.bearbeiter.vorname} ${a.bearbeiter.nachname} — klicken zum Ändern` : 'Bearbeiter zuweisen'}
-                      className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-[10px] font-bold transition-opacity hover:opacity-80 ${
-                        a.bearbeiter ? 'text-white' : 'text-[#94A3B8] border-2 border-dashed border-[#CBD5E1] bg-white'
+                      className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold transition-opacity hover:opacity-80 ${
+                        a.bearbeiter ? 'text-white shadow-sm' : 'text-[#94A3B8] border-2 border-dashed border-[#CBD5E1] bg-white'
                       }`}
                       style={a.bearbeiter ? { background: a.bearbeiter.farbe } : {}}
                     >
@@ -404,8 +404,8 @@ export default function AnfragenPage() {
                         <button
                           onClick={e => { e.stopPropagation(); const r = e.currentTarget.getBoundingClientRect(); setDropdown(d => d?.anfrageId === a.id ? null : { anfrageId: a.id, x: r.left, y: r.bottom + 4 }) }}
                           title={a.bearbeiter ? `${a.bearbeiter.vorname} ${a.bearbeiter.nachname} — klicken zum Ändern` : 'Bearbeiter zuweisen'}
-                          className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-[10px] font-bold transition-opacity hover:opacity-80 ${
-                            a.bearbeiter ? 'text-white' : 'text-[#94A3B8] border-2 border-dashed border-[#CBD5E1] bg-white'
+                          className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold transition-opacity hover:opacity-80 ${
+                            a.bearbeiter ? 'text-white shadow-sm' : 'text-[#94A3B8] border-2 border-dashed border-[#CBD5E1] bg-white'
                           }`}
                           style={a.bearbeiter ? { background: a.bearbeiter.farbe } : {}}
                         >
