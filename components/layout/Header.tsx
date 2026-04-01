@@ -57,14 +57,24 @@ export default function Header({ telefon }: { telefon: string }) {
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
               {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="text-[#0F172A] hover:text-[#0369A1] transition-colors duration-200 font-medium relative group"
-                >
-                  {item.label}
-                  <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-[#0369A1] group-hover:w-full transition-all duration-200" />
-                </Link>
+                item.href === '/fahrzeug-verkaufen' ? (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="px-4 py-1.5 bg-[#0369A1] hover:bg-[#025d8f] text-[#f5f8f7] font-semibold rounded-full transition-colors duration-200 text-sm"
+                  >
+                    {item.label}
+                  </Link>
+                ) : (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="text-[#0F172A] hover:text-[#0369A1] transition-colors duration-200 font-medium relative group"
+                  >
+                    {item.label}
+                    <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-[#0369A1] group-hover:w-full transition-all duration-200" />
+                  </Link>
+                )
               ))}
             </nav>
 
@@ -115,7 +125,11 @@ export default function Header({ telefon }: { telefon: string }) {
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-white hover:text-[#0EA5E9] transition-colors duration-200 font-semibold text-2xl py-4 border-b border-white/10"
+                className={
+                  item.href === '/fahrzeug-verkaufen'
+                    ? 'text-[#0EA5E9] hover:text-white transition-colors duration-200 font-bold text-2xl py-4 border-b border-white/10'
+                    : 'text-white hover:text-[#0EA5E9] transition-colors duration-200 font-semibold text-2xl py-4 border-b border-white/10'
+                }
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {item.label}
