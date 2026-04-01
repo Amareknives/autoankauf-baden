@@ -205,7 +205,7 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
             min={1}
             value={data.leistungKw ?? ''}
             error={errors.leistungKw}
-            onChange={(e) => onChange({ leistungKw: Number(e.target.value) })}
+            onChange={(e) => onChange({ leistungKw: e.target.value ? Number(e.target.value) : undefined })}
           />
         </div>
 
@@ -272,7 +272,7 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
           min={1}
           max={9}
           value={data.anzahlSitze ?? ''}
-          onChange={(e) => onChange({ anzahlSitze: Number(e.target.value) })}
+          onChange={(e) => onChange({ anzahlSitze: e.target.value ? Number(e.target.value) : undefined })}
         />
       </div>
 
@@ -312,7 +312,7 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
           min={0}
           value={data.kilometerstand ?? ''}
           error={errors.kilometerstand}
-          onChange={(e) => onChange({ kilometerstand: Number(e.target.value) })}
+          onChange={(e) => onChange({ kilometerstand: e.target.value ? Number(e.target.value) : undefined })}
         />
         {(data.kilometerstand ?? 0) > 0 && (
           <p className="text-xs text-[#0369A1] mt-0.5">
