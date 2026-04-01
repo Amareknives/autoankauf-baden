@@ -220,6 +220,12 @@ function BearbeiterBlock({
 }) {
   const [mitarbeiter, setMitarbeiter] = useState<MitarbeiterKurz[]>([])
   const [open, setOpen] = useState(false)
+  const [aktuell, setAktuell] = useState(anfrage.bearbeiter)
+  const [aktuellId, setAktuellId] = useState(anfrage.bearbeiterId)
+
+  // Props-Sync (wenn update() die Anfrage neu setzt)
+  useEffect(() => { setAktuell(anfrage.bearbeiter) }, [anfrage.bearbeiter])
+  useEffect(() => { setAktuellId(anfrage.bearbeiterId) }, [anfrage.bearbeiterId])
 
   useEffect(() => {
     void fetch('/api/dashboard/mitarbeiter')
@@ -228,7 +234,14 @@ function BearbeiterBlock({
       .catch(() => {/* ignorieren */})
   }, [])
 
-  const aktuell = anfrage.bearbeiter
+  const handleAssign = (id: string | null) => {
+    // Optimistisches Update sofort
+    const ma = id ? mitarbeiter.find(m => m.id === id) ?? null : null
+    setAktuell(ma)
+    setAktuellId(id)
+    setOpen(false)
+    onAssign(id)
+  }
 
   return (
     <div className="bg-white rounded-2xl border border-[#E2EDF7] p-5">
@@ -273,9 +286,9 @@ function BearbeiterBlock({
             <button
               key={m.id}
               disabled={saving}
-              onClick={() => { onAssign(m.id); setOpen(false) }}
+              onClick={() => handleAssign(m.id)}
               className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-colors ${
-                anfrage.bearbeiterId === m.id
+                aktuellId === m.id
                   ? 'bg-[#EFF6FF] border border-[#0369A1]'
                   : 'hover:bg-[#F8FAFC] border border-transparent'
               }`}
@@ -287,13 +300,13 @@ function BearbeiterBlock({
                 {m.kuerzel ?? (m.vorname[0] + m.nachname[0]).toUpperCase()}
               </div>
               <span className="text-sm text-[#0F172A]">{m.vorname} {m.nachname}</span>
-              {anfrage.bearbeiterId === m.id && <span className="ml-auto text-xs text-[#0369A1] font-semibold">✓</span>}
+              {aktuellId === m.id && <span className="ml-auto text-xs text-[#0369A1] font-semibold">✓</span>}
             </button>
           ))}
-          {anfrage.bearbeiterId && (
+          {aktuellId && (
             <button
               disabled={saving}
-              onClick={() => { onAssign(null); setOpen(false) }}
+              onClick={() => handleAssign(null)}
               className="w-full text-left px-3 py-2 rounded-xl text-xs text-[#94A3B8] hover:text-[#DC2626] hover:bg-[#FEF2F2] transition-colors"
             >
               Zuweisung aufheben

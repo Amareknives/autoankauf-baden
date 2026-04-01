@@ -164,6 +164,7 @@ const INP = 'w-full px-3 py-2 border border-[#E2EDF7] rounded-xl text-sm text-[#
 function DefaultBearbeiterCard({ liste }: { liste: MitarbeiterTyp[] }) {
   const [defaultId, setDefaultId] = useState('')
   const [saving, setSaving] = useState(false)
+  const [bulkLoading, setBulkLoading] = useState(false)
 
   useEffect(() => {
     void fetch('/api/dashboard/einstellungen')
@@ -206,9 +207,31 @@ function DefaultBearbeiterCard({ liste }: { liste: MitarbeiterTyp[] }) {
         ))}
       </select>
       {defaultId && (
-        <p className="mt-2 text-[11px] text-[#0369A1]">
-          ✓ Jede neue Anfrage geht automatisch an {aktive.find(m => m.id === defaultId)?.vorname ?? '…'}
-        </p>
+        <>
+          <p className="mt-2 text-[11px] text-[#0369A1]">
+            ✓ Jede neue Anfrage geht automatisch an {aktive.find(m => m.id === defaultId)?.vorname ?? '…'}
+          </p>
+          <div className="mt-3 pt-3 border-t border-[#E2EDF7]">
+            <p className="text-xs text-[#64748B] mb-2">Bestehende Anfragen ohne Zuweisung nachträglich zuweisen:</p>
+            <button
+              disabled={bulkLoading}
+              onClick={async () => {
+                setBulkLoading(true)
+                try {
+                  const res = await fetch('/api/dashboard/anfragen/assign-default', { method: 'POST' })
+                  const d = await res.json() as { aktualisiert?: number; error?: string }
+                  if (res.ok) toast.success(`${d.aktualisiert ?? 0} Anfragen zugewiesen`)
+                  else toast.error(d.error ?? 'Fehler')
+                } finally {
+                  setBulkLoading(false)
+                }
+              }}
+              className="px-4 py-2 bg-[#0369A1] text-white text-xs font-bold rounded-xl hover:bg-[#0284C7] disabled:opacity-50 transition-colors"
+            >
+              {bulkLoading ? 'Läuft…' : 'Alle unzugewiesenen Anfragen jetzt zuweisen'}
+            </button>
+          </div>
+        </>
       )}
     </Card>
   )
