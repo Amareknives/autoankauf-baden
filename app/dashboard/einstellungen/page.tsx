@@ -161,6 +161,59 @@ interface MitarbeiterTyp {
 
 const INP = 'w-full px-3 py-2 border border-[#E2EDF7] rounded-xl text-sm text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#0369A1]'
 
+function DefaultBearbeiterCard({ liste }: { liste: MitarbeiterTyp[] }) {
+  const [defaultId, setDefaultId] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    void fetch('/api/dashboard/einstellungen')
+      .then(r => r.json())
+      .then((d: Record<string, string>) => { if (d.defaultBearbeiterId) setDefaultId(d.defaultBearbeiterId) })
+      .catch(() => {})
+  }, [])
+
+  const save = async (val: string) => {
+    setDefaultId(val)
+    setSaving(true)
+    try {
+      await fetch('/api/dashboard/einstellungen', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ defaultBearbeiterId: val }),
+      })
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const aktive = liste.filter(m => m.aktiv)
+  if (aktive.length === 0) return null
+
+  return (
+    <Card title="Standard-Bearbeiter">
+      <p className="text-xs text-[#64748B] mb-4">
+        Neue Anfragen werden automatisch diesem Mitarbeiter zugewiesen. Du kannst die Zuweisung jederzeit pro Fall ändern.
+      </p>
+      <select
+        value={defaultId}
+        onChange={e => void save(e.target.value)}
+        disabled={saving}
+        className="w-full px-3 py-2 border border-[#E2EDF7] rounded-xl text-sm text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#0369A1] disabled:opacity-50"
+      >
+        <option value="">— Kein Standard (manuell zuweisen) —</option>
+        {aktive.map(m => (
+          <option key={m.id} value={m.id}>{m.vorname} {m.nachname}{m.kuerzel ? ` (${m.kuerzel})` : ''}</option>
+        ))}
+      </select>
+      {defaultId && (
+        <p className="mt-2 text-[11px] text-[#0369A1]">
+          ✓ Jede neue Anfrage geht automatisch an {aktive.find(m => m.id === defaultId)?.vorname ?? '…'}
+        </p>
+      )}
+    </Card>
+  )
+}
+
 function MitarbeiterVerwaltung() {
   const [liste, setListe] = useState<MitarbeiterTyp[]>([])
   const [ichId, setIchId] = useState<string | null>(null)
@@ -553,6 +606,8 @@ function MitarbeiterVerwaltung() {
         <p className="text-xs text-[#94A3B8] text-center py-4">Noch keine Mitarbeiter angelegt.</p>
       )}
     </Card>
+
+    <DefaultBearbeiterCard liste={liste} />
 
     {/* Transfer-Modal */}
     {transferModal && (

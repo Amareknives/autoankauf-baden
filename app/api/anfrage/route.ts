@@ -75,7 +75,12 @@ export async function POST(request: NextRequest) {
     const data = anfrageSchema.parse(body);
 
     const { prisma } = await import('@/lib/prisma');
-    const anfrage = await prisma.anfrage.create({ data });
+    const { getSiteSettings } = await import('@/lib/siteSettings');
+    const settings = await getSiteSettings();
+    const createData = settings.defaultBearbeiterId
+      ? { ...data, bearbeiterId: settings.defaultBearbeiterId }
+      : data;
+    const anfrage = await prisma.anfrage.create({ data: createData });
     const anfrageId = anfrage.id;
 
     // Newsletter-Anmeldung dauerhaft speichern (unabhängig von der Anfrage)

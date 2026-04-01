@@ -16,6 +16,7 @@ export interface SiteSettings {
   social_youtube: string
   social_xing: string
   social_linkedin: string
+  defaultBearbeiterId: string
 }
 
 const DEFAULTS: SiteSettings = {
@@ -35,6 +36,7 @@ const DEFAULTS: SiteSettings = {
   social_youtube: '',
   social_xing: '',
   social_linkedin: '',
+  defaultBearbeiterId: '',
 }
 
 export async function getSiteSettings(): Promise<SiteSettings> {

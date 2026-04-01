@@ -258,7 +258,13 @@ function BearbeiterBlock({
           </div>
         </div>
       ) : (
-        <p className="text-xs text-[#94A3B8] italic">Noch nicht zugewiesen</p>
+        <button
+          onClick={() => setOpen(true)}
+          className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl border-2 border-dashed border-[#FDE68A] bg-[#FFFBEB] text-[#92400E] text-xs font-semibold hover:bg-[#FEF3C7] transition-colors"
+        >
+          <span className="text-base">👤</span>
+          Bearbeiter zuweisen — wer ist zuständig?
+        </button>
       )}
 
       {open && mitarbeiter.length > 0 && (
