@@ -229,8 +229,11 @@ export async function PATCH(
         // ── Angebots-Mail an Kunden ────────────────────────────────────────
         if (data.sendeAngebotMail && updated.angebotspreis) {
           const { angebotEmail } = await import('@/services/emailTemplates')
+          // Signatur: Bearbeiter hat Vorrang, Fallback auf eingeloggten User
           let angebotBearbeiterName: string | null = null
-          if (mitarbeiterId) {
+          if (bearbeiter) {
+            angebotBearbeiterName = `${bearbeiter.vorname} ${bearbeiter.nachname}`
+          } else if (mitarbeiterId) {
             const ma = await prisma.mitarbeiter.findUnique({ where: { id: mitarbeiterId }, select: { vorname: true, nachname: true } })
             if (ma) angebotBearbeiterName = `${ma.vorname} ${ma.nachname}`
           }

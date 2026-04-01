@@ -32,6 +32,8 @@ interface Anfrage {
   notizen: string | null
   angebotspreis: number | null
   aktivitaeten: AktivitaetKurz[]
+  bearbeiterId: string | null
+  bearbeiter: { id: string; vorname: string; nachname: string; kuerzel: string | null; farbe: string } | null
 }
 
 const STATUS_CONFIG: Record<string, { label: string; bg: string; text: string }> = {
@@ -250,9 +252,20 @@ export default function AnfragenPage() {
                     <p className="font-bold text-[#0F172A]">{a.vorname} {a.nachname}</p>
                     <p className="text-xs text-[#64748B] mt-0.5">{a.telefon}</p>
                   </div>
-                  <span className={`shrink-0 px-2.5 py-1 rounded-full text-xs font-semibold ${s.bg} ${s.text}`}>
-                    {s.label}
-                  </span>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {a.bearbeiter && (
+                      <span
+                        title={`${a.bearbeiter.vorname} ${a.bearbeiter.nachname}`}
+                        className="inline-flex items-center justify-center w-6 h-6 rounded-full text-white text-[10px] font-bold"
+                        style={{ background: a.bearbeiter.farbe }}
+                      >
+                        {a.bearbeiter.kuerzel ?? (a.bearbeiter.vorname[0] + a.bearbeiter.nachname[0]).toUpperCase()}
+                      </span>
+                    )}
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${s.bg} ${s.text}`}>
+                      {s.label}
+                    </span>
+                  </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
@@ -335,6 +348,15 @@ export default function AnfragenPage() {
                         <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold ${s.bg} ${s.text}`}>
                           {s.label}
                         </span>
+                        {a.bearbeiter && (
+                          <span
+                            title={`${a.bearbeiter.vorname} ${a.bearbeiter.nachname}`}
+                            className="inline-flex items-center justify-center w-6 h-6 rounded-full text-white text-[10px] font-bold"
+                            style={{ background: a.bearbeiter.farbe }}
+                          >
+                            {a.bearbeiter.kuerzel ?? (a.bearbeiter.vorname[0] + a.bearbeiter.nachname[0]).toUpperCase()}
+                          </span>
+                        )}
                         {a.archiviert && (
                           <span className="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-500">Archiv</span>
                         )}

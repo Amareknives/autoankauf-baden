@@ -32,13 +32,6 @@ export async function POST(
     const { prisma } = await import('@/lib/prisma')
     const mitarbeiterId = await getMitarbeiterId()
 
-    // Mitarbeiter-Name für Signatur laden
-    let bearbeiterName: string | null = null
-    if (mitarbeiterId) {
-      const ma = await prisma.mitarbeiter.findUnique({ where: { id: mitarbeiterId }, select: { vorname: true, nachname: true } })
-      if (ma) bearbeiterName = `${ma.vorname} ${ma.nachname}`
-    }
-
     const anfrage = await prisma.anfrage.findUnique({
       where: { id },
       select: {
@@ -48,11 +41,21 @@ export async function POST(
         marke: true,
         modell: true,
         status: true,
+        bearbeiter: { select: { vorname: true, nachname: true } },
       },
     })
 
     if (!anfrage) {
       return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
+    }
+
+    // Signatur: Bearbeiter des Falls hat Vorrang, Fallback auf eingeloggten User
+    let bearbeiterName: string | null = null
+    if (anfrage.bearbeiter) {
+      bearbeiterName = `${anfrage.bearbeiter.vorname} ${anfrage.bearbeiter.nachname}`
+    } else if (mitarbeiterId) {
+      const ma = await prisma.mitarbeiter.findUnique({ where: { id: mitarbeiterId }, select: { vorname: true, nachname: true } })
+      if (ma) bearbeiterName = `${ma.vorname} ${ma.nachname}`
     }
 
     const { getSiteSettings } = await import('@/lib/siteSettings')
