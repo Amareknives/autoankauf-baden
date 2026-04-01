@@ -8,7 +8,7 @@ export async function GET() {
     const { prisma } = await import('@/lib/prisma')
     const einstellungen = await prisma.einstellung.findMany()
     const result: Record<string, string> = {}
-    einstellungen.forEach(e => { result[e.id] = e.wert })
+    einstellungen.forEach((e: { id: string; wert: string }) => { result[e.id] = e.wert })
     return NextResponse.json(result)
   } catch {
     return NextResponse.json({})

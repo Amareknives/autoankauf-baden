@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     const { prisma } = await import('@/lib/prisma')
     const rows = await prisma.einstellung.findMany()
     const settings: Record<string, string> = {}
-    rows.forEach(r => { settings[r.id] = r.wert })
+    rows.forEach((r: { id: string; wert: string }) => { settings[r.id] = r.wert })
 
     const { sendEmail } = await import('@/lib/email')
     const {
