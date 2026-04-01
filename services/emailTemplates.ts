@@ -323,17 +323,25 @@ export function terminBestaetigung(params: {
 
     ${params.bearbeiter ? `
     <!-- Ansprechpartner -->
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F0F9FF;border:1px solid #BAE6FD;border-radius:12px;margin-bottom:24px;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F0F9FF;border:1px solid #BAE6FD;border-radius:12px;margin-bottom:16px;">
       <tr><td style="padding:16px 24px;">
-        <p style="margin:0 0 6px;color:#0369A1;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">Dein Ansprechpartner</p>
-        <p style="margin:0 ${params.bearbeiter.telefon || params.bearbeiter.whatsapp ? '0 6px' : ''};color:#0F172A;font-size:15px;font-weight:700;">${params.bearbeiter.vorname} ${params.bearbeiter.nachname}</p>
+        <p style="margin:0 0 6px;color:#0369A1;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">Dein Ansprechpartner vor Ort</p>
+        <p style="margin:0 0 6px;color:#0F172A;font-size:15px;font-weight:700;">${params.bearbeiter.vorname} ${params.bearbeiter.nachname}</p>
         ${params.bearbeiter.telefon ? `<p style="margin:0 0 2px;color:#475569;font-size:14px;">📞 <a href="tel:${params.bearbeiter.telefon}" style="color:#0369A1;text-decoration:none;">${params.bearbeiter.telefon}</a></p>` : ''}
         ${params.bearbeiter.whatsapp ? `<p style="margin:0;color:#475569;font-size:14px;">💬 <a href="https://wa.me/${params.bearbeiter.whatsapp.replace(/[^0-9]/g, '')}" style="color:#0369A1;text-decoration:none;">WhatsApp schreiben</a></p>` : ''}
       </td></tr>
     </table>
-    ` : ''}
 
-    <!-- CTA -->
+    <p style="margin:0 0 12px;color:#94A3B8;font-size:13px;text-align:center;">
+      Allgemeine Fragen zum Ablauf? Unsere Zentrale ist gerne für dich da:
+    </p>
+    ` : `
+    <p style="margin:0 0 12px;color:#475569;font-size:14px;text-align:center;">
+      Bei Fragen oder Terminänderungen erreichst du uns direkt:
+    </p>
+    `}
+
+    <!-- CTA Zentrale -->
     <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
       <tr><td align="center">
         <a href="tel:${params.telefon}" style="display:inline-block;background:#0369A1;color:white;font-size:15px;font-weight:700;text-decoration:none;padding:14px 32px;border-radius:10px;">
@@ -342,7 +350,7 @@ export function terminBestaetigung(params: {
       </td></tr>
     </table>
     <p style="margin:0;color:#94A3B8;font-size:13px;text-align:center;">
-      Bei Fragen oder Terminänderungen — ruf uns einfach an oder antworte auf diese E-Mail.
+      Oder antworte einfach auf diese E-Mail — wir helfen dir gerne weiter.
     </p>
   `, `Terminbestätigung: ${terminText}`)
 
@@ -400,20 +408,28 @@ export function terminVerschoben(params: {
 
     ${params.bearbeiter ? `
     <!-- Ansprechpartner -->
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F0F9FF;border:1px solid #BAE6FD;border-radius:12px;margin-bottom:24px;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F0F9FF;border:1px solid #BAE6FD;border-radius:12px;margin-bottom:16px;">
       <tr><td style="padding:16px 24px;">
-        <p style="margin:0 0 6px;color:#0369A1;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">Dein Ansprechpartner</p>
-        <p style="margin:0 ${params.bearbeiter.telefon || params.bearbeiter.whatsapp ? '0 6px' : ''};color:#0F172A;font-size:15px;font-weight:700;">${params.bearbeiter.vorname} ${params.bearbeiter.nachname}</p>
+        <p style="margin:0 0 6px;color:#0369A1;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">Dein Ansprechpartner vor Ort</p>
+        <p style="margin:0 0 6px;color:#0F172A;font-size:15px;font-weight:700;">${params.bearbeiter.vorname} ${params.bearbeiter.nachname}</p>
         ${params.bearbeiter.telefon ? `<p style="margin:0 0 2px;color:#475569;font-size:14px;">📞 <a href="tel:${params.bearbeiter.telefon}" style="color:#0369A1;text-decoration:none;">${params.bearbeiter.telefon}</a></p>` : ''}
         ${params.bearbeiter.whatsapp ? `<p style="margin:0;color:#475569;font-size:14px;">💬 <a href="https://wa.me/${params.bearbeiter.whatsapp.replace(/[^0-9]/g, '')}" style="color:#0369A1;text-decoration:none;">WhatsApp schreiben</a></p>` : ''}
       </td></tr>
     </table>
-    ` : ''}
+
+    <p style="margin:0 0 12px;color:#94A3B8;font-size:13px;text-align:center;">
+      Allgemeine Fragen zum Ablauf? Unsere Zentrale ist gerne für dich da:
+    </p>
+    ` : `
+    <p style="margin:0 0 12px;color:#475569;font-size:14px;text-align:center;">
+      Passt der neue Termin nicht? Ruf uns einfach an:
+    </p>
+    `}
 
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr><td align="center">
         <a href="tel:${params.telefon}" style="display:inline-block;background:#0369A1;color:white;font-size:15px;font-weight:700;text-decoration:none;padding:14px 32px;border-radius:10px;">
-          📞 Termin besprechen
+          📞 ${params.telefon}
         </a>
       </td></tr>
     </table>

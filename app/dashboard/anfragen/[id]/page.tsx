@@ -7,6 +7,7 @@ import toast from 'react-hot-toast'
 import { ChevronLeft, Phone, Mail, MessageCircle, Share2, Eye } from 'lucide-react'
 import { MailVorschauModal } from '@/components/dashboard/MailVorschauModal'
 import NachrichtModal from '@/components/dashboard/NachrichtModal'
+import EmailVorschauConfirmModal from '@/components/dashboard/EmailVorschauConfirmModal'
 
 interface AktivitaetsLog {
   id: string
@@ -517,19 +518,27 @@ function TerminFormular({
 }
 
 const AKTION_TO_MAIL_TYP: Record<string, string> = {
-  angebot_mail_gesendet: 'angebot',
-  termin_bestaetigt: 'termin_bestaetigung',
-  termin_verschoben: 'termin_bestaetigung',
-  termin_abgesagt: 'termin_abgesagt',
-  termin_mail_erneut: 'termin_bestaetigung',
+  angebot_mail_gesendet:    'angebot',
+  termin_bestaetigt:        'termin_bestaetigung',
+  termin_verschoben:        'termin_verschoben',      // Korrekt: 'termin_verschoben', nicht 'termin_bestaetigung'
+  termin_abgesagt:          'termin_abgesagt',
+  termin_mail_erneut:       'termin_bestaetigung',
+  ablehnung_mail_gesendet:  'ablehnung',
+  rueckfrage_gesendet:      'rueckfrage',
+  nachricht_gesendet:       'freinachricht',
+  bearbeiter_mail_gesendet: 'bearbeiter_geaendert',
 }
 
 const AKTION_TO_TITEL: Record<string, string> = {
-  angebot_mail_gesendet: 'Gesendetes Angebot',
-  termin_bestaetigt: 'Terminbestätigung',
-  termin_verschoben: 'Terminänderung',
-  termin_abgesagt: 'Terminabsage',
-  termin_mail_erneut: 'Terminbestätigung (erneut)',
+  angebot_mail_gesendet:    'Gesendetes Angebot',
+  termin_bestaetigt:        'Terminbestätigung',
+  termin_verschoben:        'Terminänderung',
+  termin_abgesagt:          'Terminabsage',
+  termin_mail_erneut:       'Terminbestätigung (erneut)',
+  ablehnung_mail_gesendet:  'Ablehnungs-Mail',
+  rueckfrage_gesendet:      'Rückfrage',
+  nachricht_gesendet:       'Freie Nachricht',
+  bearbeiter_mail_gesendet: 'Ansprechpartner-Wechsel',
 }
 
 function findMatchingMailLog(aktLog: AktivitaetsLog, typ: string, mailLogs: MailLogEntry[]): MailLogEntry | null {
@@ -603,6 +612,10 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
   // Angebot-Vorschau (letzter MailLog-Eintrag)
   const [angebotVorschauId, setAngebotVorschauId] = useState<string | null>(null)
   const [angebotVorschauLoading, setAngebotVorschauLoading] = useState(false)
+
+  // Email-Vorschau-Confirm-Modal (vor dem Senden)
+  const [sendVorschau, setSendVorschau] = useState<{ subject: string; html: string; onConfirm: () => void } | null>(null)
+  const [loadingPreview, setLoadingPreview] = useState(false)
 
   // Allgemeine Mail-Vorschau (Ablehnung, Rückfrage, Freie Nachricht)
   const [mailVorschauId, setMailVorschauId] = useState<string | null>(null)
@@ -741,6 +754,30 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
       toast.error('Verbindungsfehler')
     }
     setSaving(false)
+  }
+
+  /** Lädt Email-Preview und zeigt Bestätigungs-Modal. onConfirm wird beim Klick auf "Jetzt senden" ausgeführt. */
+  const holeVorschau = async (
+    previewParams: Record<string, unknown>,
+    onConfirm: () => void
+  ) => {
+    setLoadingPreview(true)
+    try {
+      const res = await fetch(`/api/dashboard/anfragen/${id}/mail-preview`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(previewParams),
+      })
+      if (res.ok) {
+        const data = await res.json() as { subject: string; html: string }
+        setSendVorschau({ ...data, onConfirm })
+      } else {
+        toast.error('Vorschau konnte nicht geladen werden')
+      }
+    } catch {
+      toast.error('Verbindungsfehler')
+    }
+    setLoadingPreview(false)
   }
 
   if (loading) {
@@ -1086,17 +1123,23 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
                   Nur speichern
                 </button>
                 <button
-                  disabled={saving || !angebotspreis || (anfrage.status === 'angebot_gesendet' && !angebotSperreFreigegeben)}
-                  onClick={() => update({
-                    angebotspreis: angebotspreis ? parseFloat(angebotspreis) : undefined,
-                    angebotNachricht: angebotNachricht || undefined,
-                    status: 'angebot_gesendet',
-                    sendeAngebotMail: true,
-                  })}
+                  disabled={saving || loadingPreview || !angebotspreis || (anfrage.status === 'angebot_gesendet' && !angebotSperreFreigegeben)}
+                  onClick={() => {
+                    const preis = angebotspreis ? parseFloat(angebotspreis) : undefined
+                    void holeVorschau(
+                      { typ: 'angebot', angebotspreis: preis, angebotNachricht: angebotNachricht || null },
+                      () => update({
+                        angebotspreis: preis,
+                        angebotNachricht: angebotNachricht || undefined,
+                        status: 'angebot_gesendet',
+                        sendeAngebotMail: true,
+                      })
+                    )
+                  }}
                   className="flex-1 px-4 py-2 bg-[#0369A1] hover:bg-[#0284c7] disabled:bg-[#94A3B8] text-white text-sm font-semibold rounded-xl transition-colors"
-                  title="Speichert und sendet dem Kunden eine E-Mail mit dem Angebot"
+                  title="Zeigt Vorschau — dann an Kunden senden"
                 >
-                  {saving ? '...' : '📧 Angebot senden'}
+                  {loadingPreview ? '…' : saving ? '...' : '📧 Angebot senden'}
                 </button>
               </div>
             </div>
@@ -1168,17 +1211,22 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
                 setTerminMitarbeiterId={setTerminMitarbeiterId}
                 mitarbeiterListe={mitarbeiterListe}
                 firmaAdresse={firmaAdresse}
-                saving={saving}
+                saving={saving || loadingPreview}
                 istAenderung={false}
                 onSave={() => {
                   if (!abholadresse.trim()) { setShowOhneAdresseWarnung(true); return }
-                  void update({
+                  const updateParams = {
                     terminVorschlag1: terminVorschlag || undefined,
                     abholadresse: abholadresse || undefined,
                     abholAdresseZusatz: abholAdresseZusatz || null,
                     status: anfrage.status !== 'abgeschlossen' ? 'termin_vereinbart' : undefined,
                     bearbeiterId: terminMitarbeiterId || null,
-                  })
+                    terminBearbeiterWechsel: true,
+                  }
+                  void holeVorschau(
+                    { typ: 'termin_bestaetigung', termin: terminVorschlag, adresse: abholadresse || undefined, adresseZusatz: abholAdresseZusatz || null, terminMitarbeiterId: terminMitarbeiterId || null },
+                    () => void update(updateParams)
+                  )
                 }}
                 onAbbrechen={null}
                 onLoeschen={null}
@@ -1225,7 +1273,7 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
                 setTerminMitarbeiterId={setTerminMitarbeiterId}
                 mitarbeiterListe={mitarbeiterListe}
                 firmaAdresse={firmaAdresse}
-                saving={saving}
+                saving={saving || loadingPreview}
                 istAenderung={true}
                 hatAenderung={
                   terminVorschlag !== new Date(anfrage.terminVorschlag1).toISOString().slice(0, 16) ||
@@ -1241,14 +1289,18 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
                 }
                 onSave={() => {
                   if (!abholadresse.trim()) { setShowOhneAdresseWarnung(true); return }
-                  void update({
+                  const updateParams = {
                     terminVorschlag1: terminVorschlag || undefined,
                     abholadresse: abholadresse || undefined,
                     abholAdresseZusatz: abholAdresseZusatz || null,
                     status: anfrage.status !== 'abgeschlossen' ? 'termin_vereinbart' : undefined,
                     bearbeiterId: terminMitarbeiterId || null,
-                  })
-                  setEditingTermin(false)
+                    terminBearbeiterWechsel: true,
+                  }
+                  void holeVorschau(
+                    { typ: 'termin_verschoben', termin: terminVorschlag, alterTermin: anfrage.terminVorschlag1, adresse: abholadresse || undefined, adresseZusatz: abholAdresseZusatz || null, terminMitarbeiterId: terminMitarbeiterId || null },
+                    () => { void update(updateParams); setEditingTermin(false) }
+                  )
                 }}
                 onSaveIntern={() => {
                   void update({ bearbeiterId: terminMitarbeiterId || null })
@@ -1267,25 +1319,30 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
             {/* Mail erneut senden */}
             {anfrage.terminVorschlag1 && !editingTermin && (
               <button
-                disabled={sendingTerminMail}
-                onClick={async () => {
-                  setSendingTerminMail(true)
-                  try {
-                    const res = await fetch(`/api/dashboard/anfragen/${id}`, {
-                      method: 'PATCH',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ sendeTerminMail: true }),
-                    })
-                    if (res.ok) toast.success('Bestätigungs-Mail erneut gesendet')
-                    else toast.error('Fehler beim Senden')
-                  } catch {
-                    toast.error('Verbindungsfehler')
-                  }
-                  setSendingTerminMail(false)
+                disabled={sendingTerminMail || loadingPreview}
+                onClick={() => {
+                  void holeVorschau(
+                    { typ: 'termin_bestaetigung', terminMitarbeiterId: anfrage.bearbeiterId ?? null },
+                    async () => {
+                      setSendingTerminMail(true)
+                      try {
+                        const res = await fetch(`/api/dashboard/anfragen/${id}`, {
+                          method: 'PATCH',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ sendeTerminMail: true }),
+                        })
+                        if (res.ok) toast.success('Bestätigungs-Mail erneut gesendet')
+                        else toast.error('Fehler beim Senden')
+                      } catch {
+                        toast.error('Verbindungsfehler')
+                      }
+                      setSendingTerminMail(false)
+                    }
+                  )
                 }}
                 className="w-full mt-2 px-4 py-2 bg-[#F0FDF4] hover:bg-[#DCFCE7] disabled:opacity-50 text-[#166534] text-sm font-semibold rounded-xl transition-colors border border-[#86EFAC]"
               >
-                {sendingTerminMail ? '...' : '📧 Bestätigungs-Mail erneut senden'}
+                {loadingPreview ? '…' : sendingTerminMail ? '...' : '📧 Bestätigungs-Mail erneut senden'}
               </button>
             )}
           </div>
@@ -1576,16 +1633,20 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
           {/* Aktivitätslog */}
           {anfrage.aktivitaeten.length > 0 && (() => {
             const VERLAUF_CONFIG: Record<string, { label: string; icon: string; dotColor: string; isMail?: boolean }> = {
-              status_geaendert:      { label: 'Status geändert',                         icon: '↕',  dotColor: '#64748B' },
-              reaktiviert:           { label: 'Reaktiviert',                             icon: '🔄', dotColor: '#0369A1' },
-              angebot_mail_gesendet: { label: 'Angebot-Mail gesendet',                   icon: '💌', dotColor: '#7C3AED', isMail: true },
-              termin_bestaetigt:     { label: 'Terminbestätigung gesendet',              icon: '📅', dotColor: '#059669', isMail: true },
-              termin_verschoben:     { label: 'Termin geändert – Mail gesendet',         icon: '🔄', dotColor: '#D97706', isMail: true },
-              archiviert:            { label: 'Archiviert',                              icon: '📁', dotColor: '#64748B' },
-              termin_abgesagt:       { label: 'Terminabsage gesendet',                   icon: '✉️', dotColor: '#DC2626', isMail: true },
-              termin_mail_erneut:    { label: 'Bestätigungs-Mail erneut gesendet',       icon: '📧', dotColor: '#0369A1', isMail: true },
-              notiz_gespeichert:     { label: 'Interne Notiz',                           icon: '📝', dotColor: '#F59E0B' },
-              bearbeiter_zugewiesen: { label: 'Bearbeiter zugewiesen',                   icon: '👤', dotColor: '#0369A1' },
+              status_geaendert:         { label: 'Status geändert',                       icon: '↕',  dotColor: '#64748B' },
+              reaktiviert:              { label: 'Reaktiviert',                           icon: '🔄', dotColor: '#0369A1' },
+              angebot_mail_gesendet:    { label: 'Angebot-Mail gesendet',                 icon: '💌', dotColor: '#7C3AED', isMail: true },
+              termin_bestaetigt:        { label: 'Terminbestätigung gesendet',            icon: '📅', dotColor: '#059669', isMail: true },
+              termin_verschoben:        { label: 'Termin geändert – Mail gesendet',       icon: '🔄', dotColor: '#D97706', isMail: true },
+              archiviert:               { label: 'Archiviert',                            icon: '📁', dotColor: '#64748B' },
+              termin_abgesagt:          { label: 'Terminabsage gesendet',                 icon: '✉️', dotColor: '#DC2626', isMail: true },
+              termin_mail_erneut:       { label: 'Bestätigungs-Mail erneut gesendet',     icon: '📧', dotColor: '#0369A1', isMail: true },
+              ablehnung_mail_gesendet:  { label: 'Ablehnungs-Mail gesendet',              icon: '✗',  dotColor: '#DC2626', isMail: true },
+              rueckfrage_gesendet:      { label: 'Rückfrage gesendet',                    icon: '?',  dotColor: '#0369A1', isMail: true },
+              nachricht_gesendet:       { label: 'Nachricht gesendet',                    icon: '✉',  dotColor: '#0F172A', isMail: true },
+              bearbeiter_mail_gesendet: { label: 'Ansprechpartner-Wechsel gesendet',      icon: '👤', dotColor: '#0369A1', isMail: true },
+              notiz_gespeichert:        { label: 'Interne Notiz',                         icon: '📝', dotColor: '#F59E0B' },
+              bearbeiter_zugewiesen:    { label: 'Bearbeiter zugewiesen',                 icon: '👤', dotColor: '#0369A1' },
             }
             return (
               <div className="bg-white rounded-2xl border border-[#E2EDF7] p-6">
@@ -1748,6 +1809,20 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
       />
     )}
 
+    {/* Email-Vorschau-Confirm-Modal (vor dem Senden) */}
+    {sendVorschau && (
+      <EmailVorschauConfirmModal
+        subject={sendVorschau.subject}
+        html={sendVorschau.html}
+        sending={saving || sendingTerminMail}
+        onConfirm={() => {
+          setSendVorschau(null)
+          sendVorschau.onConfirm()
+        }}
+        onClose={() => setSendVorschau(null)}
+      />
+    )}
+
     {/* Warnung: Termin ohne Adresse */}
     {showOhneAdresseWarnung && (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
@@ -1886,21 +1961,40 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
                 Abbrechen
               </button>
               <button
-                disabled={saving}
+                disabled={saving || loadingPreview}
                 onClick={() => {
-                  setShowTerminModal(false)
-                  setTerminVorschlag(defaultTermin())
-                  update({
-                    terminVorschlag1: null,
-                    terminLoeschenGrund,
-                    ersatztermin1: ersatztermin1 || null,
-                    ersatztermin2: ersatztermin2 || null,
-                    terminKommentar: terminKommentar || null,
-                  })
+                  const doDelete = () => {
+                    setShowTerminModal(false)
+                    setTerminVorschlag(defaultTermin())
+                    update({
+                      terminVorschlag1: null,
+                      terminLoeschenGrund,
+                      ersatztermin1: ersatztermin1 || null,
+                      ersatztermin2: ersatztermin2 || null,
+                      terminKommentar: terminKommentar || null,
+                    })
+                  }
+                  // Bei kein_interesse: kein Mail → direkt löschen
+                  if (terminLoeschenGrund === 'kein_interesse') {
+                    doDelete()
+                    return
+                  }
+                  // Sonst: Vorschau zeigen
+                  const previewTyp = terminLoeschenGrund === 'wir_sagen_ab' ? 'termin_abgesagt' : 'termin_kunde_abgesagt'
+                  void holeVorschau(
+                    {
+                      typ: previewTyp,
+                      alterTermin: anfrage.terminVorschlag1,
+                      ersatztermin1: ersatztermin1 || null,
+                      ersatztermin2: ersatztermin2 || null,
+                      kommentar: terminKommentar || null,
+                    },
+                    doDelete
+                  )
                 }}
                 className="flex-1 px-4 py-2.5 bg-[#991B1B] hover:bg-[#7F1D1D] disabled:opacity-50 text-white text-sm font-bold rounded-xl transition-colors"
               >
-                Termin löschen
+                {loadingPreview ? '…' : terminLoeschenGrund === 'kein_interesse' ? 'Löschen' : 'Vorschau & Löschen'}
               </button>
             </div>
           </div>

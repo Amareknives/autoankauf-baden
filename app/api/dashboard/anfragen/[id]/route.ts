@@ -21,6 +21,8 @@ const updateSchema = z.object({
   bearbeiterId: z.string().nullable().optional(),
   abschlussPreis: z.number().nullable().optional(),
   ablehnungsGrund: z.string().nullable().optional(),
+  // Wenn true: bearbeiterId-Änderung kommt vom Termin-Formular → kein "Ansprechpartner geändert"-Mail
+  terminBearbeiterWechsel: z.boolean().optional(),
 })
 
 /** Holt die mitarbeiterId aus dem Session-Cookie (optional — null wenn kein Session) */
@@ -276,7 +278,15 @@ export async function PATCH(
         }
 
         // ── Bearbeiter-Wechsel: E-Mail an Kunden ─────────────────────────
-        if (data.bearbeiterId !== undefined && data.bearbeiterId !== alt?.bearbeiterId && data.bearbeiterId && bearbeiter) {
+        // Nicht senden wenn der Wechsel über das Termin-Formular kam (terminBearbeiterWechsel=true),
+        // da der Termin selbst die Kontaktdaten bereits enthält.
+        if (
+          data.bearbeiterId !== undefined &&
+          data.bearbeiterId !== alt?.bearbeiterId &&
+          data.bearbeiterId &&
+          bearbeiter &&
+          !data.terminBearbeiterWechsel
+        ) {
           const { bearbeiterGeaendert } = await import('@/services/emailTemplates')
           const mail = bearbeiterGeaendert({
             vorname: updated.vorname,
@@ -292,8 +302,8 @@ export async function PATCH(
             data: {
               anfrageId: id,
               mitarbeiterId,
-              aktion: 'bearbeiter_zugewiesen',
-              details: `Kunde informiert: neuer Ansprechpartner ${bearbeiter.vorname} ${bearbeiter.nachname}`,
+              aktion: 'bearbeiter_mail_gesendet',
+              details: `Ansprechpartner-Wechsel gesendet: ${bearbeiter.vorname} ${bearbeiter.nachname}`,
             },
           })
         }
@@ -433,7 +443,7 @@ export async function PATCH(
               to: updated.email,
               ...mail,
               attachments: [{ filename: 'termin.ics', content: icsContent, contentType: 'text/calendar' }],
-              _typ: 'termin_verschoben',
+              _typ: 'termin_verschoben',  // Korrekt: 'termin_verschoben', nicht 'termin_bestaetigung'
               _anfrageId: id,
             })
             await prisma.aktivitaetsLog.create({

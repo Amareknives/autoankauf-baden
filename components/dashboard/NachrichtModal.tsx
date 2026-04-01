@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import toast from 'react-hot-toast'
+import EmailVorschauConfirmModal from './EmailVorschauConfirmModal'
 
 type Modus = 'ablehnung' | 'rueckfrage' | 'freinachricht'
 
@@ -60,17 +61,41 @@ export default function NachrichtModal({
 
   const [text, setText] = useState('')
   const [vorgangSchliessen, setVorgangSchliessen] = useState(true)
+  const [loadingPreview, setLoadingPreview] = useState(false)
   const [sending, setSending] = useState(false)
+
+  // Preview-State
+  const [vorschau, setVorschau] = useState<{ subject: string; html: string } | null>(null)
 
   const handleVorlage = (vorlage: string) => {
     setText(prev => prev.trim() ? prev.trimEnd() + '\n' + vorlage : vorlage)
   }
 
-  const handleSend = async () => {
+  const handleVorschauAnzeigen = async () => {
     if (!text.trim()) {
       toast.error('Bitte einen Text eingeben.')
       return
     }
+    setLoadingPreview(true)
+    try {
+      const res = await fetch(`/api/dashboard/anfragen/${anfrageId}/mail-preview`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ typ: modus, text: text.trim() }),
+      })
+      if (res.ok) {
+        const data = await res.json() as { subject: string; html: string }
+        setVorschau(data)
+      } else {
+        toast.error('Vorschau konnte nicht geladen werden')
+      }
+    } catch {
+      toast.error('Verbindungsfehler')
+    }
+    setLoadingPreview(false)
+  }
+
+  const handleSend = async () => {
     setSending(true)
     try {
       const res = await fetch(`/api/dashboard/anfragen/${anfrageId}/nachricht`, {
@@ -83,7 +108,7 @@ export default function NachrichtModal({
         const label = modus === 'ablehnung' ? 'Ablehnungs-Mail'
           : modus === 'rueckfrage' ? 'Rückfrage'
           : 'Nachricht'
-        toast.success(`${label} gesendet · Vorschau wird geladen…`)
+        toast.success(`${label} gesendet`)
         onGesendet(data.neuerStatus, modus)
         onClose()
       } else {
@@ -93,6 +118,19 @@ export default function NachrichtModal({
       toast.error('Verbindungsfehler')
     }
     setSending(false)
+  }
+
+  // Preview-Modal anzeigen
+  if (vorschau) {
+    return (
+      <EmailVorschauConfirmModal
+        subject={vorschau.subject}
+        html={vorschau.html}
+        sending={sending}
+        onConfirm={handleSend}
+        onClose={() => setVorschau(null)}
+      />
+    )
   }
 
   return (
@@ -216,14 +254,11 @@ export default function NachrichtModal({
             Abbrechen
           </button>
           <button
-            onClick={handleSend}
-            disabled={sending || !text.trim()}
+            onClick={handleVorschauAnzeigen}
+            disabled={loadingPreview || !text.trim()}
             className={`flex-1 px-4 py-3 text-white text-sm font-bold rounded-xl transition-colors disabled:opacity-50 min-h-[48px] ${cfg.btnKlasse}`}
           >
-            {sending ? 'Sendet…'
-              : modus === 'ablehnung' ? 'Ablehnung senden'
-              : modus === 'rueckfrage' ? 'Rückfrage senden'
-              : 'Nachricht senden'}
+            {loadingPreview ? 'Lädt…' : '👁 Vorschau & Senden'}
           </button>
         </div>
 
