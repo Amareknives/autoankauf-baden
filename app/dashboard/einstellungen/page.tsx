@@ -164,6 +164,7 @@ const INP = 'w-full px-3 py-2 border border-[#E2EDF7] rounded-xl text-sm text-[#
 function MitarbeiterVerwaltung() {
   const [liste, setListe] = useState<MitarbeiterTyp[]>([])
   const [ichId, setIchId] = useState<string | null>(null)
+  const [meLoaded, setMeLoaded] = useState(false)
   const [neu, setNeu] = useState({ vorname: '', nachname: '', email: '', passwort: '', kuerzel: '', telefon: '', farbe: FARBEN[0] })
   const [adding, setAdding] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -180,10 +181,10 @@ function MitarbeiterVerwaltung() {
 
   useEffect(() => {
     void load()
-    void fetch('/api/dashboard/me').then(r => r.ok ? r.json() : null).then((d: { id: string } | null) => { if (d) setIchId(d.id) })
+    void fetch('/api/dashboard/me').then(r => r.ok ? r.json() : null).then((d: { id: string } | null) => { if (d) setIchId(d.id); setMeLoaded(true) })
   }, [])
 
-  const ichBinDefault = liste.find(m => m.id === ichId)?.istDefault ?? false
+  const ichBinDefault = meLoaded ? (liste.find(m => m.id === ichId)?.istDefault ?? false) : true
 
   const handleAdd = async () => {
     if (!neu.vorname.trim() || !neu.nachname.trim() || !neu.email.trim() || !neu.passwort.trim()) return
