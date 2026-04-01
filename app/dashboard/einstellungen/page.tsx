@@ -142,7 +142,7 @@ function Card({ title, children, badge }: { title: string; children: React.React
   )
 }
 
-const FARBEN = ['#0369A1', '#7C3AED', '#059669', '#D97706', '#DC2626', '#0891B2', '#9333EA', '#16A34A']
+const FARBEN = ['#0369A1', '#7C3AED', '#059669', '#D97706', '#DC2626', '#DB2777', '#0F172A', '#EA580C']
 
 interface MitarbeiterTyp {
   id: string
