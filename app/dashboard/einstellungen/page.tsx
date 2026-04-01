@@ -168,6 +168,7 @@ function MitarbeiterVerwaltung() {
   const [saving, setSaving] = useState(false)
   const [editPw, setEditPw] = useState<{ id: string; pw: string } | null>(null)
   const [editEmail, setEditEmail] = useState<{ id: string; email: string } | null>(null)
+  const [editProfil, setEditProfil] = useState<{ id: string; vorname: string; nachname: string; kuerzel: string; farbe: string } | null>(null)
   const [transferModal, setTransferModal] = useState<{ id: string; name: string; offeneAnfragen: number } | null>(null)
   const [transferZiel, setTransferZiel] = useState('')
 
@@ -286,6 +287,19 @@ function MitarbeiterVerwaltung() {
     setSaving(false)
   }
 
+  const handleProfilChange = async () => {
+    if (!editProfil || !editProfil.vorname.trim() || !editProfil.nachname.trim()) return
+    setSaving(true)
+    const res = await fetch(`/api/dashboard/mitarbeiter/${editProfil.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ vorname: editProfil.vorname.trim(), nachname: editProfil.nachname.trim(), kuerzel: editProfil.kuerzel.trim() || null, farbe: editProfil.farbe }),
+    })
+    if (res.ok) { setEditProfil(null); await load(); toast.success('Profil gespeichert') }
+    else toast.error('Fehler beim Speichern')
+    setSaving(false)
+  }
+
   const handleKanalChange = async (id: string, kanal: string) => {
     const res = await fetch(`/api/dashboard/mitarbeiter/${id}`, {
       method: 'PATCH',
@@ -328,7 +342,10 @@ function MitarbeiterVerwaltung() {
                       Standard
                     </button>
                   )}
-                  <button onClick={() => { setEditEmail({ id: m.id, email: m.email }); setEditPw(null) }} className="text-xs text-[#64748B] hover:text-[#0369A1] px-2 py-1 rounded-lg hover:bg-[#EFF6FF] transition-colors">
+                  <button onClick={() => { setEditProfil({ id: m.id, vorname: m.vorname, nachname: m.nachname, kuerzel: m.kuerzel ?? '', farbe: m.farbe }); setEditPw(null); setEditEmail(null) }} className="text-xs text-[#64748B] hover:text-[#0369A1] px-2 py-1 rounded-lg hover:bg-[#EFF6FF] transition-colors">
+                    Bearbeiten
+                  </button>
+                  <button onClick={() => { setEditEmail({ id: m.id, email: m.email }); setEditPw(null); setEditProfil(null) }} className="text-xs text-[#64748B] hover:text-[#0369A1] px-2 py-1 rounded-lg hover:bg-[#EFF6FF] transition-colors">
                     E-Mail
                   </button>
                   <button onClick={() => { setEditPw({ id: m.id, pw: '' }); setEditEmail(null) }} className="text-xs text-[#64748B] hover:text-[#0369A1] px-2 py-1 rounded-lg hover:bg-[#EFF6FF] transition-colors">
@@ -369,6 +386,30 @@ function MitarbeiterVerwaltung() {
                   <button onClick={() => setEditPw(null)} className="px-3 py-2 border border-[#E2EDF7] text-xs rounded-xl text-[#64748B]">
                     ✕
                   </button>
+                </div>
+              )}
+              {/* Profil-Bearbeiten Inline */}
+              {editProfil?.id === m.id && (
+                <div className="mt-3 pt-3 border-t border-[#E2EDF7] space-y-2">
+                  <div className="flex gap-2">
+                    <input type="text" placeholder="Vorname" value={editProfil.vorname} onChange={e => setEditProfil(p => p ? { ...p, vorname: e.target.value } : null)} className={`${INP} flex-1`} />
+                    <input type="text" placeholder="Nachname" value={editProfil.nachname} onChange={e => setEditProfil(p => p ? { ...p, nachname: e.target.value } : null)} className={`${INP} flex-1`} />
+                  </div>
+                  <div className="flex gap-2 items-center">
+                    <input type="text" placeholder="Kürzel (max. 3)" maxLength={3} value={editProfil.kuerzel} onChange={e => setEditProfil(p => p ? { ...p, kuerzel: e.target.value.toUpperCase() } : null)} className={`${INP} w-24`} />
+                    <div className="flex gap-1 flex-1 flex-wrap">
+                      {FARBEN.map(f => (
+                        <button key={f} onClick={() => setEditProfil(p => p ? { ...p, farbe: f } : null)}
+                          className="w-6 h-6 rounded-full border-2 transition-all"
+                          style={{ backgroundColor: f, borderColor: editProfil.farbe === f ? '#0F172A' : 'transparent' }} />
+                      ))}
+                    </div>
+                    <button onClick={() => void handleProfilChange()} disabled={saving || !editProfil.vorname.trim() || !editProfil.nachname.trim()}
+                      className="px-3 py-2 bg-[#0369A1] text-white text-xs font-bold rounded-xl disabled:opacity-40">
+                      Speichern
+                    </button>
+                    <button onClick={() => setEditProfil(null)} className="px-3 py-2 border border-[#E2EDF7] text-xs rounded-xl text-[#64748B]">✕</button>
+                  </div>
                 </div>
               )}
               {/* E-Mail-Ändern Inline */}
