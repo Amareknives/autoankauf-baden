@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
       const mitarbeiter = await db.mitarbeiter.findMany({ where: { aktiv: true } })
       const rows = await db.einstellung.findMany()
       const settings: Record<string, string> = {}
-      rows.forEach(r => { settings[r.id] = r.wert })
+      rows.forEach((r: { id: string; wert: string }) => { settings[r.id] = r.wert })
 
       const { notifyMitarbeiter } = await import('@/lib/notify')
       const { sendToAllNumbers } = await import('@/lib/callmebot')

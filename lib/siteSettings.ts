@@ -42,7 +42,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     const { prisma } = await import('./prisma')
     const rows = await prisma.einstellung.findMany()
     const db: Record<string, string> = {}
-    rows.forEach(r => { db[r.id] = r.wert })
+    rows.forEach((r: { id: string; wert: string }) => { db[r.id] = r.wert })
     return { ...DEFAULTS, ...db } as SiteSettings
   } catch {
     return DEFAULTS

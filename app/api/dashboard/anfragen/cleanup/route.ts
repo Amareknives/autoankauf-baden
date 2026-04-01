@@ -6,7 +6,7 @@ export async function POST() {
 
     const rows = await prisma.einstellung.findMany()
     const settings: Record<string, string> = {}
-    rows.forEach(r => { settings[r.id] = r.wert })
+    rows.forEach((r: { id: string; wert: string }) => { settings[r.id] = r.wert })
 
     if (settings['auto_loeschen_aktiv'] !== 'true') {
       return NextResponse.json({ ok: true, geloescht: 0, info: 'Auto-Löschen deaktiviert' })

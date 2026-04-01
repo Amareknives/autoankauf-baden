@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     // Settings laden
     const rows = await prisma.einstellung.findMany()
     const settings: Record<string, string> = {}
-    rows.forEach(r => { settings[r.id] = r.wert })
+    rows.forEach((r: { id: string; wert: string }) => { settings[r.id] = r.wert })
 
     const followupAktiv = settings['followup_aktiv'] !== 'false'
     const followupTage = parseInt(settings['followup_tage'] || '5', 10)
