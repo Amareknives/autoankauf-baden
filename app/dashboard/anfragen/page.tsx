@@ -237,6 +237,17 @@ export default function AnfragenPage() {
         </div>
       </div>
 
+      {/* Hinweis: Anfragen ohne Bearbeiter */}
+      {!loading && !showArchiv && anfragen.some(a => !a.bearbeiterId) && (
+        <div className="mb-4 flex items-center gap-3 px-4 py-3 bg-[#FFFBEB] border border-[#FDE68A] rounded-xl text-sm text-[#92400E]">
+          <span className="text-base">👤</span>
+          <span className="flex-1">
+            <strong>{anfragen.filter(a => !a.bearbeiterId).length}</strong> Anfrage{anfragen.filter(a => !a.bearbeiterId).length !== 1 ? 'n' : ''} ohne Bearbeiter — klicke auf <strong>+</strong> um direkt zuzuweisen, oder nutze den{' '}
+            <a href="/dashboard/einstellungen?tab=team" className="underline hover:text-[#78350F]">Standard-Bearbeiter in den Einstellungen</a>.
+          </span>
+        </div>
+      )}
+
       {/* Filter */}
       <div className="bg-white rounded-2xl border border-[#E2EDF7] p-4 mb-5 flex flex-col sm:flex-row gap-3">
         <input
@@ -358,7 +369,7 @@ export default function AnfragenPage() {
             <tr className="border-b border-[#E2EDF7] bg-[#F8FAFC]">
               <th className="text-left px-5 py-3 font-semibold text-[#64748B]">Kunde</th>
               <th className="text-left px-5 py-3 font-semibold text-[#64748B]">Fahrzeug</th>
-              <th className="text-left px-5 py-3 font-semibold text-[#64748B]">Status</th>
+              <th className="text-left px-5 py-3 font-semibold text-[#64748B]">Status · Bearb.</th>
               <th className="text-left px-5 py-3 font-semibold text-[#64748B] hidden lg:table-cell">Erstellt</th>
               <th className="px-5 py-3" />
             </tr>

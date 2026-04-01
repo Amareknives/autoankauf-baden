@@ -218,10 +218,18 @@ function DefaultBearbeiterCard({ liste }: { liste: MitarbeiterTyp[] }) {
               onClick={async () => {
                 setBulkLoading(true)
                 try {
-                  const res = await fetch('/api/dashboard/anfragen/assign-default', { method: 'POST' })
+                  const res = await fetch('/api/dashboard/anfragen/assign-default', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ bearbeiterId: defaultId }),
+                  })
                   const d = await res.json() as { aktualisiert?: number; error?: string }
-                  if (res.ok) toast.success(`${d.aktualisiert ?? 0} Anfragen zugewiesen`)
-                  else toast.error(d.error ?? 'Fehler')
+                  if (res.ok) {
+                    const n = d.aktualisiert ?? 0
+                    toast.success(n > 0 ? `${n} Anfragen zugewiesen` : 'Alle Anfragen haben bereits einen Bearbeiter')
+                  } else {
+                    toast.error(d.error ?? 'Fehler')
+                  }
                 } finally {
                   setBulkLoading(false)
                 }
