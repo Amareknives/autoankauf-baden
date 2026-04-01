@@ -87,7 +87,7 @@ export default async function Footer() {
 
   // Nur ausgefüllte Social-Links anzeigen
   const socialLinks = (Object.keys(SOCIAL_ICONS) as (keyof typeof SOCIAL_ICONS)[])
-    .map(key => ({ key, url: (s as Record<string, string>)[key] ?? '', ...SOCIAL_ICONS[key] }))
+    .map(key => ({ key, url: (s as unknown as Record<string, string>)[key] ?? '', ...SOCIAL_ICONS[key] }))
     .filter(item => item.url.trim() !== '')
 
   const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(`${s.strasse}, ${s.plz_firma} ${s.ort}`)}`
