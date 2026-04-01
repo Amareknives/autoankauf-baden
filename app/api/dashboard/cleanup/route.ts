@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/authOptions'
+import { cookies } from 'next/headers'
+import { verifySessionToken } from '@/lib/auth'
 
 /**
  * Datenschutz-Löschkonzept gemäß DSGVO + § 147 AO
@@ -19,8 +19,11 @@ import { authOptions } from '@/lib/authOptions'
  */
 
 export async function POST(request: NextRequest) {
-  const session = await getServerSession(authOptions)
-  if (!session) return NextResponse.json({ error: 'Nicht autorisiert' }, { status: 401 })
+  const cookieStore = await cookies()
+  const token = cookieStore.get('aab_session')?.value
+  if (!token || !(await verifySessionToken(token))) {
+    return NextResponse.json({ error: 'Nicht autorisiert' }, { status: 401 })
+  }
 
   const { searchParams } = request.nextUrl
   const dryRun = searchParams.get('dry') === 'true'

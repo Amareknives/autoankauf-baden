@@ -15,11 +15,11 @@ export async function POST(request: Request) {
     const {
       eingangsbestaetigung,
       neueAnfrageIntern,
-      angebotMail,
+      angebotEmail,
       terminBestaetigung,
       terminVerschoben,
       terminAbgesagt,
-      followUpMail,
+      followupEmail,
       haendlerBestaetigung,
     } = await import('@/services/emailTemplates')
 
@@ -73,14 +73,16 @@ export async function POST(request: Request) {
         })
         break
       case 'angebot':
-        mail = angebotMail({
+        mail = angebotEmail({
           vorname: testVorname,
           marke: testMarke,
           modell: testModell,
           kilometerstand: testKm,
-          erstzulassungJahr: testJahr,
           angebotspreis: testPreis,
           angebotNachricht: 'Das Fahrzeug ist in einem sehr guten Zustand.',
+          firmaEmail: firmaEmail,
+          telefon: settings['telefon'] || '',
+          whatsapp: settings['whatsapp'] || '',
         })
         break
       case 'termin':
@@ -88,8 +90,9 @@ export async function POST(request: Request) {
           vorname: testVorname,
           marke: testMarke,
           modell: testModell,
-          terminDatum: testTermin,
-          abholadresse: 'Heidelberger Str. 4, 76676 Graben-Neudorf',
+          termin: testTermin,
+          adresse: 'Heidelberger Str. 4, 76676 Graben-Neudorf',
+          telefon: settings['telefon'] || '',
         })
         break
       case 'termin_verschoben':
@@ -99,7 +102,7 @@ export async function POST(request: Request) {
           modell: testModell,
           alterTermin: testTermin,
           neuerTermin: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-          abholadresse: 'Heidelberger Str. 4, 76676 Graben-Neudorf',
+          telefon: settings['telefon'] || '',
         })
         break
       case 'termin_abgesagt':
@@ -107,18 +110,21 @@ export async function POST(request: Request) {
           vorname: testVorname,
           marke: testMarke,
           modell: testModell,
-          terminDatum: testTermin,
-          grund: 'wir_sagen_ab',
+          alterTermin: testTermin,
           kommentar: 'Leider müssen wir den Termin kurzfristig absagen.',
           ersatztermin1: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(),
+          telefon: settings['telefon'] || '',
+          whatsapp: settings['whatsapp'] || '',
         })
         break
       case 'followup':
-        mail = followUpMail({
+        mail = followupEmail({
           vorname: testVorname,
           marke: testMarke,
           modell: testModell,
-          kilometerstand: testKm,
+          anfrageId: testAnfrageId,
+          telefon: settings['telefon'] || '',
+          whatsapp: settings['whatsapp'] || '',
         })
         break
       case 'haendler':

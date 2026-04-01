@@ -1,17 +1,25 @@
 import { PrismaClient } from '@prisma/client'
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
-import path from 'path'
+import { PrismaPg } from '@prisma/adapter-pg'
+import pg from 'pg'
 
 function createPrismaClient() {
-  const dbUrl = process.env.DATABASE_URL ?? 'file:./dev.db'
-  // Resolve relative path to absolute so it works from any cwd
-  const filePath = dbUrl.replace(/^file:/, '')
-  const absolutePath = path.isAbsolute(filePath)
-    ? filePath
-    : path.join(process.cwd(), filePath)
-
-  const adapter = new PrismaBetterSqlite3({ url: absolutePath })
-  return new PrismaClient({ adapter } as ConstructorParameters<typeof PrismaClient>[0])
+  const url = new URL(process.env.DIRECT_URL!)
+  // Supabase direct connections are IPv6 only.
+  // pg.Pool fails to resolve the hostname to IPv6 — use the pre-resolved IPv6 address.
+  const host = process.env.SUPABASE_DB_IPV6 || url.hostname
+  const pool = new pg.Pool({
+    host,
+    port: parseInt(url.port || '5432'),
+    database: url.pathname.replace(/^\//, ''),
+    user: decodeURIComponent(url.username),
+    password: decodeURIComponent(url.password),
+    ssl: { rejectUnauthorized: false },
+    max: 5,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 10000,
+  })
+  const adapter = new PrismaPg(pool)
+  return new PrismaClient({ adapter })
 }
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined }
