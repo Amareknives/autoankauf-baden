@@ -308,13 +308,14 @@ function MitarbeiterVerwaltung() {
   }
 
   const handleKanalChange = async (id: string, kanal: string) => {
+    setListe(prev => prev.map(m => m.id === id ? { ...m, benachrichtigungKanal: kanal } : m))
     const res = await fetch(`/api/dashboard/mitarbeiter/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ benachrichtigungKanal: kanal }),
     })
-    if (res.ok) { await load(); toast.success('Benachrichtigungskanal gespeichert') }
-    else toast.error('Fehler beim Speichern')
+    if (res.ok) { toast.success('Benachrichtigungskanal gespeichert') }
+    else { await load(); toast.error('Fehler beim Speichern') }
   }
 
   return (
