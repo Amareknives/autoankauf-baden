@@ -8,6 +8,7 @@ import { ChevronLeft, Phone, Mail, MessageCircle, Share2, Eye } from 'lucide-rea
 import { MailVorschauModal } from '@/components/dashboard/MailVorschauModal'
 import NachrichtModal from '@/components/dashboard/NachrichtModal'
 import EmailVorschauConfirmModal from '@/components/dashboard/EmailVorschauConfirmModal'
+import EmailPreviewLader from '@/components/dashboard/EmailPreviewLader'
 
 interface AktivitaetsLog {
   id: string
@@ -1808,6 +1809,9 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
         onClose={() => setMailVorschauId(null)}
       />
     )}
+
+    {/* Auto-Preloader beim Erstellen der Email-Vorschau */}
+    {loadingPreview && <EmailPreviewLader />}
 
     {/* Email-Vorschau-Confirm-Modal (vor dem Senden) */}
     {sendVorschau && (

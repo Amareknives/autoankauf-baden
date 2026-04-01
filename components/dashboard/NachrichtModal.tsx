@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import EmailVorschauConfirmModal from './EmailVorschauConfirmModal'
+import EmailPreviewLader from './EmailPreviewLader'
 
 type Modus = 'ablehnung' | 'rueckfrage' | 'freinachricht'
 
@@ -119,6 +120,9 @@ export default function NachrichtModal({
     }
     setSending(false)
   }
+
+  // Auto-Lader während Preview-Fetch
+  if (loadingPreview) return <EmailPreviewLader />
 
   // Preview-Modal anzeigen
   if (vorschau) {
