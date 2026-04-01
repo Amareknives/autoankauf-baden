@@ -58,6 +58,8 @@ function RadioGroup({
   onChange,
   required,
   error,
+  beschreibungen,
+  infoText,
 }: {
   label: string;
   options: string[];
@@ -65,19 +67,29 @@ function RadioGroup({
   onChange: (v: string) => void;
   required?: boolean;
   error?: string;
+  /** Optionale Kurzbeschreibung pro Option: Record<optionValue, beschreibung> */
+  beschreibungen?: Record<string, string>;
+  /** Optionaler Erklärungstext unter dem Label */
+  infoText?: string;
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-[11px] font-semibold text-[#0F172A] uppercase tracking-wide">
+      <span className="text-[11px] font-semibold text-[#0F172A] uppercase tracking-wide flex items-center gap-1.5">
         {label}
-        {!required && <span className="ml-1.5 text-[10px] font-normal normal-case tracking-normal text-[#94A3B8]">(optional)</span>}
+        {!required && <span className="text-[10px] font-normal normal-case tracking-normal text-[#94A3B8]">(optional)</span>}
       </span>
+      {infoText && (
+        <p className="text-[12px] text-[#64748B] leading-relaxed -mt-1 flex items-start gap-1.5">
+          <span className="shrink-0 inline-flex items-center justify-center w-4 h-4 rounded-full bg-[#E8F4FD] text-[#0369A1] text-[9px] font-bold mt-0.5">i</span>
+          {infoText}
+        </p>
+      )}
       <div className="flex flex-col gap-2">
         {options.map((opt) => (
           <label
             key={opt}
             className={[
-              'flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 transition-all duration-150',
+              'flex cursor-pointer items-start gap-3 rounded-lg border px-4 py-3 transition-all duration-150',
               value === opt
                 ? 'border-[#0369A1] bg-[#F0F7FF]'
                 : 'border-[#E2EDF7] bg-white hover:border-[#0369A1]',
@@ -85,7 +97,7 @@ function RadioGroup({
           >
             <span
               className={[
-                'flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2',
+                'flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 mt-0.5',
                 value === opt ? 'border-[#0369A1]' : 'border-[#CBD5E1]',
               ].join(' ')}
             >
@@ -93,7 +105,12 @@ function RadioGroup({
                 <span className="h-2 w-2 rounded-full bg-[#0369A1]" />
               )}
             </span>
-            <span className="text-[15px] text-[#0F172A]">{opt}</span>
+            <div className="flex-1 min-w-0">
+              <span className="text-[15px] text-[#0F172A] leading-snug">{opt}</span>
+              {beschreibungen?.[opt] && (
+                <p className="text-[12px] text-[#94A3B8] mt-0.5 leading-relaxed">{beschreibungen[opt]}</p>
+              )}
+            </div>
             <input
               type="radio"
               className="sr-only"
@@ -136,6 +153,15 @@ export function Step2Zustand({ data, onChange, errors }: Step2Props) {
         options={UNFALLFAHRZEUG_OPTIONS}
         value={data.unfallfahrzeug ?? ''}
         onChange={(v) => onChange({ unfallfahrzeug: v })}
+        infoText="Bezieht sich auf die gesamte Fahrzeughistorie — auch bei früheren Vorbesitzern."
+        beschreibungen={{
+          'Nein, kein Unfallfahrzeug':
+            'Weder du noch frühere Vorbesitzer hatten einen registrierten Unfall mit diesem Fahrzeug.',
+          'Ja, Unfallfahrzeug (repariert)':
+            'Das Fahrzeug hatte einen oder mehrere Unfälle, die fachgerecht und ordnungsgemäß repariert wurden.',
+          'Ja, Unfallfahrzeug (nicht repariert)':
+            'Das Fahrzeug hatte Unfälle, die bisher nicht oder nicht vollständig behoben wurden.',
+        }}
       />
 
       {/* Fahrbereitschaft */}
@@ -189,9 +215,14 @@ export function Step2Zustand({ data, onChange, errors }: Step2Props) {
 
       {/* Fotos */}
       <div className="flex flex-col gap-2">
-        <span className="text-[11px] font-semibold text-[#0F172A] uppercase tracking-wide">
+        <span className="text-[11px] font-semibold text-[#0F172A] uppercase tracking-wide flex items-center gap-1.5">
           Fotos hochladen
+          <span className="text-[10px] font-normal normal-case tracking-normal text-[#94A3B8]">(optional)</span>
         </span>
+        <p className="text-[12px] text-[#64748B] leading-relaxed -mt-1 flex items-start gap-1.5">
+          <span className="shrink-0 inline-flex items-center justify-center w-4 h-4 rounded-full bg-[#E8F4FD] text-[#0369A1] text-[9px] font-bold mt-0.5">i</span>
+          Fotos sind nicht erforderlich — helfen uns aber, ein besseres Angebot zu erstellen.
+        </p>
         <div className="rounded-lg bg-[#FFF7ED] border border-[#FED7AA] px-4 py-2.5">
           <p className="text-xs text-[#92400E]">
             <span className="font-semibold">Tipp:</span> Mehr Fotos = besseres Angebot! Bis zu 8 Bilder, je max. 8 MB. Bitte keine Personen auf den Bildern.
