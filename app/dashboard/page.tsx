@@ -24,6 +24,7 @@ interface AnfragePreview {
   status: string
   createdAt: string
   plz: string
+  bearbeiter: { vorname: string; nachname: string; kuerzel: string | null; farbe: string } | null
 }
 
 const STATUS_CONFIG: Record<string, { label: string; bg: string; text: string }> = {
@@ -151,6 +152,15 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
+                    {a.bearbeiter && (
+                      <div
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
+                        style={{ background: a.bearbeiter.farbe }}
+                        title={`${a.bearbeiter.vorname} ${a.bearbeiter.nachname}`}
+                      >
+                        {a.bearbeiter.kuerzel ?? (a.bearbeiter.vorname[0] + a.bearbeiter.nachname[0]).toUpperCase()}
+                      </div>
+                    )}
                     <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${s.bg} ${s.text}`}>
                       {s.label}
                     </span>
