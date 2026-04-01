@@ -515,7 +515,7 @@ function MitarbeiterVerwaltung() {
                       <input value={editProfil.nachname} onChange={e => setEditProfil(p => p ? { ...p, nachname: e.target.value } : null)} className={INP} />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-3 items-end">
                     <div>
                       <label className="block text-xs font-semibold text-[#64748B] mb-1 uppercase tracking-wide">Telefon</label>
                       <input value={editProfil.telefon} onChange={e => setEditProfil(p => p ? { ...p, telefon: e.target.value } : null)} className={INP} />
@@ -599,7 +599,7 @@ function MitarbeiterVerwaltung() {
               <input type="password" value={neu.passwort} onChange={e => setNeu(p => ({ ...p, passwort: e.target.value }))} placeholder="min. 6 Zeichen" className={INP} />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 items-end">
             <div>
               <label className="block text-xs font-semibold text-[#64748B] mb-1 uppercase tracking-wide">Telefon</label>
               <input value={neu.telefon} onChange={e => setNeu(p => ({ ...p, telefon: e.target.value }))} className={INP} />
