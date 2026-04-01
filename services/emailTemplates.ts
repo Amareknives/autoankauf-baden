@@ -15,8 +15,16 @@ function emailLayout(content: string, preheader = '') {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="x-apple-disable-message-reformatting">
+  <meta name="format-detection" content="telephone=no,address=no,email=no">
   <title>autoankauf baden</title>
   <!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><![endif]-->
+  <style>
+    @media only screen and (max-width:620px) {
+      .header-cell { padding:20px !important; }
+      .body-cell   { padding:24px 20px !important; }
+      .footer-cell { padding:18px 20px !important; }
+    }
+  </style>
 </head>
 <body style="margin:0;padding:0;background:#F1F5F9;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
   ${preheader ? `<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">${preheader}</div>` : ''}
@@ -26,7 +34,7 @@ function emailLayout(content: string, preheader = '') {
 
         <!-- HEADER -->
         <tr>
-          <td style="background:#0F172A;border-radius:16px 16px 0 0;padding:28px 40px;">
+          <td class="header-cell" style="background:#0F172A;border-radius:16px 16px 0 0;padding:28px 40px;">
             <table width="100%" cellpadding="0" cellspacing="0">
               <tr>
                 <td style="vertical-align:middle;">
@@ -49,14 +57,14 @@ function emailLayout(content: string, preheader = '') {
 
         <!-- BODY -->
         <tr>
-          <td style="background:#ffffff;padding:40px;border-left:1px solid #E2E8F0;border-right:1px solid #E2E8F0;">
+          <td class="body-cell" style="background:#ffffff;padding:40px;border-left:1px solid #E2E8F0;border-right:1px solid #E2E8F0;">
             ${content}
           </td>
         </tr>
 
         <!-- FOOTER -->
         <tr>
-          <td style="background:#0F172A;border-radius:0 0 16px 16px;padding:24px 40px;text-align:center;">
+          <td class="footer-cell" style="background:#0F172A;border-radius:0 0 16px 16px;padding:24px 40px;text-align:center;">
             <p style="margin:0 0 6px;color:rgba(255,255,255,0.4);font-size:12px;line-height:1.6;">
               autoankauf baden · Muhammet Demir · Heidelberger Str. 4, 76676 Graben-Neudorf
             </p>
@@ -104,8 +112,8 @@ export function eingangsbestaetigung(params: {
     : ''
 
   const html = emailLayout(`
-    <h2 style="margin:0 0 8px;color:#0F172A;font-size:22px;font-weight:800;">Hallo ${params.vorname},</h2>
-    <p style="margin:0 0 24px;color:#475569;font-size:16px;line-height:1.6;">
+    <h2 style="margin:0 0 8px;color:#0F172A;font-size:20px;font-weight:800;">Hallo ${params.vorname},</h2>
+    <p style="margin:0 0 24px;color:#475569;font-size:15px;line-height:1.7;">
       ${inhalt || `schön, dass du dich bei uns meldest! Deine Anfrage ist sicher bei uns angekommen. Wir schauen uns alles in Ruhe an und melden uns <strong>innerhalb von 2–3 Stunden*</strong> persönlich mit einem fairen Angebot zurück — kostenlos und unverbindlich.`}
     </p>
 
@@ -177,6 +185,7 @@ export function angebotEmail(params: {
   firmaEmail: string
   telefon: string
   whatsapp: string
+  bearbeiterName?: string | null
 }) {
   const preisFormatiert = params.angebotspreis.toLocaleString('de-DE')
   const waLink = `https://wa.me/${params.whatsapp}`
@@ -187,8 +196,8 @@ export function angebotEmail(params: {
   const mailtoLink = `mailto:${params.firmaEmail}?subject=${mailtoBetreff}&body=${mailtoBody}`
 
   const html = emailLayout(`
-    <h2 style="margin:0 0 8px;color:#0F172A;font-size:22px;font-weight:800;">Hallo ${params.vorname},</h2>
-    <p style="margin:0 0 ${params.angebotNachricht ? '16px' : '24px'};color:#475569;font-size:16px;line-height:1.6;">
+    <h2 style="margin:0 0 8px;color:#0F172A;font-size:20px;font-weight:800;">Hallo ${params.vorname},</h2>
+    <p style="margin:0 0 ${params.angebotNachricht ? '16px' : '24px'};color:#475569;font-size:15px;line-height:1.7;">
       wir haben deinen <strong>${params.marke} ${params.modell}</strong> geprüft und freuen uns, dir ein persönliches Angebot machen zu können. Überzeuge dich selbst — fair, transparent und ohne versteckte Kosten.
     </p>
     ${params.angebotNachricht ? `
@@ -200,7 +209,7 @@ export function angebotEmail(params: {
     <table width="100%" cellpadding="0" cellspacing="0" style="background:#0369A1;border-radius:16px;margin-bottom:28px;">
       <tr><td style="padding:28px 32px;text-align:center;">
         <p style="margin:0 0 6px;color:rgba(255,255,255,0.75);font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:600;">Unser Angebot für deinen</p>
-        <p style="margin:0 0 14px;color:#BAE6FD;font-size:16px;font-weight:600;">${params.marke} ${params.modell} · ${params.kilometerstand.toLocaleString('de-DE')} km</p>
+        <p style="margin:0 0 14px;color:#BAE6FD;font-size:15px;font-weight:600;">${params.marke} ${params.modell} · ${params.kilometerstand.toLocaleString('de-DE')} km</p>
         <p style="margin:0;color:#ffffff;font-size:48px;font-weight:900;letter-spacing:-2px;line-height:1;">${preisFormatiert} €</p>
         <p style="margin:10px 0 0;color:rgba(255,255,255,0.6);font-size:13px;">Kostenlos · Unverbindlich · Barzahlung bei Abholung</p>
       </td></tr>
@@ -245,6 +254,12 @@ export function angebotEmail(params: {
       </p>
     </div>
 
+    ${params.bearbeiterName ? `
+    <p style="margin:0 0 20px;color:#475569;font-size:14px;line-height:1.6;">
+      Mit freundlichen Grüßen<br>
+      <strong style="color:#0F172A;">${params.bearbeiterName} | AutoAnkauf-Baden-Team</strong>
+    </p>` : ''}
+
     <p style="margin:0;color:#94A3B8;font-size:11px;line-height:1.6;">
       * Dieses Angebot basiert auf deinen Angaben im Formular und ist 7 Tage gültig. Der endgültige Ankaufspreis wird nach Besichtigung des Fahrzeugs festgelegt und kann bei Abweichungen vom beschriebenen Zustand variieren.
     </p>
@@ -265,12 +280,13 @@ export function terminBestaetigung(params: {
   adresse?: string | null
   adresseZusatz?: string | null
   telefon: string
+  bearbeiter?: { vorname: string; nachname: string; telefon?: string | null; whatsapp?: string | null } | null
 }) {
   const terminText = formatDatum(params.termin)
 
   const html = emailLayout(`
-    <h2 style="margin:0 0 8px;color:#0F172A;font-size:22px;font-weight:800;">Hallo ${params.vorname},</h2>
-    <p style="margin:0 0 24px;color:#475569;font-size:16px;line-height:1.6;">
+    <h2 style="margin:0 0 8px;color:#0F172A;font-size:20px;font-weight:800;">Hallo ${params.vorname},</h2>
+    <p style="margin:0 0 24px;color:#475569;font-size:15px;line-height:1.7;">
       dein Besichtigungstermin ist bestätigt! Wir freuen uns darauf, deinen <strong>${params.marke} ${params.modell}</strong> persönlich kennenzulernen.
     </p>
 
@@ -305,6 +321,18 @@ export function terminBestaetigung(params: {
       </td></tr>
     </table>
 
+    ${params.bearbeiter ? `
+    <!-- Ansprechpartner -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F0F9FF;border:1px solid #BAE6FD;border-radius:12px;margin-bottom:24px;">
+      <tr><td style="padding:16px 24px;">
+        <p style="margin:0 0 6px;color:#0369A1;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">Dein Ansprechpartner</p>
+        <p style="margin:0 ${params.bearbeiter.telefon || params.bearbeiter.whatsapp ? '0 6px' : ''};color:#0F172A;font-size:15px;font-weight:700;">${params.bearbeiter.vorname} ${params.bearbeiter.nachname}</p>
+        ${params.bearbeiter.telefon ? `<p style="margin:0 0 2px;color:#475569;font-size:14px;">📞 <a href="tel:${params.bearbeiter.telefon}" style="color:#0369A1;text-decoration:none;">${params.bearbeiter.telefon}</a></p>` : ''}
+        ${params.bearbeiter.whatsapp ? `<p style="margin:0;color:#475569;font-size:14px;">💬 <a href="https://wa.me/${params.bearbeiter.whatsapp.replace(/[^0-9]/g, '')}" style="color:#0369A1;text-decoration:none;">WhatsApp schreiben</a></p>` : ''}
+      </td></tr>
+    </table>
+    ` : ''}
+
     <!-- CTA -->
     <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
       <tr><td align="center">
@@ -334,13 +362,14 @@ export function terminVerschoben(params: {
   adresse?: string | null
   adresseZusatz?: string | null
   telefon: string
+  bearbeiter?: { vorname: string; nachname: string; telefon?: string | null; whatsapp?: string | null } | null
 }) {
   const altText = formatDatum(params.alterTermin)
   const neuText = formatDatum(params.neuerTermin)
 
   const html = emailLayout(`
-    <h2 style="margin:0 0 8px;color:#0F172A;font-size:22px;font-weight:800;">Hallo ${params.vorname},</h2>
-    <p style="margin:0 0 24px;color:#475569;font-size:16px;line-height:1.6;">
+    <h2 style="margin:0 0 8px;color:#0F172A;font-size:20px;font-weight:800;">Hallo ${params.vorname},</h2>
+    <p style="margin:0 0 24px;color:#475569;font-size:15px;line-height:1.7;">
       dein Besichtigungstermin für den <strong>${params.marke} ${params.modell}</strong> wurde auf einen neuen Zeitpunkt verschoben. Hier sind die aktualisierten Infos:
     </p>
 
@@ -368,6 +397,18 @@ export function terminVerschoben(params: {
     <p style="margin:0 0 24px;color:#475569;font-size:14px;line-height:1.6;">
       Sollte der neue Termin für dich nicht passen, melde dich bitte <strong>mindestens 24 Stunden vorher</strong> bei uns — wir finden gemeinsam eine passende Zeit.
     </p>
+
+    ${params.bearbeiter ? `
+    <!-- Ansprechpartner -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F0F9FF;border:1px solid #BAE6FD;border-radius:12px;margin-bottom:24px;">
+      <tr><td style="padding:16px 24px;">
+        <p style="margin:0 0 6px;color:#0369A1;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">Dein Ansprechpartner</p>
+        <p style="margin:0 ${params.bearbeiter.telefon || params.bearbeiter.whatsapp ? '0 6px' : ''};color:#0F172A;font-size:15px;font-weight:700;">${params.bearbeiter.vorname} ${params.bearbeiter.nachname}</p>
+        ${params.bearbeiter.telefon ? `<p style="margin:0 0 2px;color:#475569;font-size:14px;">📞 <a href="tel:${params.bearbeiter.telefon}" style="color:#0369A1;text-decoration:none;">${params.bearbeiter.telefon}</a></p>` : ''}
+        ${params.bearbeiter.whatsapp ? `<p style="margin:0;color:#475569;font-size:14px;">💬 <a href="https://wa.me/${params.bearbeiter.whatsapp.replace(/[^0-9]/g, '')}" style="color:#0369A1;text-decoration:none;">WhatsApp schreiben</a></p>` : ''}
+      </td></tr>
+    </table>
+    ` : ''}
 
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr><td align="center">
@@ -415,8 +456,8 @@ export function terminAbgesagt(params: {
     </p>` : ''
 
   const html = emailLayout(`
-    <h2 style="margin:0 0 8px;color:#0F172A;font-size:22px;font-weight:800;">Hallo ${params.vorname},</h2>
-    <p style="margin:0 0 16px;color:#475569;font-size:16px;line-height:1.6;">
+    <h2 style="margin:0 0 8px;color:#0F172A;font-size:20px;font-weight:800;">Hallo ${params.vorname},</h2>
+    <p style="margin:0 0 16px;color:#475569;font-size:15px;line-height:1.7;">
       leider müssen wir deinen Besichtigungstermin am <strong>${altText}</strong> für den <strong>${params.marke} ${params.modell}</strong> kurzfristig absagen. Wir entschuldigen uns für die Unannehmlichkeiten.
     </p>
     ${kommentarBox}
@@ -471,8 +512,8 @@ export function terminKundeAbgesagt(params: {
     </table>` : ''
 
   const html = emailLayout(`
-    <h2 style="margin:0 0 8px;color:#0F172A;font-size:22px;font-weight:800;">Hallo ${params.vorname},</h2>
-    <p style="margin:0 0 16px;color:#475569;font-size:16px;line-height:1.6;">
+    <h2 style="margin:0 0 8px;color:#0F172A;font-size:20px;font-weight:800;">Hallo ${params.vorname},</h2>
+    <p style="margin:0 0 16px;color:#475569;font-size:15px;line-height:1.7;">
       kein Problem — wir haben deine Absage für den <strong>${altText}</strong> erhalten. Dein <strong>${params.marke} ${params.modell}</strong> interessiert uns weiterhin, und wir melden uns in Kürze, um einen neuen Termin zu finden.
     </p>
     ${kommentarBox}
@@ -533,8 +574,8 @@ export function followupEmail(params: {
   const wa = params.whatsapp || '4917664179764'
 
   const html = emailLayout(`
-    <h2 style="margin:0 0 8px;color:#0F172A;font-size:22px;font-weight:800;">Hallo ${params.vorname},</h2>
-    <p style="margin:0 0 24px;color:#475569;font-size:16px;line-height:1.6;">${inhalt}</p>
+    <h2 style="margin:0 0 8px;color:#0F172A;font-size:20px;font-weight:800;">Hallo ${params.vorname},</h2>
+    <p style="margin:0 0 24px;color:#475569;font-size:15px;line-height:1.7;">${inhalt}</p>
 
     <!-- Fahrzeug -->
     <table width="100%" cellpadding="0" cellspacing="0" style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:12px;margin-bottom:24px;">
@@ -641,7 +682,7 @@ export function haendlerBestaetigung(params: {
 
   const html = emailLayout(`
     <p style="margin:0 0 8px;color:#64748B;font-size:14px;">Guten Tag ${params.vorname} ${params.nachname},</p>
-    <h2 style="margin:0 0 20px;color:#0F172A;font-size:22px;font-weight:800;line-height:1.3;">
+    <h2 style="margin:0 0 20px;color:#0F172A;font-size:20px;font-weight:800;line-height:1.3;">
       Ihre Anfrage ist bei uns eingegangen!
     </h2>
     <p style="margin:0 0 24px;color:#64748B;font-size:15px;line-height:1.7;">
@@ -697,7 +738,7 @@ export function passwortZugesendet(params: {
 
   const html = emailLayout(`
     <p style="margin:0 0 8px;color:#64748B;font-size:14px;">Hallo ${params.vorname},</p>
-    <h2 style="margin:0 0 20px;color:#0F172A;font-size:22px;font-weight:800;line-height:1.3;">
+    <h2 style="margin:0 0 20px;color:#0F172A;font-size:20px;font-weight:800;line-height:1.3;">
       Dein temporäres Passwort
     </h2>
     <p style="margin:0 0 24px;color:#64748B;font-size:15px;line-height:1.7;">
@@ -735,11 +776,12 @@ export function ablehnungKunde(params: {
   grund?: string
   telefon?: string
   whatsapp?: string
+  bearbeiterName?: string | null
 }) {
   const subject = `Zu deiner Anfrage – ${params.marke} ${params.modell}`
 
   const html = emailLayout(`
-    <h2 style="margin:0 0 8px;color:#0F172A;font-size:22px;font-weight:800;">Hallo ${params.vorname},</h2>
+    <h2 style="margin:0 0 8px;color:#0F172A;font-size:20px;font-weight:800;">Hallo ${params.vorname},</h2>
     <p style="margin:0 0 20px;color:#475569;font-size:15px;line-height:1.7;">
       vielen Dank für dein Vertrauen und deine Anfrage zu deinem <strong>${params.marke} ${params.modell}</strong>.
       Wir haben alles sorgfältig geprüft und möchten uns jetzt bei dir melden.
@@ -777,7 +819,7 @@ export function ablehnungKunde(params: {
     <p style="margin:24px 0 0;color:#475569;font-size:15px;line-height:1.7;">
       Alles Gute und viel Erfolg beim Verkauf deines Fahrzeugs!<br><br>
       Herzliche Grüße<br>
-      <strong>Dein AutoAnkauf-Baden-Team</strong>
+      <strong>${params.bearbeiterName ? `${params.bearbeiterName} | ` : ''}AutoAnkauf-Baden-Team</strong>
     </p>
   `, `Rückmeldung zu deiner Anfrage – ${params.marke} ${params.modell}`)
 
@@ -792,11 +834,12 @@ export function rueckfrageKunde(params: {
   frage: string
   telefon?: string
   whatsapp?: string
+  bearbeiterName?: string | null
 }) {
   const subject = `Kurze Rückfrage zu deiner Anfrage – ${params.marke} ${params.modell}`
 
   const html = emailLayout(`
-    <h2 style="margin:0 0 8px;color:#0F172A;font-size:22px;font-weight:800;">Hallo ${params.vorname},</h2>
+    <h2 style="margin:0 0 8px;color:#0F172A;font-size:20px;font-weight:800;">Hallo ${params.vorname},</h2>
     <p style="margin:0 0 20px;color:#475569;font-size:15px;line-height:1.7;">
       wir prüfen gerade deine Anfrage zu deinem <strong>${params.marke} ${params.modell}</strong> und sind fast fertig.
       Damit wir dir ein wirklich passendes Angebot machen können, haben wir noch eine kurze Frage:
@@ -817,7 +860,7 @@ export function rueckfrageKunde(params: {
     <p style="margin:0;color:#475569;font-size:15px;line-height:1.7;">
       Vielen Dank für deine Mithilfe!<br><br>
       Herzliche Grüße<br>
-      <strong>Dein AutoAnkauf-Baden-Team</strong>
+      <strong>${params.bearbeiterName ? `${params.bearbeiterName} | ` : ''}AutoAnkauf-Baden-Team</strong>
     </p>
   `, `Rückfrage zu deiner Anfrage – ${params.marke} ${params.modell}`)
 
@@ -831,11 +874,12 @@ export function freieNachrichtKunde(params: {
   modell: string
   nachricht: string
   telefon?: string
+  bearbeiterName?: string | null
 }) {
   const subject = `Nachricht zu deiner Anfrage – ${params.marke} ${params.modell}`
 
   const html = emailLayout(`
-    <h2 style="margin:0 0 8px;color:#0F172A;font-size:22px;font-weight:800;">Hallo ${params.vorname},</h2>
+    <h2 style="margin:0 0 8px;color:#0F172A;font-size:20px;font-weight:800;">Hallo ${params.vorname},</h2>
     <p style="margin:0 0 20px;color:#475569;font-size:15px;line-height:1.7;">
       wir melden uns wegen deiner Anfrage zu deinem <strong>${params.marke} ${params.modell}</strong>:
     </p>
@@ -854,9 +898,46 @@ export function freieNachrichtKunde(params: {
 
     <p style="margin:0;color:#475569;font-size:15px;line-height:1.7;">
       Herzliche Grüße<br>
-      <strong>Dein AutoAnkauf-Baden-Team</strong>
+      <strong>${params.bearbeiterName ? `${params.bearbeiterName} | ` : ''}AutoAnkauf-Baden-Team</strong>
     </p>
   `, `Nachricht zu deiner Anfrage – ${params.marke} ${params.modell}`)
+
+  return { subject, html }
+}
+
+// ─── MAIL 13: Bearbeiter-Wechsel Benachrichtigung ─────────────────────────────
+export function bearbeiterGeaendert(params: {
+  vorname: string
+  marke: string
+  modell: string
+  bearbeiterVorname: string
+  bearbeiterNachname: string
+  bearbeiterTelefon?: string | null
+  bearbeiterWhatsapp?: string | null
+}) {
+  const subject = `Dein neuer Ansprechpartner – ${params.marke} ${params.modell}`
+
+  const html = emailLayout(`
+    <h2 style="margin:0 0 8px;color:#0F172A;font-size:20px;font-weight:800;">Hallo ${params.vorname},</h2>
+    <p style="margin:0 0 24px;color:#475569;font-size:15px;line-height:1.7;">
+      wir möchten dich kurz informieren: Für deine Anfrage zu deinem <strong>${params.marke} ${params.modell}</strong> ist ab sofort ein neuer Ansprechpartner für dich zuständig.
+    </p>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F0F9FF;border:1px solid #BAE6FD;border-radius:12px;margin-bottom:24px;">
+      <tr><td style="padding:20px 24px;">
+        <p style="margin:0 0 6px;color:#0369A1;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">Dein neuer Ansprechpartner</p>
+        <p style="margin:0 ${params.bearbeiterTelefon || params.bearbeiterWhatsapp ? '0 10px' : ''};color:#0F172A;font-size:17px;font-weight:700;">${params.bearbeiterVorname} ${params.bearbeiterNachname}</p>
+        ${params.bearbeiterTelefon ? `<p style="margin:0 0 4px;color:#475569;font-size:14px;">📞 <a href="tel:${params.bearbeiterTelefon}" style="color:#0369A1;text-decoration:none;">${params.bearbeiterTelefon}</a></p>` : ''}
+        ${params.bearbeiterWhatsapp ? `<p style="margin:0;color:#475569;font-size:14px;">💬 <a href="https://wa.me/${params.bearbeiterWhatsapp.replace(/[^0-9]/g, '')}" style="color:#0369A1;text-decoration:none;">WhatsApp schreiben</a></p>` : ''}
+      </td></tr>
+    </table>
+
+    <p style="margin:0;color:#475569;font-size:15px;line-height:1.7;">
+      Bei Fragen rund um deine Anfrage kannst du dich gerne direkt bei ihm melden — wir sind für dich da!<br><br>
+      Herzliche Grüße<br>
+      <strong>Dein AutoAnkauf-Baden-Team</strong>
+    </p>
+  `, `Dein neuer Ansprechpartner: ${params.bearbeiterVorname} ${params.bearbeiterNachname}`)
 
   return { subject, html }
 }

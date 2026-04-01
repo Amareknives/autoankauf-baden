@@ -32,6 +32,13 @@ export async function POST(
     const { prisma } = await import('@/lib/prisma')
     const mitarbeiterId = await getMitarbeiterId()
 
+    // Mitarbeiter-Name für Signatur laden
+    let bearbeiterName: string | null = null
+    if (mitarbeiterId) {
+      const ma = await prisma.mitarbeiter.findUnique({ where: { id: mitarbeiterId }, select: { vorname: true, nachname: true } })
+      if (ma) bearbeiterName = `${ma.vorname} ${ma.nachname}`
+    }
+
     const anfrage = await prisma.anfrage.findUnique({
       where: { id },
       select: {
@@ -65,6 +72,7 @@ export async function POST(
         grund: data.text,
         telefon: settings.telefon,
         whatsapp: settings.whatsapp,
+        bearbeiterName,
       })
       await sendEmail({ to: anfrage.email, ...mail, _typ: 'ablehnung', _anfrageId: id })
       mailTyp = 'ablehnung'
@@ -79,6 +87,7 @@ export async function POST(
         frage: data.text,
         telefon: settings.telefon,
         whatsapp: settings.whatsapp,
+        bearbeiterName,
       })
       await sendEmail({ to: anfrage.email, ...mail, _typ: 'rueckfrage', _anfrageId: id })
       mailTyp = 'rueckfrage'
@@ -92,6 +101,7 @@ export async function POST(
         modell: anfrage.modell,
         nachricht: data.text,
         telefon: settings.telefon,
+        bearbeiterName,
       })
       await sendEmail({ to: anfrage.email, ...mail, _typ: 'freinachricht', _anfrageId: id })
       mailTyp = 'freinachricht'

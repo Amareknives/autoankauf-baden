@@ -145,7 +145,7 @@ export async function PATCH(
       where: { id },
       data: updateData,
       include: {
-        bearbeiter: { select: { id: true, vorname: true, nachname: true, email: true, whatsapp: true, waApiKey: true, kuerzel: true, benachrichtigungKanal: true } },
+        bearbeiter: { select: { id: true, vorname: true, nachname: true, email: true, telefon: true, whatsapp: true, waApiKey: true, kuerzel: true, benachrichtigungKanal: true } },
       },
     })
 
@@ -229,6 +229,11 @@ export async function PATCH(
         // ── Angebots-Mail an Kunden ────────────────────────────────────────
         if (data.sendeAngebotMail && updated.angebotspreis) {
           const { angebotEmail } = await import('@/services/emailTemplates')
+          let angebotBearbeiterName: string | null = null
+          if (mitarbeiterId) {
+            const ma = await prisma.mitarbeiter.findUnique({ where: { id: mitarbeiterId }, select: { vorname: true, nachname: true } })
+            if (ma) angebotBearbeiterName = `${ma.vorname} ${ma.nachname}`
+          }
           const mail = angebotEmail({
             vorname: updated.vorname,
             marke: updated.marke,
@@ -239,6 +244,7 @@ export async function PATCH(
             firmaEmail: settings.email,
             telefon: settings.telefon,
             whatsapp: settings.whatsapp,
+            bearbeiterName: angebotBearbeiterName,
           })
           await sendEmail({ to: updated.email, ...mail, _typ: 'angebot', _anfrageId: id })
           await prisma.aktivitaetsLog.create({
@@ -264,6 +270,29 @@ export async function PATCH(
             const msg = `📋 ${label}\n👤 ${updated.vorname} ${updated.nachname}\n🚗 ${updated.marke} ${updated.modell}`
             await notifyBearbeiter(`[AAB] ${label}: ${updated.vorname} ${updated.nachname}`, msg)
           }
+        }
+
+        // ── Bearbeiter-Wechsel: E-Mail an Kunden ─────────────────────────
+        if (data.bearbeiterId !== undefined && data.bearbeiterId !== alt?.bearbeiterId && data.bearbeiterId && bearbeiter) {
+          const { bearbeiterGeaendert } = await import('@/services/emailTemplates')
+          const mail = bearbeiterGeaendert({
+            vorname: updated.vorname,
+            marke: updated.marke,
+            modell: updated.modell,
+            bearbeiterVorname: bearbeiter.vorname,
+            bearbeiterNachname: bearbeiter.nachname,
+            bearbeiterTelefon: bearbeiter.telefon ?? null,
+            bearbeiterWhatsapp: bearbeiter.whatsapp ?? null,
+          })
+          await sendEmail({ to: updated.email, ...mail, _typ: 'bearbeiter_geaendert', _anfrageId: id })
+          await prisma.aktivitaetsLog.create({
+            data: {
+              anfrageId: id,
+              mitarbeiterId,
+              aktion: 'bearbeiter_zugewiesen',
+              details: `Kunde informiert: neuer Ansprechpartner ${bearbeiter.vorname} ${bearbeiter.nachname}`,
+            },
+          })
         }
 
         // ── Bearbeiter-Zuweisung Benachrichtigung ─────────────────────────
@@ -331,6 +360,7 @@ export async function PATCH(
               adresse: updated.abholadresse || `${settings.strasse}, ${settings.plz_firma} ${settings.ort}`,
               adresseZusatz: updated.abholAdresseZusatz,
               telefon: settings.telefon,
+              bearbeiter: bearbeiter ? { vorname: bearbeiter.vorname, nachname: bearbeiter.nachname, telefon: bearbeiter.telefon ?? null, whatsapp: bearbeiter.whatsapp ?? null } : null,
             })
             await sendEmail({
               to: updated.email,
@@ -394,6 +424,7 @@ export async function PATCH(
               adresse: updated.abholadresse || `${settings.strasse}, ${settings.plz_firma} ${settings.ort}`,
               adresseZusatz: updated.abholAdresseZusatz,
               telefon: settings.telefon,
+              bearbeiter: bearbeiter ? { vorname: bearbeiter.vorname, nachname: bearbeiter.nachname, telefon: bearbeiter.telefon ?? null, whatsapp: bearbeiter.whatsapp ?? null } : null,
             })
             await sendEmail({
               to: updated.email,
@@ -552,6 +583,7 @@ export async function PATCH(
             adresse: updated.abholadresse || `${settings.strasse}, ${settings.plz_firma} ${settings.ort}`,
             adresseZusatz: updated.abholAdresseZusatz,
             telefon: settings.telefon,
+            bearbeiter: bearbeiter ? { vorname: bearbeiter.vorname, nachname: bearbeiter.nachname, telefon: bearbeiter.telefon ?? null, whatsapp: bearbeiter.whatsapp ?? null } : null,
           })
           await sendEmail({
             to: updated.email,

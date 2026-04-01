@@ -382,6 +382,10 @@ function MitarbeiterVerwaltung() {
                   )}
                 </div>
               </div>
+              {/* Info-Hinweis Termin-Mails */}
+              <p className="mt-2 text-[11px] text-[#94A3B8] leading-relaxed">
+                💡 Name, Telefon und WhatsApp werden dem Kunden in Termin-Mails als Ansprechpartner angezeigt.
+              </p>
               {/* Benachrichtigungs-Kanal */}
               <div className="mt-3 pt-3 border-t border-[#E2EDF7] flex items-center justify-between gap-3 flex-wrap">
                 <span className="text-xs text-[#64748B] font-medium">Benachrichtigungen via</span>
