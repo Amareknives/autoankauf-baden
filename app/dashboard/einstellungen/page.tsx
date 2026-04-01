@@ -354,6 +354,16 @@ function MitarbeiterVerwaltung() {
                   <button onClick={() => void (m.aktiv ? handleDelete(m.id) : handleToggleAktiv(m.id, m.aktiv))} className="text-xs text-[#64748B] hover:text-[#D97706] px-2 py-1 rounded-lg hover:bg-[#FFF7ED] transition-colors">
                     {m.aktiv ? 'Deaktivieren' : 'Aktivieren'}
                   </button>
+                  {!m.aktiv && (
+                    <button onClick={() => {
+                      if (confirm(`${m.vorname} ${m.nachname} endgültig löschen? Dies kann nicht rückgängig gemacht werden.`)) {
+                        void fetch(`/api/dashboard/mitarbeiter/${m.id}?permanent=true`, { method: 'DELETE' })
+                          .then(r => { if (r.ok) { void load(); toast.success('Mitarbeiter gelöscht') } else toast.error('Fehler beim Löschen') })
+                      }
+                    }} className="text-xs text-[#DC2626] hover:text-[#DC2626] px-2 py-1 rounded-lg hover:bg-[#FEF2F2] transition-colors">
+                      Löschen
+                    </button>
+                  )}
                 </div>
               </div>
               {/* Benachrichtigungs-Kanal */}
@@ -390,25 +400,28 @@ function MitarbeiterVerwaltung() {
               )}
               {/* Profil-Bearbeiten Inline */}
               {editProfil?.id === m.id && (
-                <div className="mt-3 pt-3 border-t border-[#E2EDF7] space-y-2">
+                <div className="mt-3 pt-3 border-t border-[#E2EDF7] space-y-3">
                   <div className="flex gap-2">
                     <input type="text" placeholder="Vorname" value={editProfil.vorname} onChange={e => setEditProfil(p => p ? { ...p, vorname: e.target.value } : null)} className={`${INP} flex-1`} />
                     <input type="text" placeholder="Nachname" value={editProfil.nachname} onChange={e => setEditProfil(p => p ? { ...p, nachname: e.target.value } : null)} className={`${INP} flex-1`} />
+                    <input type="text" placeholder="Kürzel" maxLength={3} value={editProfil.kuerzel} onChange={e => setEditProfil(p => p ? { ...p, kuerzel: e.target.value.toUpperCase() } : null)} className={`${INP} w-20`} />
                   </div>
-                  <div className="flex gap-2 items-center">
-                    <input type="text" placeholder="Kürzel (max. 3)" maxLength={3} value={editProfil.kuerzel} onChange={e => setEditProfil(p => p ? { ...p, kuerzel: e.target.value.toUpperCase() } : null)} className={`${INP} w-24`} />
-                    <div className="flex gap-1 flex-1 flex-wrap">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-[#64748B]">Farbe:</span>
+                    <div className="flex gap-1.5 flex-1">
                       {FARBEN.map(f => (
                         <button key={f} onClick={() => setEditProfil(p => p ? { ...p, farbe: f } : null)}
-                          className="w-6 h-6 rounded-full border-2 transition-all"
+                          className="w-6 h-6 rounded-full border-2 transition-all shrink-0"
                           style={{ backgroundColor: f, borderColor: editProfil.farbe === f ? '#0F172A' : 'transparent' }} />
                       ))}
                     </div>
+                  </div>
+                  <div className="flex gap-2 justify-end">
+                    <button onClick={() => setEditProfil(null)} className="px-3 py-2 border border-[#E2EDF7] text-xs rounded-xl text-[#64748B]">Abbrechen</button>
                     <button onClick={() => void handleProfilChange()} disabled={saving || !editProfil.vorname.trim() || !editProfil.nachname.trim()}
-                      className="px-3 py-2 bg-[#0369A1] text-white text-xs font-bold rounded-xl disabled:opacity-40">
+                      className="px-4 py-2 bg-[#0369A1] text-white text-xs font-bold rounded-xl disabled:opacity-40">
                       Speichern
                     </button>
-                    <button onClick={() => setEditProfil(null)} className="px-3 py-2 border border-[#E2EDF7] text-xs rounded-xl text-[#64748B]">✕</button>
                   </div>
                 </div>
               )}

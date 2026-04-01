@@ -88,6 +88,15 @@ export async function DELETE(
       })
     }
 
+    // permanent=true → endgültig löschen (nur wenn bereits inaktiv)
+    const permanent = searchParams.get('permanent') === 'true'
+    if (permanent) {
+      const ma = await prisma.mitarbeiter.findUnique({ where: { id }, select: { aktiv: true } })
+      if (ma?.aktiv) return NextResponse.json({ error: 'Nur inaktive Mitarbeiter können gelöscht werden' }, { status: 400 })
+      await prisma.mitarbeiter.delete({ where: { id } })
+      return NextResponse.json({ ok: true })
+    }
+
     // Mitarbeiter deaktivieren statt löschen → Verlauf bleibt erhalten
     await prisma.mitarbeiter.update({
       where: { id },
