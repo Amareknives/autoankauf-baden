@@ -100,19 +100,13 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
             Marke
           </label>
           <ComboboxInput
-            listId="marken-list"
+            options={[...MARKEN_BELIEBTESTE, ...MARKEN_ALLE, 'Sonstige']}
             value={data.marke ?? ''}
             onValueChange={(v) => onChange({ marke: v })}
             placeholder="Marke tippen oder wählen"
             autoCapitalize="words"
-            autoComplete="off"
             className={SELECT_CLASS}
           />
-          <datalist id="marken-list">
-            {MARKEN_BELIEBTESTE.map((m) => <option key={`b-${m}`} value={m} />)}
-            {MARKEN_ALLE.map((m) => <option key={`a-${m}`} value={m} />)}
-            <option value="Sonstige" />
-          </datalist>
           {errors.marke && <span className="text-xs text-[#EF4444]">{errors.marke}</span>}
         </div>
 
@@ -121,19 +115,13 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
             Modell
           </label>
           <ComboboxInput
-            listId="modell-list"
+            options={MODELLE_PRO_MARKE[data.marke ?? ''] ?? []}
             value={data.modell ?? ''}
             onValueChange={(v) => onChange({ modell: v })}
             placeholder="z.B. Golf, 3er, A4"
             autoCapitalize="words"
-            autoComplete="off"
             className={SELECT_CLASS}
           />
-          <datalist id="modell-list">
-            {(MODELLE_PRO_MARKE[data.marke ?? ''] ?? []).map((m) => (
-              <option key={m} value={m} />
-            ))}
-          </datalist>
           {errors.modell && <span className="text-xs text-[#EF4444]">{errors.modell}</span>}
         </div>
       </div>
@@ -152,7 +140,7 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
             Erstzulassung Jahr
           </label>
           <ComboboxInput
-            listId="jahre-list"
+            options={YEARS.map(y => y.value)}
             inputMode="numeric"
             placeholder="z.B. 2018"
             value={data.erstzulassungJahr ? String(data.erstzulassungJahr) : ''}
@@ -163,9 +151,6 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
             }}
             className={SELECT_CLASS}
           />
-          <datalist id="jahre-list">
-            {YEARS.map(y => <option key={y.value} value={y.value} />)}
-          </datalist>
           {errors.erstzulassungJahr && (
             <span className="text-xs text-[#EF4444]">{errors.erstzulassungJahr}</span>
           )}

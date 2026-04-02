@@ -80,53 +80,39 @@ export default function WertRechner() {
                   <div>
                     <label className="block text-xs font-semibold text-white/80 mb-1.5">Marke</label>
                     <ComboboxInput
-                      listId="rechner-marken"
+                      options={ALLE_MARKEN}
                       placeholder="z.B. VW, BMW"
                       value={marke}
                       onValueChange={v => { setMarke(v); setModell('') }}
                       autoCapitalize="words"
-                      autoComplete="off"
                       className={INPUT_CLASS}
                     />
-                    <datalist id="rechner-marken">
-                      {ALLE_MARKEN.map(m => <option key={m} value={m} />)}
-                    </datalist>
                   </div>
 
                   {/* Modell */}
                   <div>
                     <label className="block text-xs font-semibold text-white/80 mb-1.5">Modell</label>
                     <ComboboxInput
-                      listId="rechner-modelle"
+                      options={MODELLE_PRO_MARKE[marke] ?? []}
                       placeholder="z.B. Golf, A4, 130i"
                       value={modell}
                       onValueChange={v => setModell(v)}
                       autoCapitalize="words"
-                      autoComplete="off"
                       className={INPUT_CLASS}
                     />
-                    <datalist id="rechner-modelle">
-                      {(MODELLE_PRO_MARKE[marke] ?? []).map(m => (
-                        <option key={m} value={m} />
-                      ))}
-                    </datalist>
                   </div>
 
                   {/* Baujahr */}
                   <div>
                     <label className="block text-xs font-semibold text-white/80 mb-1.5">Erstzulassung</label>
                     <ComboboxInput
-                      listId="rechner-jahre"
+                      options={JAHRE.map(String)}
                       inputMode="numeric"
                       placeholder="z.B. 2018"
                       value={jahr}
                       onValueChange={v => setJahr(v)}
-                      autoComplete="off"
                       className={INPUT_CLASS}
                     />
-                    <datalist id="rechner-jahre">
-                      {JAHRE.map(j => <option key={j} value={j} />)}
-                    </datalist>
                   </div>
 
                   {/* Kilometerstand */}

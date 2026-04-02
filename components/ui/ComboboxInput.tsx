@@ -3,49 +3,32 @@
 import { useRef, useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
-interface ComboboxInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'list' | 'onClick'> {
-  /** ID des zugehörigen <datalist> – wird genutzt um die Optionen auszulesen */
-  listId: string;
+interface ComboboxInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'list'> {
+  options: string[];
   value: string;
   onValueChange: (value: string) => void;
-  onClick?: React.MouseEventHandler<HTMLInputElement>;
 }
 
-/**
- * Custom Combobox: zeigt beim Fokus/Klick ALLE Optionen als eigenes Dropdown,
- * ohne das Feld zu leeren. Tippt der User, wird gefiltert.
- */
 export function ComboboxInput({
-  listId,
+  options,
   value,
   onValueChange,
   className,
   onFocus,
   onBlur,
-  onClick,
   ...props
 }: ComboboxInputProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState(value);
   const [isOpen, setIsOpen] = useState(false);
-  const [options, setOptions] = useState<string[]>([]);
 
-  // Externe Wertänderungen (Formular-Reset etc.) synchronisieren
   useEffect(() => {
     setInputValue(value);
   }, [value]);
 
-  const readOptions = () => {
-    const list = document.getElementById(listId);
-    if (!list) return [];
-    return Array.from(list.querySelectorAll('option')).map(o => o.value);
-  };
-
-  const openDropdown = () => {
-    setOptions(readOptions());
-    setIsOpen(true);
-  };
+  const filtered = inputValue
+    ? options.filter(o => o.toLowerCase().includes(inputValue.toLowerCase()))
+    : options;
 
   const selectOption = (opt: string) => {
     setInputValue(opt);
@@ -54,13 +37,8 @@ export function ComboboxInput({
   };
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    openDropdown();
+    setIsOpen(true);
     onFocus?.(e);
-  };
-
-  const handleClick = (e: React.MouseEvent<HTMLInputElement>) => {
-    openDropdown();
-    onClick?.(e);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,7 +48,6 @@ export function ComboboxInput({
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    // Nicht schließen wenn Fokus ins Dropdown geht
     if (containerRef.current?.contains(e.relatedTarget as Node)) return;
     setIsOpen(false);
     onBlur?.(e);
@@ -84,19 +61,13 @@ export function ComboboxInput({
     }
   };
 
-  const filtered = inputValue
-    ? options.filter(o => o.toLowerCase().includes(inputValue.toLowerCase()))
-    : options;
-
   return (
     <div ref={containerRef} className="relative">
       <input
-        ref={inputRef}
         {...props}
         value={inputValue}
         onChange={handleChange}
         onFocus={handleFocus}
-        onClick={handleClick}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         autoComplete="off"
@@ -107,10 +78,7 @@ export function ComboboxInput({
           {filtered.map((opt) => (
             <li
               key={opt}
-              onMouseDown={(e) => {
-                e.preventDefault(); // verhindert blur vor click
-                selectOption(opt);
-              }}
+              onMouseDown={(e) => { e.preventDefault(); selectOption(opt); }}
               className="cursor-pointer px-3 py-2 text-sm text-[#0F172A] hover:bg-[#F0F7FF]"
             >
               {opt}
