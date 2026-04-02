@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
 import { MailVorschauModal } from '@/components/dashboard/MailVorschauModal'
 
 interface MailLogEntry {
@@ -107,11 +108,16 @@ export default function MailLogPage() {
       <div className="p-4 md:p-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-black text-[#0F172A]">Mail-Protokoll</h1>
-            <p className="text-[#64748B] text-sm mt-0.5">
-              {logs.length} Einträge · {fehlerCount} Fehler
-            </p>
+          <div className="flex items-center gap-3">
+            <Link href="/dashboard" className="text-[#64748B] hover:text-[#0369A1] transition-colors shrink-0">
+              <ArrowLeft size={20} strokeWidth={2.5} />
+            </Link>
+            <div>
+              <h1 className="text-2xl font-black text-[#0F172A]">Mail-Protokoll</h1>
+              <p className="text-[#64748B] text-sm mt-0.5">
+                {logs.length} Einträge · {fehlerCount} Fehler
+              </p>
+            </div>
           </div>
           <div className="flex items-center gap-3">
             <label className="flex items-center gap-2 cursor-pointer">

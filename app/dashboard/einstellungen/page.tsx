@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 interface Settings {
@@ -1017,9 +1019,14 @@ export default function EinstellungenPage() {
 
   return (
     <div className="p-6 md:p-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-black text-[#0F172A]">Einstellungen</h1>
-        <p className="text-[#64748B] text-sm mt-0.5">Werden im Footer, Impressum und überall auf der Website verwendet.</p>
+      <div className="flex items-center gap-3 mb-6">
+        <Link href="/dashboard" className="text-[#64748B] hover:text-[#0369A1] transition-colors shrink-0">
+          <ArrowLeft size={20} strokeWidth={2.5} />
+        </Link>
+        <div>
+          <h1 className="text-2xl font-black text-[#0F172A]">Einstellungen</h1>
+          <p className="text-[#64748B] text-sm mt-0.5">Werden im Footer, Impressum und überall auf der Website verwendet.</p>
+        </div>
       </div>
 
       {/* Tabs */}

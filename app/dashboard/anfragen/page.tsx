@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, Fragment } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { ChevronDown, Download } from 'lucide-react'
+import { ArrowLeft, ChevronDown, Download } from 'lucide-react'
 
 interface AktivitaetKurz {
   id: string
@@ -210,11 +210,16 @@ export default function AnfragenPage() {
     <div className="p-4 md:p-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
-        <div>
-          <h1 className="text-2xl font-black text-[#0F172A]">
-            {showArchiv ? 'Archiv' : 'Anfragen'}
-          </h1>
-          <p className="text-[#64748B] text-sm mt-0.5">{total} {showArchiv ? 'archivierte Einträge' : 'gesamt'}</p>
+        <div className="flex items-center gap-3">
+          <Link href="/dashboard" className="text-[#64748B] hover:text-[#0369A1] transition-colors shrink-0">
+            <ArrowLeft size={20} strokeWidth={2.5} />
+          </Link>
+          <div>
+            <h1 className="text-2xl font-black text-[#0F172A]">
+              {showArchiv ? 'Archiv' : 'Anfragen'}
+            </h1>
+            <p className="text-[#64748B] text-sm mt-0.5">{total} {showArchiv ? 'archivierte Einträge' : 'gesamt'}</p>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <button
