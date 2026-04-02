@@ -1,9 +1,10 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
-interface ComboboxInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'defaultValue' | 'onClick'> {
+interface ComboboxInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value' | 'list' | 'onClick'> {
+  /** ID des zugehörigen <datalist> – wird genutzt um die Optionen auszulesen */
   listId: string;
   value: string;
   onValueChange: (value: string) => void;
@@ -11,9 +12,8 @@ interface ComboboxInputProps extends Omit<React.InputHTMLAttributes<HTMLInputEle
 }
 
 /**
- * Input mit Datalist – zeigt beim Fokussieren und beim Klick in ein bereits
- * fokussiertes Feld ALLE Optionen an. Direkte DOM-Manipulation per Ref damit
- * der Browser die leere Datalist sofort (synchron) sieht.
+ * Custom Combobox: zeigt beim Fokus/Klick ALLE Optionen als eigenes Dropdown,
+ * ohne das Feld zu leeren. Tippt der User, wird gefiltert.
  */
 export function ComboboxInput({
   listId,
@@ -25,68 +25,100 @@ export function ComboboxInput({
   onClick,
   ...props
 }: ComboboxInputProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const savedValue = useRef(value);
-  const isFocused = useRef(false);
+  const [inputValue, setInputValue] = useState(value);
+  const [isOpen, setIsOpen] = useState(false);
+  const [options, setOptions] = useState<string[]>([]);
 
-  // Externe Wertänderungen (z.B. Formular-Reset) in DOM übernehmen,
-  // aber nur wenn Feld nicht fokussiert ist
+  // Externe Wertänderungen (Formular-Reset etc.) synchronisieren
   useEffect(() => {
-    savedValue.current = value;
-    if (inputRef.current && !isFocused.current) {
-      inputRef.current.value = value;
-    }
+    setInputValue(value);
   }, [value]);
 
+  const readOptions = () => {
+    const list = document.getElementById(listId);
+    if (!list) return [];
+    return Array.from(list.querySelectorAll('option')).map(o => o.value);
+  };
+
   const openDropdown = () => {
-    if (!inputRef.current) return;
-    savedValue.current = inputRef.current.value;
-    // Direkt im DOM leeren → Browser sieht sofort '' → alle Optionen erscheinen
-    inputRef.current.value = '';
+    setOptions(readOptions());
+    setIsOpen(true);
+  };
+
+  const selectOption = (opt: string) => {
+    setInputValue(opt);
+    onValueChange(opt);
+    setIsOpen(false);
   };
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    isFocused.current = true;
     openDropdown();
     onFocus?.(e);
   };
 
-  // Feld bereits fokussiert und hat noch einen Wert → blur+focus simulieren,
-  // das ist exakt was "rausklicken und wieder reinklicken" macht (und was funktioniert)
   const handleClick = (e: React.MouseEvent<HTMLInputElement>) => {
-    if (isFocused.current && inputRef.current && inputRef.current.value !== '') {
-      inputRef.current.blur();
-      inputRef.current.focus();
-    }
+    openDropdown();
     onClick?.(e);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
     onValueChange(e.target.value);
+    setIsOpen(true);
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    isFocused.current = false;
-    if (inputRef.current && inputRef.current.value.trim() === '') {
-      // Nichts ausgewählt → vorherigen Wert wiederherstellen
-      inputRef.current.value = savedValue.current;
-      onValueChange(savedValue.current);
-    }
+    // Nicht schließen wenn Fokus ins Dropdown geht
+    if (containerRef.current?.contains(e.relatedTarget as Node)) return;
+    setIsOpen(false);
     onBlur?.(e);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Escape') setIsOpen(false);
+    if (e.key === 'Enter' && isOpen && filtered.length > 0) {
+      e.preventDefault();
+      selectOption(filtered[0]);
+    }
+  };
+
+  const filtered = inputValue
+    ? options.filter(o => o.toLowerCase().includes(inputValue.toLowerCase()))
+    : options;
+
   return (
-    <input
-      ref={inputRef}
-      {...props}
-      list={listId}
-      defaultValue={value}
-      onChange={handleChange}
-      onFocus={handleFocus}
-      onClick={handleClick}
-      onBlur={handleBlur}
-      className={cn(className)}
-    />
+    <div ref={containerRef} className="relative">
+      <input
+        ref={inputRef}
+        {...props}
+        value={inputValue}
+        onChange={handleChange}
+        onFocus={handleFocus}
+        onClick={handleClick}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
+        autoComplete="off"
+        className={cn(className)}
+      />
+      {isOpen && filtered.length > 0 && (
+        <ul className="absolute left-0 right-0 top-full z-50 mt-1 max-h-52 overflow-y-auto rounded-lg border border-[#E2EDF7] bg-white shadow-lg">
+          {filtered.map((opt) => (
+            <li
+              key={opt}
+              onMouseDown={(e) => {
+                e.preventDefault(); // verhindert blur vor click
+                selectOption(opt);
+              }}
+              className="cursor-pointer px-3 py-2 text-sm text-[#0F172A] hover:bg-[#F0F7FF]"
+            >
+              {opt}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 
