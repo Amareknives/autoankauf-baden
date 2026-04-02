@@ -15,6 +15,7 @@ import {
 import { Select } from '@/components/ui/Select';
 import { Input } from '@/components/ui/Input';
 import { FieldTooltip } from '@/components/form/FieldTooltip';
+import { ComboboxInput } from '@/components/ui/ComboboxInput';
 
 interface Step1Props {
   data: Partial<AnfrageFormData>;
@@ -98,10 +99,10 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
           <label className="text-[11px] font-semibold text-[#0F172A] uppercase tracking-wide">
             Marke
           </label>
-          <input
-            list="marken-list"
+          <ComboboxInput
+            listId="marken-list"
             value={data.marke ?? ''}
-            onChange={(e) => onChange({ marke: e.target.value })}
+            onValueChange={(v) => onChange({ marke: v })}
             placeholder="Marke tippen oder wählen"
             autoCapitalize="words"
             autoComplete="off"
@@ -119,10 +120,10 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
           <label className="text-[11px] font-semibold text-[#0F172A] uppercase tracking-wide flex items-center gap-1">
             Modell
           </label>
-          <input
-            list="modell-list"
+          <ComboboxInput
+            listId="modell-list"
             value={data.modell ?? ''}
-            onChange={(e) => onChange({ modell: e.target.value })}
+            onValueChange={(v) => onChange({ modell: v })}
             placeholder="z.B. Golf, 3er, A4"
             autoCapitalize="words"
             autoComplete="off"
@@ -150,15 +151,15 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
           <label className="text-[11px] font-semibold text-[#0F172A] uppercase tracking-wide">
             Erstzulassung Jahr
           </label>
-          <input
-            list="jahre-list"
+          <ComboboxInput
+            listId="jahre-list"
             inputMode="numeric"
             placeholder="z.B. 2018"
             value={data.erstzulassungJahr ? String(data.erstzulassungJahr) : ''}
-            onChange={(e) => {
-              const v = Number(e.target.value)
-              if (!isNaN(v) && v > 0) onChange({ erstzulassungJahr: v })
-              else if (e.target.value === '') onChange({ erstzulassungJahr: undefined })
+            onValueChange={(v) => {
+              const n = Number(v)
+              if (!isNaN(n) && n > 0) onChange({ erstzulassungJahr: n })
+              else if (v === '') onChange({ erstzulassungJahr: undefined })
             }}
             className={SELECT_CLASS}
           />

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { MARKEN_BELIEBTESTE, MARKEN_ALLE } from '@/constants/marken'
 import { MODELLE_PRO_MARKE } from '@/constants/modelle'
 import { ChevronRight } from 'lucide-react'
+import { ComboboxInput } from '@/components/ui/ComboboxInput'
 
 const ALLE_MARKEN = [...MARKEN_BELIEBTESTE, ...MARKEN_ALLE, 'Sonstige']
 
@@ -78,11 +79,11 @@ export default function WertRechner() {
                   {/* Marke */}
                   <div>
                     <label className="block text-xs font-semibold text-white/80 mb-1.5">Marke</label>
-                    <input
-                      list="rechner-marken"
+                    <ComboboxInput
+                      listId="rechner-marken"
                       placeholder="z.B. VW, BMW"
                       value={marke}
-                      onChange={e => { setMarke(e.target.value); setModell('') }}
+                      onValueChange={v => { setMarke(v); setModell('') }}
                       autoCapitalize="words"
                       autoComplete="off"
                       className={INPUT_CLASS}
@@ -95,11 +96,11 @@ export default function WertRechner() {
                   {/* Modell */}
                   <div>
                     <label className="block text-xs font-semibold text-white/80 mb-1.5">Modell</label>
-                    <input
-                      list="rechner-modelle"
+                    <ComboboxInput
+                      listId="rechner-modelle"
                       placeholder="z.B. Golf, A4, 130i"
                       value={modell}
-                      onChange={e => setModell(e.target.value)}
+                      onValueChange={v => setModell(v)}
                       autoCapitalize="words"
                       autoComplete="off"
                       className={INPUT_CLASS}
@@ -114,12 +115,12 @@ export default function WertRechner() {
                   {/* Baujahr */}
                   <div>
                     <label className="block text-xs font-semibold text-white/80 mb-1.5">Erstzulassung</label>
-                    <input
-                      list="rechner-jahre"
+                    <ComboboxInput
+                      listId="rechner-jahre"
                       inputMode="numeric"
                       placeholder="z.B. 2018"
                       value={jahr}
-                      onChange={e => setJahr(e.target.value)}
+                      onValueChange={v => setJahr(v)}
                       autoComplete="off"
                       className={INPUT_CLASS}
                     />
