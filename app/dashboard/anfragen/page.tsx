@@ -320,32 +320,33 @@ export default function AnfragenPage() {
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div>
+                <div className="flex items-center justify-between gap-2">
+                  <div className="min-w-0">
                     <p className="text-sm font-semibold text-[#0F172A]">{a.marke} {a.modell}</p>
                     <p className="text-xs text-[#64748B]">{a.kilometerstand.toLocaleString('de-DE')} km · EZ {a.erstzulassungJahr} · {formatDate(a.createdAt)}</p>
                   </div>
-                  <div className="flex items-center gap-2 ml-3 shrink-0">
+                  <div className="flex items-center gap-2 shrink-0">
                     {a.archiviert && (
                       <button
                         disabled={reaktivierendId === a.id}
                         onClick={() => void reaktivieren(a.id)}
-                        className="px-3 py-1.5 border border-[#86EFAC] rounded-lg text-xs text-[#166534] hover:bg-[#F0FDF4] disabled:opacity-50 transition-colors font-medium"
+                        className="px-3 py-2 border border-[#86EFAC] rounded-lg text-xs text-[#166534] hover:bg-[#F0FDF4] disabled:opacity-50 transition-colors font-medium"
                       >
                         {reaktivierendId === a.id ? '…' : '↩'}
                       </button>
                     )}
                     <button
                       onClick={() => toggleExpand(a.id)}
-                      className={`p-1.5 rounded-lg border transition-colors ${isExpanded ? 'bg-[#EFF6FF] border-[#0369A1] text-[#0369A1]' : 'border-[#E2EDF7] text-[#94A3B8]'}`}
+                      className={`p-2 rounded-lg border transition-colors ${isExpanded ? 'bg-[#EFF6FF] border-[#0369A1] text-[#0369A1]' : 'border-[#CBD5E1] text-[#64748B] hover:border-[#0369A1] hover:text-[#0369A1]'}`}
+                      title="Schnellvorschau"
                     >
-                      <ChevronDown size={14} className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                      <ChevronDown size={16} className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                     </button>
                     <Link
                       href={`/dashboard/anfragen/${a.id}`}
-                      className="px-3 py-1.5 border border-[#E2EDF7] rounded-lg text-xs text-[#64748B] hover:text-[#0369A1] hover:border-[#0369A1] transition-colors font-medium"
+                      className="inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs bg-[#FB6F6F] hover:bg-[#f95c5c] text-white font-bold transition-colors whitespace-nowrap"
                     >
-                      →
+                      Details →
                     </Link>
                   </div>
                 </div>
@@ -437,10 +438,10 @@ export default function AnfragenPage() {
                         )}
                         <button
                           onClick={() => toggleExpand(a.id)}
-                          className={`p-1.5 rounded-lg border transition-colors ${isExpanded ? 'bg-[#EFF6FF] border-[#0369A1] text-[#0369A1]' : 'border-[#E2EDF7] text-[#94A3B8] hover:border-[#0369A1] hover:text-[#0369A1]'}`}
-                          title="Details ein-/ausklappen"
+                          className={`p-2 rounded-lg border transition-colors ${isExpanded ? 'bg-[#EFF6FF] border-[#0369A1] text-[#0369A1]' : 'border-[#CBD5E1] text-[#64748B] hover:border-[#0369A1] hover:text-[#0369A1]'}`}
+                          title="Schnellvorschau"
                         >
-                          <ChevronDown size={14} className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                          <ChevronDown size={15} className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                         </button>
                         <Link
                           href={`/dashboard/anfragen/${a.id}`}
