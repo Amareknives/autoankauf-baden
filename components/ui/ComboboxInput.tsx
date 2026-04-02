@@ -7,6 +7,7 @@ interface ComboboxInputProps extends Omit<React.InputHTMLAttributes<HTMLInputEle
   listId: string;
   value: string;
   onValueChange: (value: string) => void;
+  onClick?: React.MouseEventHandler<HTMLInputElement>;
 }
 
 /**
