@@ -98,6 +98,14 @@ export default function HaendlerPage() {
                   </span>
                 ))}
               </div>
+              <div className="mt-6 md:hidden">
+                <a
+                  href="#haendler-formular"
+                  className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#FB6F6F] hover:bg-[#f95c5c] text-white font-bold rounded-xl transition-colors text-base w-full justify-center"
+                >
+                  Jetzt Partnerschaft anfragen ↓
+                </a>
+              </div>
             </div>
 
             {/* Quick Stats */}
@@ -193,7 +201,7 @@ export default function HaendlerPage() {
           </div>
 
           {/* Right: Form */}
-          <div className="sticky top-6">
+          <div className="sticky top-6" id="haendler-formular">
             <HaendlerForm />
           </div>
         </div>

@@ -342,7 +342,7 @@ function TerminFormular({
   terminMitarbeiterId, setTerminMitarbeiterId,
   mitarbeiterListe, firmaAdresse,
   saving, istAenderung, hatAenderung, nurMitarbeiterGeaendert,
-  onSave, onSaveIntern, onAbbrechen, onLoeschen,
+  onSave, onSaveIntern, onSaveOnly, onAbbrechen, onLoeschen,
 }: {
   terminVorschlag: string
   setTerminVorschlag: (v: string) => void
@@ -360,6 +360,7 @@ function TerminFormular({
   nurMitarbeiterGeaendert?: boolean
   onSave: () => void
   onSaveIntern?: () => void
+  onSaveOnly?: () => void
   onAbbrechen: (() => void) | null
   onLoeschen: (() => void) | null
 }) {
@@ -493,13 +494,24 @@ function TerminFormular({
         )}
         {/* Hauptbutton: nur anzeigen wenn Datum/Adresse geändert oder neuer Termin */}
         {(!istAenderung || !nurMitarbeiterGeaendert) && (
-          <button type="button"
-            disabled={saving || !terminVorschlag || !abholadresse.trim() || (!istAenderung && !terminMitarbeiterId) || (istAenderung && hatAenderung === false)}
-            onClick={onSave}
-            title={!istAenderung && !terminMitarbeiterId ? 'Bitte zuerst einen Mitarbeiter auswählen' : istAenderung && hatAenderung === false ? 'Keine Änderung vorgenommen' : undefined}
-            className="flex-1 px-4 py-2.5 bg-[#0369A1] hover:bg-[#0284c7] disabled:bg-[#94A3B8] disabled:cursor-not-allowed text-white text-sm font-semibold rounded-xl transition-colors">
-            {saving ? '…' : istAenderung ? '📅 Termin ändern & Senden' : 'Neuen Termin speichern & Senden'}
-          </button>
+          <>
+            <button type="button"
+              disabled={saving || !terminVorschlag || !abholadresse.trim() || (!istAenderung && !terminMitarbeiterId) || (istAenderung && hatAenderung === false)}
+              onClick={onSave}
+              title={!istAenderung && !terminMitarbeiterId ? 'Bitte zuerst einen Mitarbeiter auswählen' : istAenderung && hatAenderung === false ? 'Keine Änderung vorgenommen' : undefined}
+              className="flex-1 px-4 py-2.5 bg-[#0369A1] hover:bg-[#0284c7] disabled:bg-[#94A3B8] disabled:cursor-not-allowed text-white text-sm font-semibold rounded-xl transition-colors">
+              {saving ? '…' : istAenderung ? '📅 Termin ändern & Senden' : 'Termin speichern & Senden'}
+            </button>
+            {onSaveOnly && (
+              <button type="button"
+                disabled={saving || !terminVorschlag || !abholadresse.trim()}
+                onClick={onSaveOnly}
+                title="Termin speichern ohne E-Mail an Kunden"
+                className="px-4 py-2.5 bg-[#F1F5F9] hover:bg-[#E2EDF7] disabled:opacity-50 text-[#0F172A] text-sm font-semibold rounded-xl transition-colors border border-[#E2EDF7] whitespace-nowrap">
+                {saving ? '…' : 'Nur speichern'}
+              </button>
+            )}
+          </>
         )}
         {onLoeschen && (
           <button type="button" disabled={saving} onClick={onLoeschen}
@@ -1234,6 +1246,16 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
                     () => void update(updateParams)
                   )
                 }}
+                onSaveOnly={() => {
+                  if (!abholadresse.trim()) { setShowOhneAdresseWarnung(true); return }
+                  void update({
+                    terminVorschlag1: terminVorschlag || undefined,
+                    abholadresse: abholadresse || undefined,
+                    abholAdresseZusatz: abholAdresseZusatz || null,
+                    status: anfrage.status !== 'abgeschlossen' ? 'termin_vereinbart' : undefined,
+                    bearbeiterId: terminMitarbeiterId || null,
+                  })
+                }}
                 onAbbrechen={null}
                 onLoeschen={null}
               />
@@ -1307,6 +1329,16 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
                     { typ: 'termin_verschoben', termin: terminVorschlag, alterTermin: anfrage.terminVorschlag1, adresse: abholadresse || undefined, adresseZusatz: abholAdresseZusatz || null, terminMitarbeiterId: terminMitarbeiterId || null },
                     () => { void update(updateParams); setEditingTermin(false) }
                   )
+                }}
+                onSaveOnly={() => {
+                  if (!abholadresse.trim()) { setShowOhneAdresseWarnung(true); return }
+                  void update({
+                    terminVorschlag1: terminVorschlag || undefined,
+                    abholadresse: abholadresse || undefined,
+                    abholAdresseZusatz: abholAdresseZusatz || null,
+                    bearbeiterId: terminMitarbeiterId || null,
+                  })
+                  setEditingTermin(false)
                 }}
                 onSaveIntern={() => {
                   void update({ bearbeiterId: terminMitarbeiterId || null })
@@ -1521,13 +1553,25 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
                   placeholder="Interne Notizen (nur für das Team sichtbar)..."
                   className="w-full px-3 py-2.5 border border-[#E2EDF7] rounded-xl text-sm text-[#0F172A] resize-none focus:outline-none focus:ring-2 focus:ring-[#0369A1] focus:border-transparent"
                 />
-                <button
-                  disabled={saving}
-                  onClick={() => update({ notizen })}
-                  className="mt-3 px-4 py-2 bg-[#F1F5F9] hover:bg-[#E2EDF7] disabled:opacity-50 text-[#0F172A] text-sm font-semibold rounded-xl transition-colors w-full"
-                >
-                  Notizen speichern
-                </button>
+                <div className="mt-3 flex gap-2">
+                  <button
+                    disabled={saving}
+                    onClick={() => update({ notizen })}
+                    className="flex-1 px-4 py-2 bg-[#F1F5F9] hover:bg-[#E2EDF7] disabled:opacity-50 text-[#0F172A] text-sm font-semibold rounded-xl transition-colors"
+                  >
+                    Notizen speichern
+                  </button>
+                  {notizen.trim() && (
+                    <button
+                      type="button"
+                      onClick={() => setNotizen('')}
+                      className="px-3 py-2 border border-[#E2EDF7] hover:border-[#FB6F6F] hover:text-[#FB6F6F] text-[#94A3B8] text-sm rounded-xl transition-colors"
+                      title="Notizen leeren"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
               </div>
             )
           })()}

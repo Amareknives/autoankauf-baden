@@ -22,12 +22,12 @@ export async function GET(request: NextRequest) {
 
     if (search) {
       where.OR = [
-        { vorname: { contains: search } },
-        { nachname: { contains: search } },
-        { marke: { contains: search } },
-        { modell: { contains: search } },
-        { plz: { contains: search } },
-        { email: { contains: search } },
+        { vorname: { contains: search, mode: 'insensitive' } },
+        { nachname: { contains: search, mode: 'insensitive' } },
+        { marke: { contains: search, mode: 'insensitive' } },
+        { modell: { contains: search, mode: 'insensitive' } },
+        { plz: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
       ]
     }
 

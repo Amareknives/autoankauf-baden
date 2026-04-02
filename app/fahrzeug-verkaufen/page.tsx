@@ -87,9 +87,10 @@ export default async function FahrzeugVerkaufenPage() {
           <div>
             <div className="mb-5 p-4 bg-[#E8F4FD] border border-[#BAE6FD] rounded-xl">
               <p className="text-sm text-[#0F172A] leading-relaxed">
-                Fülle das Formular mit allen relevanten Pflichtfeldern aus, damit wir dir ein faires Angebot machen können.{' '}
+                <span className="sm:hidden">Ca. 2–3 Min. · Antwort in 2–3 Stunden.*</span>
+                <span className="hidden sm:inline">Fülle das Formular mit allen relevanten Pflichtfeldern aus, damit wir dir ein faires Angebot machen können.{' '}
                 <span className="font-semibold">Dauer: ca. 2–3 Minuten.</span>{' '}
-                Du erhältst deine Antwort innerhalb von 2–3 Stunden.*
+                Du erhältst deine Antwort innerhalb von 2–3 Stunden.*</span>
               </p>
             </div>
             <AngebotForm />

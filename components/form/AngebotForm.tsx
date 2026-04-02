@@ -202,6 +202,7 @@ export function AngebotForm() {
         kontaktWeg: formData.kontaktWeg ?? 'email_telefon',
       });
 
+      window.scrollTo({ top: 0, behavior: 'instant' });
       router.push(`/danke?${params.toString()}`);
     } catch (err) {
       console.error('Submit error:', err);
@@ -235,9 +236,9 @@ export function AngebotForm() {
           )}
 
           {/* Navigation */}
-          <div className="mt-8 flex items-center justify-between gap-4 border-t border-[#E2EDF7] pt-6">
+          <div className={`mt-8 border-t border-[#E2EDF7] pt-6 ${currentStep === 4 ? 'flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between' : 'flex items-center justify-between gap-4'}`}>
             {currentStep > 1 ? (
-              <Button variant="outline" size="lg" onClick={handleBack} type="button">
+              <Button variant="outline" size="lg" onClick={handleBack} type="button" className={currentStep === 4 ? 'w-full sm:w-auto' : ''}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
@@ -280,7 +281,7 @@ export function AngebotForm() {
                 onClick={handleSubmit}
                 loading={isSubmitting}
                 type="button"
-                className="flex-1 sm:flex-none min-w-[240px]"
+                className="w-full sm:w-auto sm:min-w-[240px]"
               >
                 <Send size={17} strokeWidth={2.5} className="mr-2" />
                 Jetzt kostenlos Angebot anfordern
