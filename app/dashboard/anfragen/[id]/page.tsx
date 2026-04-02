@@ -496,11 +496,11 @@ function TerminFormular({
         {(!istAenderung || !nurMitarbeiterGeaendert) && (
           <>
             <button type="button"
-              disabled={saving || !terminVorschlag || !abholadresse.trim() || (!istAenderung && !terminMitarbeiterId) || (istAenderung && hatAenderung === false)}
+              disabled={saving || !terminVorschlag || !abholadresse.trim() || (!istAenderung && !terminMitarbeiterId)}
               onClick={onSave}
-              title={!istAenderung && !terminMitarbeiterId ? 'Bitte zuerst einen Mitarbeiter auswählen' : istAenderung && hatAenderung === false ? 'Keine Änderung vorgenommen' : undefined}
+              title={!istAenderung && !terminMitarbeiterId ? 'Bitte zuerst einen Mitarbeiter auswählen' : undefined}
               className="flex-1 px-4 py-2.5 bg-[#0369A1] hover:bg-[#0284c7] disabled:bg-[#94A3B8] disabled:cursor-not-allowed text-white text-sm font-semibold rounded-xl transition-colors">
-              {saving ? '…' : istAenderung ? '📅 Termin ändern & Senden' : 'Termin speichern & Senden'}
+              {saving ? '…' : istAenderung ? (hatAenderung ? '📅 Termin ändern & Senden' : '📧 E-Mail erneut senden') : 'Termin speichern & Senden'}
             </button>
             {onSaveOnly && (
               <button type="button"
