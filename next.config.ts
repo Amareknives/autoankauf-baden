@@ -13,21 +13,6 @@ const securityHeaders = [
   { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' },
   // XSS-Schutz (moderne Browser nutzen CSP, ältere diesen Header)
   { key: 'X-XSS-Protection', value: '1; mode=block' },
-  // Content Security Policy
-  {
-    key: 'Content-Security-Policy',
-    value: [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Next.js benötigt unsafe-inline für Hydration
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https:",
-      "connect-src 'self'",
-      "frame-ancestors 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-    ].join('; '),
-  },
 ];
 
 const nextConfig: NextConfig = {
