@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Logo from './Logo'
 import { getSiteSettings } from '@/lib/siteSettings'
 import { FooterContactLinks } from './FooterContactLinks'
+import { FooterInstallButton } from './FooterInstallButton'
 
 const SOCIAL_ICONS: Record<string, { label: string; svg: React.ReactNode }> = {
   social_facebook: {
@@ -97,24 +98,22 @@ export default async function Footer() {
       <div className="container mx-auto px-4 md:px-6 lg:px-8 py-12 lg:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10">
 
-          {/* Spalte 1: Logo + Tagline + Adresse + Social */}
-          <div className="lg:col-span-1">
+          {/* Spalte 1+2: Logo + Kontakt + Erreichbarkeit + Social */}
+          <div className="lg:col-span-2">
             <Link href="/" className="inline-block mb-3">
               <Logo variant="dark" height={32} showText={false} />
             </Link>
             <p className="text-white/60 text-sm leading-relaxed mb-3">
               Seit 6 Jahren fair, schnell &amp; persönlich.
             </p>
+
             {/* Adresse */}
-            <div className="mb-2 flex items-start gap-1.5 text-white/45 text-xs leading-relaxed">
+            <div className="mb-1.5 flex items-start gap-1.5 text-white/45 text-xs leading-relaxed">
               <svg className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              <span>
-                {s.strasse}<br />
-                {s.plz_firma} {s.ort}
-              </span>
+              <span>{s.strasse}, {s.plz_firma} {s.ort}</span>
             </div>
 
             {/* Google Maps Link */}
@@ -129,6 +128,29 @@ export default async function Footer() {
               </svg>
               Auf Google Maps öffnen
             </a>
+
+            {/* Kontakt */}
+            <div className="border-t border-white/10 pt-4 mb-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-white/40 mb-3">Kontakt</h3>
+              <FooterContactLinks
+                telefon={s.telefon}
+                whatsapp={s.whatsapp}
+                email={s.email}
+              />
+            </div>
+
+            {/* Erreichbarkeit */}
+            <div className="border-t border-white/10 pt-4 mb-5">
+              <p className="text-white/40 text-[10px] font-semibold uppercase tracking-wider mb-2">Erreichbarkeit</p>
+              <div className="space-y-1 mb-2">
+                <p className="text-white/60 text-xs">📞 Telefon &amp; 💬 WhatsApp</p>
+                <p className="text-white/45 text-xs">Mo–Fr: 6:00–18:00 Uhr &nbsp;·&nbsp; Sa: 6:00–13:00 Uhr</p>
+              </div>
+              <p className="text-white/60 text-xs mb-0.5">✉️ E-Mail &amp; 💬 WhatsApp: jederzeit</p>
+              <p className="text-white/30 text-[10px] leading-relaxed">
+                Nachrichten außerhalb der Geschäftszeiten werden am nächsten Werktag beantwortet.
+              </p>
+            </div>
 
             {/* Social Media Icons – nur wenn eingetragen */}
             {socialLinks.length > 0 && (
@@ -150,50 +172,6 @@ export default async function Footer() {
                 </div>
               </div>
             )}
-          </div>
-
-          {/* Spalte 2: Kontakt + Zeiten */}
-          <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-white/40 mb-4">Kontakt</h3>
-            <FooterContactLinks
-              telefon={s.telefon}
-              whatsapp={s.whatsapp}
-              email={s.email}
-            />
-            <div className="mt-5 pt-4 border-t border-white/10 space-y-3">
-              <div>
-                <p className="text-white/40 text-[10px] font-semibold uppercase tracking-wider mb-1.5">Erreichbarkeit</p>
-                <div className="space-y-0.5">
-                  <p className="text-white/60 text-xs">📞 Telefon &amp; 💬 WhatsApp</p>
-                  <p className="text-white/45 text-xs">Mo–Fr: 6:00–18:00 Uhr</p>
-                  <p className="text-white/45 text-xs">Sa: 6:00–13:00 Uhr</p>
-                </div>
-              </div>
-              <div className="space-y-1">
-                <p className="text-white/60 text-xs">💬 WhatsApp: jederzeit</p>
-                <a
-                  href={`https://wa.me/${s.whatsapp}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#0EA5E9] hover:text-white transition-colors duration-200 text-xs"
-                >
-                  {s.telefon}
-                </a>
-              </div>
-              <div className="space-y-1">
-                <p className="text-white/60 text-xs">✉️ E-Mail: jederzeit</p>
-                <a
-                  href={`mailto:${s.email}`}
-                  className="text-[#0EA5E9] hover:text-white transition-colors duration-200 text-xs"
-                >
-                  {s.email}
-                </a>
-                <p className="text-white/40 text-[10px]">Antwort innerhalb der Geschäftszeiten</p>
-              </div>
-              <p className="text-white/30 text-[10px] leading-relaxed">
-                Nachrichten außerhalb der Geschäftszeiten werden am nächsten Werktag beantwortet. Wir prüfen deine Anfrage persönlich.
-              </p>
-            </div>
           </div>
 
           {/* Spalte 3: Navigation */}
@@ -261,12 +239,13 @@ export default async function Footer() {
             <p className="text-xs text-white/35">
               © {new Date().getFullYear()} {s.firmenname}. Alle Rechte vorbehalten.
             </p>
-            <div className="flex flex-wrap gap-5">
+            <div className="flex flex-wrap items-center gap-5">
               {navigation.legal.map((item) => (
                 <Link key={item.name} href={item.href} className="text-xs text-white/35 hover:text-white/60 transition-colors duration-200">
                   {item.name}
                 </Link>
               ))}
+              <FooterInstallButton />
             </div>
           </div>
         </div>
