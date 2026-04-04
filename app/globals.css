@@ -341,6 +341,15 @@ input[type='number'] {
   background: #F59E0B;
 }
 
+/* Scrollbar verstecken (horizontal scroll strips) */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Responsive utilities */
 @media (max-width: 768px) {
   .chat-widget {

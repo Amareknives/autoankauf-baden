@@ -4,76 +4,90 @@ import { ClipboardList, Mail, Handshake, ChevronRight } from 'lucide-react'
 const steps = [
   {
     num: '01',
-    icon: <ClipboardList size={28} strokeWidth={2.5} color="white" />,
+    icon: ClipboardList,
     title: 'Formular ausfüllen',
     desc: 'Dauert nur 2 Minuten',
-    color: 'bg-[#0369A1]',
+    iconBg: 'bg-white',
+    iconColor: '#0369A1',
   },
   {
     num: '02',
-    icon: <Mail size={28} strokeWidth={2.5} color="white" />,
+    icon: Mail,
     title: 'Persönliches Angebot',
     desc: 'In 2–3 Stunden*',
-    color: 'bg-[#0369A1]',
+    iconBg: 'bg-white',
+    iconColor: '#0369A1',
   },
   {
     num: '03',
-    icon: <Handshake size={28} strokeWidth={2.5} color="white" />,
+    icon: Handshake,
     title: 'Termin & Barzahlung',
     desc: 'Kostenlose Abholung',
-    color: 'bg-[#FB6F6F]',
+    iconBg: 'bg-[#FB6F6F]',
+    iconColor: '#ffffff',
   },
 ]
 
 export default function HowItWorks() {
   return (
-    <section id="wie-funktionierts" className="py-16 md:py-20 bg-white">
+    <section
+      id="wie-funktionierts"
+      className="py-12 md:py-20 bg-gradient-to-br from-[#0369A1] to-[#0284C7]"
+    >
       <div className="container mx-auto px-4 md:px-6 lg:px-8">
+
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-[#E8F4FD] border border-[#F0F7FF] rounded-full px-4 py-2 mb-4">
-            <span className="text-sm font-semibold text-[#0369A1]">So einfach geht&apos;s</span>
+        <div className="text-center mb-10 md:mb-14">
+          <div className="inline-flex items-center gap-2 bg-white/15 border border-white/25 rounded-full px-4 py-1.5 mb-3">
+            <span className="text-sm font-semibold text-white">So einfach geht&apos;s</span>
           </div>
-          <h2 className="text-[24px] font-extrabold text-[#0F172A] mb-3">
+          <h2 className="text-[22px] md:text-[26px] font-extrabold text-white">
             In 3 Schritten zum Angebot
           </h2>
         </div>
 
         {/* Steps */}
-        <div className="relative max-w-4xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-6">
-            {steps.map((step, i) => (
-              <div key={step.num} className="relative flex flex-col items-center text-center">
-                {/* Connector arrow — desktop only */}
-                {i < steps.length - 1 && (
-                  <div className="hidden md:flex absolute top-10 left-[calc(50%+56px)] items-center justify-end w-[calc(100%-112px)] z-0">
-                    <ChevronRight size={20} strokeWidth={2.5} color="#CBD5E1" />
+        <div className="relative max-w-3xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-4 md:gap-6">
+            {steps.map((step, i) => {
+              const Icon = step.icon
+              return (
+                <div key={step.num} className="relative flex md:flex-col items-center md:items-center gap-4 md:gap-0 md:text-center bg-white/10 rounded-2xl p-5 md:p-6 border border-white/20">
+
+                  {/* Connector arrow – Desktop only */}
+                  {i < steps.length - 1 && (
+                    <div className="hidden md:flex absolute top-10 left-[calc(100%+6px)] items-center z-10 w-3">
+                      <ChevronRight size={18} strokeWidth={2.5} color="rgba(255,255,255,0.4)" />
+                    </div>
+                  )}
+
+                  {/* Step circle */}
+                  <div className={`relative flex-shrink-0 w-14 h-14 md:w-16 md:h-16 ${step.iconBg} rounded-full flex flex-col items-center justify-center md:mx-auto md:mb-4 shadow-md gap-0.5`}>
+                    <span className="text-[9px] font-bold tracking-wider leading-none" style={{ color: step.iconColor === '#ffffff' ? 'rgba(255,255,255,0.7)' : '#0369A1' }}>{step.num}</span>
+                    <Icon size={22} strokeWidth={2.5} color={step.iconColor} />
                   </div>
-                )}
 
-                {/* Step circle */}
-                <div className={`relative z-10 w-20 h-20 ${step.color} rounded-full flex flex-col items-center justify-center mb-5 shadow-lg gap-1`}>
-                  <span className="text-white/70 text-[10px] font-bold tracking-wider leading-none">{step.num}</span>
-                  {step.icon}
+                  {/* Text */}
+                  <div className="flex-1 md:flex-none">
+                    <h3 className="font-bold text-white text-[15px] md:text-[16px] mb-0.5 leading-tight">{step.title}</h3>
+                    <p className="text-sm text-white/65">{step.desc}</p>
+                  </div>
                 </div>
-
-                <h3 className="font-bold text-[#0F172A] mb-1 text-[15px]">{step.title}</h3>
-                <p className="text-sm text-[#64748B]">{step.desc}</p>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
 
         {/* CTA */}
-        <div className="text-center mt-12">
+        <div className="text-center mt-10 md:mt-12">
           <Link
             href="/fahrzeug-verkaufen"
-            className="inline-flex items-center justify-center px-8 py-4 bg-[#FB6F6F] hover:bg-[#f95c5c] text-white font-bold rounded-xl transition-colors duration-200 min-h-[52px]"
+            className="inline-flex items-center justify-center px-8 py-4 bg-[#FB6F6F] hover:bg-[#f95c5c] text-white font-bold rounded-xl transition-colors duration-200 min-h-[52px] shadow-lg"
           >
             Jetzt Angebot holen
           </Link>
-          <p className="mt-3 text-[11px] text-[#94A3B8]">
-            *Werktags 6–18 Uhr &amp; Samstag 6–13 Uhr · Wir kümmern uns persönlich um dich
+          <p className="mt-3 text-[11px] text-white/50">
+            *Werktags 6–18 Uhr &amp; Samstag 6–13 Uhr
           </p>
         </div>
       </div>

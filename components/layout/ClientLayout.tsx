@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import Header from './Header'
 import WhatsAppButton from './WhatsAppButton'
 import AnrufButton from './AnrufButton'
+import StickyMobileCTA from './StickyMobileCTA'
 
 export default function ClientLayout({
   children,
@@ -25,6 +26,7 @@ export default function ClientLayout({
       </main>
       {!isDashboard && <WhatsAppButton nummer={whatsapp} />}
       {!isDashboard && <AnrufButton nummer={telefon} />}
+      {!isDashboard && <StickyMobileCTA />}
     </>
   )
 }
