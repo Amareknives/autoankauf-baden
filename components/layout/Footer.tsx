@@ -169,9 +169,26 @@ export default async function Footer() {
                   <p className="text-white/45 text-xs">Sa: 6:00–13:00 Uhr</p>
                 </div>
               </div>
-              <div>
+              <div className="space-y-1">
+                <p className="text-white/60 text-xs">💬 WhatsApp: jederzeit</p>
+                <a
+                  href={`https://wa.me/${s.whatsapp}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#0EA5E9] hover:text-white transition-colors duration-200 text-xs"
+                >
+                  {s.telefon}
+                </a>
+              </div>
+              <div className="space-y-1">
                 <p className="text-white/60 text-xs">✉️ E-Mail: jederzeit</p>
-                <p className="text-white/40 text-[10px] mt-0.5">Antwort innerhalb der Geschäftszeiten</p>
+                <a
+                  href={`mailto:${s.email}`}
+                  className="text-[#0EA5E9] hover:text-white transition-colors duration-200 text-xs"
+                >
+                  {s.email}
+                </a>
+                <p className="text-white/40 text-[10px]">Antwort innerhalb der Geschäftszeiten</p>
               </div>
               <p className="text-white/30 text-[10px] leading-relaxed">
                 Nachrichten außerhalb der Geschäftszeiten werden am nächsten Werktag beantwortet. Wir prüfen deine Anfrage persönlich.

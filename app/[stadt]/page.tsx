@@ -71,7 +71,7 @@ export default async function StadtPage({ params }: { params: Promise<{ stadt: s
                   href="/fahrzeug-verkaufen"
                   className="inline-flex items-center gap-3 bg-[#FB6F6F] hover:bg-[#f95c5c] text-white font-bold px-8 py-4 rounded-xl transition-colors duration-200"
                 >
-                  Jetzt Auto bewerten
+                  Jetzt verkaufen
                   <ArrowRight size={22} strokeWidth={2.5} />
                 </Link>
               </div>
@@ -147,7 +147,7 @@ export default async function StadtPage({ params }: { params: Promise<{ stadt: s
                 href="/fahrzeug-verkaufen"
                 className="inline-flex items-center gap-3 bg-[#FB6F6F] hover:bg-[#f95c5c] text-white font-bold px-7 py-3.5 rounded-xl transition-colors duration-200"
               >
-                Jetzt kostenlos bewerten
+                Angebot anfordern
                 <ArrowRight size={18} strokeWidth={2.5} />
               </Link>
 
@@ -279,7 +279,7 @@ export default async function StadtPage({ params }: { params: Promise<{ stadt: s
             href="/fahrzeug-verkaufen"
             className="inline-flex items-center gap-3 bg-[#FB6F6F] hover:bg-[#f95c5c] text-white font-bold px-8 py-4 rounded-xl transition-colors duration-200"
           >
-            Jetzt kostenlos bewerten
+            Jetzt verkaufen
             <ArrowRight size={22} strokeWidth={2.5} />
           </Link>
         </div>

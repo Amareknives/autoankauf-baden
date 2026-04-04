@@ -1,4 +1,4 @@
-// PLZ -> Region Mapping fuer Baden und Pfalz
+// PLZ -> Region Mapping für Baden und Pfalz
 const PLZ_REGIONS: Record<string, string> = {
   '76': 'Karlsruhe & Umgebung',
   '766': 'Bruchsal & Kraichgau',

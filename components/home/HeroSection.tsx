@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { gtmEvents } from '@/lib/gtm'
+import { useHeroImage } from '@/hooks/useHeroImage'
 
 const HERO_IMAGES = [
   '/hero-home.webp', '/hero-home1.webp', '/hero-home2.webp',
@@ -11,11 +11,7 @@ const HERO_IMAGES = [
 ]
 
 export default function HeroSection() {
-  const [heroSrc, setHeroSrc] = useState('')
-
-  useEffect(() => {
-    setHeroSrc(HERO_IMAGES[Math.floor(Math.random() * HERO_IMAGES.length)])
-  }, [])
+  const heroSrc = useHeroImage(HERO_IMAGES)
 
   const handleCTAClick = () => {
     gtmEvents.form_start({ page: '/' })
@@ -71,7 +67,7 @@ export default function HeroSection() {
                   onClick={handleCTAClick}
                   className="inline-flex items-center justify-center px-7 py-4 bg-[#FB6F6F] hover:bg-[#f95c5c] text-white font-bold rounded-xl transition-colors duration-200 text-center min-h-[52px]"
                 >
-                  Jetzt kostenloses Angebot holen
+                  Jetzt Angebot anfordern
                 </Link>
                 <Link
                   href="/so-funktionierts"

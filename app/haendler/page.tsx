@@ -39,13 +39,13 @@ const vorteile = [
   },
   {
     icon: <FileText size={22} strokeWidth={2.5} color="#0369A1" />,
-    titel: 'Saubere Abwicklung',
-    text: 'Kaufvertrag, Rechnung, Abmeldung – wir erledigen die gesamte kaufmännische Abwicklung professionell und zuverlässig.',
+    titel: 'Vollständige Dokumentation',
+    text: 'Kaufvertrag, Rechnung, Zahlungsbeleg, Abmeldung – wir liefern die vollständige kaufmännische Dokumentation. Alles revisionssicher und buchungsfertig.',
   },
   {
     icon: <Zap size={22} strokeWidth={2.5} color="#0369A1" />,
     titel: 'Sofortige Zahlung',
-    text: 'Keine langen Zahlungsziele. Du bekommst dein Geld direkt bei Fahrzeugübergabe – bar auf die Hand.',
+    text: 'Keine langen Zahlungsziele. Zahlung direkt bei Fahrzeugübergabe – wahlweise per sofortiger Banküberweisung oder in bar. Buchungsbeleg und Kaufvertrag inklusive.',
   },
 ]
 
@@ -112,7 +112,7 @@ export default function HaendlerPage() {
             <div className="grid grid-cols-2 gap-3">
               {[
                 { zahl: '6+', label: 'Jahre Erfahrung' },
-                { zahl: 'Sofort', label: 'Zahlung vor Ort' },
+                { zahl: 'Sofort', label: 'Zahlung bei Übergabe' },
                 { zahl: 'Langfristig', label: 'Partnerschaft' },
                 { zahl: '48h', label: 'Rückmeldung' },
               ].map(s => (
@@ -172,7 +172,7 @@ export default function HaendlerPage() {
                   { num: '1', text: 'Kurze Anfrage über das Formular oder per Anruf' },
                   { num: '2', text: 'Wir melden uns innerhalb von 24–48h für ein erstes Gespräch' },
                   { num: '3', text: 'Wir schauen uns deine Fahrzeuge an und machen dir faire Angebote' },
-                  { num: '4', text: 'Kaufvertrag & sofortige Zahlung – unkompliziert und transparent' },
+                  { num: '4', text: 'Kaufvertrag, Zahlungsbeleg & sofortige Zahlung per Überweisung oder bar – transparent und buchungsfertig' },
                   { num: '5', text: 'Regelmäßige Zusammenarbeit nach deinen Möglichkeiten' },
                 ].map(s => (
                   <li key={s.num} className="flex items-center gap-4">

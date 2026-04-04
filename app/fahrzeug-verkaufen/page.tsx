@@ -56,7 +56,7 @@ export default async function FahrzeugVerkaufenPage() {
                 className="font-black text-white mb-4 leading-tight"
                 style={{ fontSize: 'clamp(28px, 4vw, 40px)' }}
               >
-                Jetzt dein Auto kostenlos bewerten lassen
+                Dein Auto verkaufen – Angebot in 2–3 Stunden
               </h1>
 
               <p className="text-white/90 text-base md:text-lg mb-6 leading-relaxed">

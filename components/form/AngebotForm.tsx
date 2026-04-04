@@ -41,6 +41,11 @@ function validateStep(step: number, data: Partial<AnfrageFormData>): FormErrors 
     if (!data.bauform) errors.bauform = 'Bitte wähle eine Bauform.';
     if (!data.kilometerstand && data.kilometerstand !== 0)
       errors.kilometerstand = 'Bitte gib den Kilometerstand an.';
+    if (!data.huBis) {
+      errors.huBis = 'Bitte wähle HU Monat und Jahr aus.';
+    } else if (!['Abgelaufen', 'Keine HU'].includes(data.huBis) && !data.huBis.includes(' ')) {
+      errors.huBis = 'Bitte wähle auch den HU-Monat aus.';
+    }
   }
 
   if (step === 2) {
@@ -66,6 +71,7 @@ function validateStep(step: number, data: Partial<AnfrageFormData>): FormErrors 
 export function AngebotForm() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
+  const [maxReachedStep, setMaxReachedStep] = useState(1);
   const [formData, setFormData] = useState<Partial<AnfrageFormData>>(DEFAULT_DATA);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -123,7 +129,17 @@ export function AngebotForm() {
     });
 
     setErrors({});
-    setCurrentStep((s) => s + 1);
+    setCurrentStep((s) => {
+      const next = s + 1;
+      setMaxReachedStep((m) => Math.max(m, next));
+      return next;
+    });
+    scrollToTop();
+  };
+
+  const handleStepClick = (step: number) => {
+    setErrors({});
+    setCurrentStep(step);
     scrollToTop();
   };
 
@@ -218,7 +234,7 @@ export function AngebotForm() {
     <div ref={formRef} className="max-w-[760px] mx-auto">
       <div className="bg-white rounded-[20px] shadow-sm border border-[#E2EDF7]">
         {/* Progress Bar */}
-        <ProgressBar currentStep={currentStep} totalSteps={4} />
+        <ProgressBar currentStep={currentStep} totalSteps={4} maxReachedStep={maxReachedStep} onStepClick={handleStepClick} />
 
         {/* Form Content */}
         <div className="px-6 pb-6 sm:px-10 sm:pb-10">
@@ -284,7 +300,7 @@ export function AngebotForm() {
                 className="w-full sm:w-auto sm:min-w-[240px]"
               >
                 <Send size={17} strokeWidth={2.5} className="mr-2" />
-                Jetzt kostenlos Angebot anfordern
+                Angebot jetzt anfordern
               </Button>
             )}
           </div>

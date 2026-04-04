@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Logo from './Logo'
 import { gtmEvents } from '@/lib/gtm'
-import { Phone, Menu, X } from 'lucide-react'
+import { Phone, Menu, X, Car } from 'lucide-react'
 
 export default function Header({ telefon }: { telefon: string }) {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -32,10 +32,10 @@ export default function Header({ telefon }: { telefon: string }) {
   }
 
   const navItems = [
-    { href: '/fahrzeug-verkaufen', label: 'Auto verkaufen' },
     { href: '/so-funktionierts', label: "So funktioniert's" },
     { href: '/haendler', label: 'Händler' },
     { href: '/faq', label: 'FAQ' },
+    { href: '/ueber-uns', label: 'Über uns' },
   ]
 
   return (
@@ -57,24 +57,14 @@ export default function Header({ telefon }: { telefon: string }) {
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
               {navItems.map((item) => (
-                item.href === '/fahrzeug-verkaufen' ? (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="px-4 py-1.5 bg-[#0369A1] hover:bg-[#025d8f] text-[#f5f8f7] font-semibold rounded-full transition-colors duration-200 text-sm"
-                  >
-                    {item.label}
-                  </Link>
-                ) : (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="text-[#0F172A] hover:text-[#0369A1] transition-colors duration-200 font-medium relative group"
-                  >
-                    {item.label}
-                    <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-[#0369A1] group-hover:w-full transition-all duration-200" />
-                  </Link>
-                )
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="text-[#0F172A] hover:text-[#0369A1] transition-colors duration-200 font-medium relative group"
+                >
+                  {item.label}
+                  <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-[#0369A1] group-hover:w-full transition-all duration-200" />
+                </Link>
               ))}
             </nav>
 
@@ -96,9 +86,9 @@ export default function Header({ telefon }: { telefon: string }) {
               <Link
                 href="/fahrzeug-verkaufen"
                 onClick={() => gtmEvents.form_start({ page: 'header' })}
-                className="hidden sm:inline-flex items-center px-4 py-2.5 bg-[#FB6F6F] hover:bg-[#f95c5c] text-white font-semibold rounded-lg transition-colors duration-200 text-sm min-h-[48px]"
+                className="hidden sm:inline-flex items-center px-5 py-2.5 bg-[#FB6F6F] hover:bg-[#f95c5c] text-white font-semibold rounded-lg transition-colors duration-200 text-sm min-h-[48px]"
               >
-                Kostenlos bewerten
+                Auto jetzt verkaufen
               </Link>
 
               {/* Mobile Menu Button */}
@@ -117,50 +107,67 @@ export default function Header({ telefon }: { telefon: string }) {
         </div>
       </header>
 
-      {/* Mobile Fullscreen Overlay */}
+      {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-40 bg-[#0F172A] flex flex-col pt-16">
-          <div className="flex flex-col px-6 py-8 space-y-2 flex-1">
+        <div className="md:hidden fixed inset-0 z-40 flex flex-col pt-16" style={{ background: 'linear-gradient(160deg, #0F172A 0%, #1a2744 100%)' }}>
+          {/* Nav-Links */}
+          <nav className="flex flex-col px-5 pt-4">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className={
-                  item.href === '/fahrzeug-verkaufen'
-                    ? 'text-[#0EA5E9] hover:text-white transition-colors duration-200 font-bold text-2xl py-4 border-b border-white/10'
-                    : 'text-white hover:text-[#0EA5E9] transition-colors duration-200 font-semibold text-2xl py-4 border-b border-white/10'
-                }
+                className="flex items-center gap-3 px-3 py-3.5 rounded-xl mb-1 text-white/90 font-semibold text-[17px] active:bg-white/10 transition-colors duration-150"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {item.label}
               </Link>
             ))}
+          </nav>
 
-            <div className="pt-8 space-y-4">
-              {telefon && (
-                <a
-                  href={`tel:${telefon}`}
-                  onClick={() => {
-                    handlePhoneClick()
-                    setIsMobileMenuOpen(false)
-                  }}
-                  className="flex items-center space-x-3 text-white hover:text-[#0EA5E9] transition-colors duration-200 font-medium py-3 min-h-[48px]"
-                >
-                  <Phone size={20} strokeWidth={2.5} />
-                  <span>{telefon}</span>
-                </a>
-              )}
+          {/* Divider */}
+          <div className="mx-5 mt-2 mb-4 h-px bg-white/10" />
 
-              <Link
-                href="/fahrzeug-verkaufen"
-                onClick={() => {
-                  gtmEvents.form_start({ page: 'header_mobile' })
-                  setIsMobileMenuOpen(false)
-                }}
-                className="flex items-center justify-center w-full px-6 py-4 bg-[#FB6F6F] hover:bg-[#f95c5c] text-white font-bold rounded-xl transition-colors duration-200 text-lg min-h-[56px]"
+          {/* CTA + Phone */}
+          <div className="px-5 space-y-3">
+            <Link
+              href="/fahrzeug-verkaufen"
+              onClick={() => { gtmEvents.form_start({ page: 'header_mobile' }); setIsMobileMenuOpen(false) }}
+              className="flex items-center justify-center w-full px-6 py-3.5 bg-[#FB6F6F] hover:bg-[#f95c5c] active:bg-[#f95c5c] text-white font-bold rounded-xl transition-colors duration-200 text-[15px] min-h-[52px]"
+            >
+              Auto jetzt verkaufen
+            </Link>
+
+            {telefon && (
+              <a
+                href={`tel:${telefon}`}
+                onClick={() => { handlePhoneClick(); setIsMobileMenuOpen(false) }}
+                className="flex items-center gap-3 px-3 py-3 rounded-xl text-white/80 font-medium text-[15px] min-h-[48px] active:bg-white/15 transition-colors duration-150"
+                style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}
               >
-                Kostenlos bewerten
-              </Link>
+                <Phone size={18} strokeWidth={2} className="text-[#38BDF8] shrink-0" />
+                <span>{telefon}</span>
+              </a>
+            )}
+          </div>
+
+          {/* Footer-Links */}
+          <div className="mt-auto px-5 pb-8 pt-6">
+            <div className="h-px bg-white/10 mb-4" />
+            <div className="flex flex-wrap gap-x-4 gap-y-2">
+              {[
+                { href: '/impressum', label: 'Impressum' },
+                { href: '/datenschutz', label: 'Datenschutz' },
+                { href: '/agb', label: 'AGB' },
+              ].map(l => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-white/35 hover:text-white/60 text-xs transition-colors duration-150"
+                >
+                  {l.label}
+                </Link>
+              ))}
             </div>
           </div>
         </div>

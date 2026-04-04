@@ -9,13 +9,12 @@ import {
   GETRIEBE_OPTIONS,
   BAUFORM_OPTIONS,
   TUEREN_OPTIONS,
-  HU_OPTIONS,
+  HU_JAHR_OPTIONS,
   FARBEN_OPTIONS,
 } from '@/constants/formOptions';
-import { Select } from '@/components/ui/Select';
 import { Input } from '@/components/ui/Input';
 import { FieldTooltip } from '@/components/form/FieldTooltip';
-import { ComboboxInput } from '@/components/ui/ComboboxInput';
+import { ChipSelect } from '@/components/ui/ChipSelect';
 
 interface Step1Props {
   data: Partial<AnfrageFormData>;
@@ -23,32 +22,62 @@ interface Step1Props {
   errors: Partial<Record<keyof AnfrageFormData, string>>;
 }
 
-const MONTHS = [
-  { value: '1', label: 'Januar' },
-  { value: '2', label: 'Februar' },
-  { value: '3', label: 'März' },
-  { value: '4', label: 'April' },
-  { value: '5', label: 'Mai' },
-  { value: '6', label: 'Juni' },
-  { value: '7', label: 'Juli' },
-  { value: '8', label: 'August' },
-  { value: '9', label: 'September' },
-  { value: '10', label: 'Oktober' },
-  { value: '11', label: 'November' },
-  { value: '12', label: 'Dezember' },
+const MARKEN_SECTIONS = [
+  { label: 'Beliebte Marken', items: MARKEN_BELIEBTESTE },
+  { label: 'Alle Marken', items: [...MARKEN_ALLE, 'Sonstige'] },
 ];
 
-const currentYear = new Date().getFullYear();
-const YEARS = Array.from({ length: currentYear - 1949 }, (_, i) => {
-  const y = currentYear - i;
-  return { value: String(y), label: String(y) };
-});
 
-function toOpts(arr: string[]) {
-  return arr.map((v) => ({ value: v, label: v }));
+const MONTH_LABELS = [
+  'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+  'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember',
+];
+
+const THIS_YEAR = new Date().getFullYear();
+const YEAR_OPTIONS = [
+  ...Array.from({ length: THIS_YEAR - 1949 }, (_, i) => String(THIS_YEAR - i)),
+  'Vor 1950',
+];
+
+// Hilfsfunktionen für Erstzulassungs-Konvertierung
+function jahrToOption(jahr: number | undefined): string {
+  if (jahr === undefined) return '';
+  if (jahr === 0) return 'Vor 1950';
+  return String(jahr);
+}
+function optionToJahr(opt: string): number | undefined {
+  if (!opt) return undefined;
+  if (opt === 'Vor 1950') return 0;
+  return Number(opt);
+}
+function monatToOption(monat: number | undefined): string {
+  if (!monat) return '';
+  return MONTH_LABELS[monat - 1] ?? '';
+}
+function optionToMonat(opt: string): number | undefined {
+  if (!opt) return undefined;
+  const idx = MONTH_LABELS.indexOf(opt);
+  return idx >= 0 ? idx + 1 : undefined;
 }
 
-const SELECT_CLASS = 'form-field';
+// HU-Hilfsfunktionen: "März 2026" ↔ zwei separate Felder
+const HU_SONDER = ['Abgelaufen', 'Keine HU'];
+function huBisToJahr(huBis: string): string {
+  if (!huBis) return '';
+  if (HU_SONDER.includes(huBis)) return huBis;
+  const parts = huBis.split(' ');
+  return parts.length === 2 ? parts[1] : huBis;
+}
+function huBisToMonat(huBis: string): string {
+  if (!huBis || HU_SONDER.includes(huBis)) return '';
+  const parts = huBis.split(' ');
+  return parts.length === 2 ? parts[0] : '';
+}
+function buildHuBis(jahr: string, monat: string): string {
+  if (!jahr) return '';
+  if (HU_SONDER.includes(jahr)) return jahr;
+  return monat ? `${monat} ${jahr}` : jahr;
+}
 
 function ToggleField({
   label,
@@ -93,79 +122,65 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
         <p className="mt-1 text-sm text-[#64748B]">Felder ohne <span className="text-[#94A3B8]">(optional)</span> sind Pflichtfelder.</p>
       </div>
 
-      {/* Marke mit Optgroups + Modell */}
+      {/* Marke + Modell als Chip-Auswahl */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1">
-          <label className="text-[11px] font-semibold text-[#0F172A] uppercase tracking-wide">
-            Marke
-          </label>
-          <ComboboxInput
-            options={[...MARKEN_BELIEBTESTE, ...MARKEN_ALLE, 'Sonstige']}
-            value={data.marke ?? ''}
-            onValueChange={(v) => onChange({ marke: v })}
-            placeholder="Marke tippen oder wählen"
-            autoCapitalize="words"
-            className={SELECT_CLASS}
-          />
-          {errors.marke && <span className="text-xs text-[#EF4444]">{errors.marke}</span>}
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label className="text-[11px] font-semibold text-[#0F172A] uppercase tracking-wide flex items-center gap-1">
-            Modell
-          </label>
-          <ComboboxInput
-            options={MODELLE_PRO_MARKE[data.marke ?? ''] ?? []}
-            value={data.modell ?? ''}
-            onValueChange={(v) => onChange({ modell: v })}
-            placeholder="z.B. Golf, 3er, A4"
-            autoCapitalize="words"
-            className={SELECT_CLASS}
-          />
-          {errors.modell && <span className="text-xs text-[#EF4444]">{errors.modell}</span>}
-        </div>
+        <ChipSelect
+          label="Marke"
+          required
+          sections={MARKEN_SECTIONS}
+          value={data.marke ?? ''}
+          onChange={(v) => onChange({ marke: v, modell: '' })}
+          placeholder="Marke eingeben z.B. BMW, VW..."
+          rightPanel
+          error={errors.marke}
+        />
+        <ChipSelect
+          label="Modell"
+          required
+          options={MODELLE_PRO_MARKE[data.marke ?? ''] ?? []}
+          value={data.modell ?? ''}
+          onChange={(v) => onChange({ modell: v })}
+          placeholder="Modell eingeben z.B. Golf, A4..."
+          rightPanel
+          error={errors.modell}
+        />
       </div>
 
-      {/* Erstzulassung */}
-      <div className="grid grid-cols-2 gap-4 items-end">
-        <Select
-          label="Erstzulassung Monat (optional)"
-          placeholder="Monat"
-          value={data.erstzulassungMonat ? String(data.erstzulassungMonat) : ''}
-          options={MONTHS}
-          onChange={(e) => onChange({ erstzulassungMonat: Number(e.target.value) })}
-        />
-        <div className="flex flex-col gap-1">
-          <label className="text-[11px] font-semibold text-[#0F172A] uppercase tracking-wide">
-            Erstzulassung Jahr
-          </label>
-          <ComboboxInput
-            options={YEARS.map(y => y.value)}
-            inputMode="numeric"
-            placeholder="z.B. 2018"
-            value={data.erstzulassungJahr ? String(data.erstzulassungJahr) : ''}
-            onValueChange={(v) => {
-              const n = Number(v)
-              if (!isNaN(n) && n > 0) onChange({ erstzulassungJahr: n })
-              else if (v === '') onChange({ erstzulassungJahr: undefined })
-            }}
-            className={SELECT_CLASS}
+      {/* Erstzulassung: Jahr (Pflicht) + Monat (optional) */}
+      <div className="flex flex-col gap-2">
+        <span className="text-[11px] font-semibold uppercase tracking-wide text-[#0F172A]">
+          Erstzulassung
+        </span>
+        <div className="grid grid-cols-2 gap-4">
+          <ChipSelect
+            label="Jahr"
+            required
+            options={YEAR_OPTIONS}
+            value={jahrToOption(data.erstzulassungJahr)}
+            onChange={(v) => onChange({ erstzulassungJahr: optionToJahr(v) })}
+            placeholder="Jahr wählen"
+            rightPanel
+            error={errors.erstzulassungJahr}
           />
-          {errors.erstzulassungJahr && (
-            <span className="text-xs text-[#EF4444]">{errors.erstzulassungJahr}</span>
-          )}
+          <ChipSelect
+            label="Monat"
+            options={MONTH_LABELS}
+            value={monatToOption(data.erstzulassungMonat)}
+            onChange={(v) => onChange({ erstzulassungMonat: optionToMonat(v) })}
+            placeholder="Monat (optional)"
+          />
         </div>
       </div>
 
       {/* Kraftstoff */}
-      <Select
+      <ChipSelect
         label="Kraftstoff"
         required
         placeholder="Kraftstoff wählen"
         value={data.kraftstoff ?? ''}
-        options={toOpts(KRAFTSTOFF_OPTIONS)}
+        options={KRAFTSTOFF_OPTIONS}
         error={errors.kraftstoff}
-        onChange={(e) => onChange({ kraftstoff: e.target.value })}
+        onChange={(v) => onChange({ kraftstoff: v })}
       />
 
       {/* Schadstoffklasse – nicht bei Elektro */}
@@ -177,11 +192,11 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
             </label>
             <FieldTooltip text="Zu finden in Feld V.9 Ihres Fahrzeugscheins (Zulassungsbescheinigung Teil I)." />
           </div>
-          <Select
+          <ChipSelect
             placeholder="Schadstoffklasse"
             value={data.schadstoffklasse ?? ''}
-            options={toOpts(SCHADSTOFFKLASSE_OPTIONS)}
-            onChange={(e) => onChange({ schadstoffklasse: e.target.value })}
+            options={SCHADSTOFFKLASSE_OPTIONS}
+            onChange={(v) => onChange({ schadstoffklasse: v })}
           />
         </div>
       )}
@@ -231,35 +246,35 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
       {/* Getriebe (entfällt bei Elektro) + Bauform */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {!isElektro && (
-          <Select
+          <ChipSelect
             label="Getriebe"
             required
             placeholder="Getriebe wählen"
             value={data.getriebe ?? ''}
-            options={toOpts(GETRIEBE_OPTIONS)}
+            options={GETRIEBE_OPTIONS}
             error={errors.getriebe}
-            onChange={(e) => onChange({ getriebe: e.target.value })}
+            onChange={(v) => onChange({ getriebe: v })}
           />
         )}
-        <Select
+        <ChipSelect
           label="Bauform"
           required
           placeholder="Bauform wählen"
           value={data.bauform ?? ''}
-          options={toOpts(BAUFORM_OPTIONS)}
+          options={BAUFORM_OPTIONS}
           error={errors.bauform}
-          onChange={(e) => onChange({ bauform: e.target.value })}
+          onChange={(v) => onChange({ bauform: v })}
         />
       </div>
 
       {/* Türen + Sitze */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Select
+        <ChipSelect
           label="Türen"
           placeholder="Türen wählen"
           value={data.anzahlTueren ?? ''}
-          options={toOpts(TUEREN_OPTIONS)}
-          onChange={(e) => onChange({ anzahlTueren: e.target.value })}
+          options={TUEREN_OPTIONS}
+          onChange={(v) => onChange({ anzahlTueren: v })}
         />
         <Input
           label="Sitze"
@@ -273,49 +288,61 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
         />
       </div>
 
-      {/* HU + Farbe */}
+      {/* Kilometerstand + Fahrzeugfarbe */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-1.5">
-            <label className="text-[11px] font-semibold text-[#0F172A] uppercase tracking-wide">
-              HU gültig bis
-            </label>
-            <FieldTooltip text="Aufgedruckt auf dem TÜV-Aufkleber an Ihrem Kennzeichen. Monat/Jahr." />
-          </div>
-          <Select
-            placeholder="HU wählen"
-            value={data.huBis ?? ''}
-            options={toOpts(HU_OPTIONS)}
-            onChange={(e) => onChange({ huBis: e.target.value })}
+          <Input
+            label="Kilometerstand"
+            required
+            type="number"
+            inputMode="numeric"
+            placeholder="z.B. 85000"
+            min={0}
+            value={data.kilometerstand ?? ''}
+            error={errors.kilometerstand}
+            onChange={(e) => onChange({ kilometerstand: e.target.value ? Number(e.target.value) : undefined })}
           />
+          {(data.kilometerstand ?? 0) > 0 && (
+            <p className="text-xs text-[#0369A1] mt-0.5">
+              = {(data.kilometerstand ?? 0).toLocaleString('de-DE')} km
+            </p>
+          )}
         </div>
-        <Select
-          label="Farbe"
+        <ChipSelect
+          label="Fahrzeugfarbe"
           placeholder="Farbe wählen"
           value={data.farbe ?? ''}
-          options={toOpts(FARBEN_OPTIONS)}
-          onChange={(e) => onChange({ farbe: e.target.value })}
+          options={FARBEN_OPTIONS}
+          onChange={(v) => onChange({ farbe: v })}
         />
       </div>
 
-      {/* Kilometerstand mit formatierter Anzeige */}
-      <div className="flex flex-col gap-1">
-        <Input
-          label="Kilometerstand"
-          required
-          type="number"
-          inputMode="numeric"
-          placeholder="z.B. 85000"
-          min={0}
-          value={data.kilometerstand ?? ''}
-          error={errors.kilometerstand}
-          onChange={(e) => onChange({ kilometerstand: e.target.value ? Number(e.target.value) : undefined })}
-        />
-        {(data.kilometerstand ?? 0) > 0 && (
-          <p className="text-xs text-[#0369A1] mt-0.5">
-            = {(data.kilometerstand ?? 0).toLocaleString('de-DE')} km
-          </p>
-        )}
+      {/* HU gültig bis: Monat + Jahr in einer Zeile */}
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-1.5">
+          <span className="text-[11px] font-semibold uppercase tracking-wide text-[#0F172A]">
+            HU gültig bis
+          </span>
+          <FieldTooltip text="Aufgedruckt auf dem TÜV-Aufkleber an Ihrem Kennzeichen. Monat/Jahr." />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <ChipSelect
+            label="Monat"
+            placeholder="Monat wählen"
+            value={huBisToMonat(data.huBis ?? '')}
+            options={MONTH_LABELS}
+            disabled={HU_SONDER.includes(huBisToJahr(data.huBis ?? ''))}
+            onChange={(v) => onChange({ huBis: buildHuBis(huBisToJahr(data.huBis ?? ''), v) })}
+          />
+          <ChipSelect
+            label="Jahr"
+            placeholder="Jahr wählen"
+            value={huBisToJahr(data.huBis ?? '')}
+            options={HU_JAHR_OPTIONS}
+            onChange={(v) => onChange({ huBis: buildHuBis(v, HU_SONDER.includes(v) ? '' : huBisToMonat(data.huBis ?? '')) })}
+          />
+        </div>
+        {errors.huBis && <span className="text-xs text-[#EF4444]">{errors.huBis}</span>}
       </div>
 
       {/* Toggle-Felder */}

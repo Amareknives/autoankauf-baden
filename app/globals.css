@@ -120,6 +120,22 @@ input[type='number'] {
   color: #0F172A;
 }
 
+/* Blaue Scrollbar für Dropdown-Listen */
+.dropdown-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.dropdown-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+}
+.dropdown-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 2px;
+}
+.dropdown-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.65);
+}
+
 /* Animation keyframes */
 @keyframes fadeIn {
   from {

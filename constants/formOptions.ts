@@ -8,17 +8,22 @@ export const SCHADSTOFFKLASSE_OPTIONS = [
 ];
 export const GETRIEBE_OPTIONS = ['Schaltgetriebe', 'Automatik', 'Halbautomatik'];
 export const BAUFORM_OPTIONS = [
-  'Limousine', 'Kombi', 'SUV', 'Gelaendewagen', 'Cabrio', 'Coupe',
+  'Limousine', 'Kombi', 'SUV', 'Geländewagen', 'Cabrio', 'Coupé',
   'Van/Minivan', 'Kleintransporter', 'Andere',
 ];
 export const TUEREN_OPTIONS = ['2/3', '4/5'];
-export const HU_OPTIONS = ['Neu (frische HU)', '2025', '2026', '2027', 'Abgelaufen', 'Keine HU'];
+const _HU_YEAR = new Date().getFullYear();
+export const HU_JAHR_OPTIONS = [
+  'Keine HU',
+  'Abgelaufen',
+  ...Array.from({ length: 6 }, (_, i) => String(_HU_YEAR + 2 - i)),
+];
 export const FARBEN_OPTIONS = [
-  'Schwarz', 'Weiss', 'Silber', 'Grau', 'Blau', 'Rot', 'Gruen', 'Braun',
+  'Schwarz', 'Weiß', 'Silber', 'Grau', 'Blau', 'Rot', 'Grün', 'Braun',
   'Beige', 'Gold', 'Orange', 'Gelb', 'Violett', 'Andere',
 ];
 export const ZUSTAND_LABELS: Record<number, string> = {
-  1: 'Stark beschaedigt',
+  1: 'Stark beschädigt',
   2: 'Viele Gebrauchsspuren',
   3: 'Normal gebraucht',
   4: 'Gut gepflegt',
@@ -26,7 +31,7 @@ export const ZUSTAND_LABELS: Record<number, string> = {
 };
 export const FAHRBEREITSCHAFT_OPTIONS = [
   'Ja, voll fahrbereit',
-  'Bedingt fahrbereit (kleine Maengel)',
+  'Bedingt fahrbereit (kleine Mängel)',
   'Nicht fahrbereit',
 ];
 export const UNFALLFAHRZEUG_OPTIONS = [
@@ -35,7 +40,7 @@ export const UNFALLFAHRZEUG_OPTIONS = [
   'Ja, Unfallfahrzeug (nicht repariert)',
 ];
 export const VERKAUFSZEITPUNKT_OPTIONS = [
-  'So schnell wie moeglich',
+  'So schnell wie möglich',
   'Innerhalb von 2 Wochen',
   'Innerhalb von 1 Monat',
   'Ich bin noch unentschlossen',
