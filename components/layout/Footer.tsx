@@ -1,8 +1,8 @@
 import Link from 'next/link'
-import Logo from './Logo'
 import { getSiteSettings } from '@/lib/siteSettings'
 import { FooterContactLinks } from './FooterContactLinks'
 import { FooterInstallButton } from './FooterInstallButton'
+import { FooterLogoEgg } from './FooterLogoEgg'
 
 const SOCIAL_ICONS: Record<string, { label: string; svg: React.ReactNode }> = {
   social_facebook: {
@@ -100,9 +100,9 @@ export default async function Footer() {
 
           {/* Spalte 1+2: Logo + Kontakt + Erreichbarkeit + Social */}
           <div className="lg:col-span-2">
-            <Link href="/" className="inline-block mb-3">
-              <Logo variant="dark" height={32} showText={false} />
-            </Link>
+            <div className="inline-block mb-3">
+              <FooterLogoEgg />
+            </div>
             <p className="text-white/60 text-sm leading-relaxed mb-3">
               Seit 6 Jahren fair, schnell &amp; persönlich.
             </p>

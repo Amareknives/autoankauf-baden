@@ -32,7 +32,7 @@ export default function HowItWorks() {
   return (
     <section
       id="wie-funktionierts"
-      className="py-12 md:py-20 bg-gradient-to-br from-[#0369A1] to-[#0284C7]"
+      className="py-12 md:py-20 bg-[#0F172A]"
     >
       <div className="container mx-auto px-4 md:px-6 lg:px-8">
 

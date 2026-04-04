@@ -2,9 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 import Header from './Header'
-import WhatsAppButton from './WhatsAppButton'
-import AnrufButton from './AnrufButton'
-import StickyMobileCTA from './StickyMobileCTA'
+import FloatingButtons from './FloatingButtons'
 
 export default function ClientLayout({
   children,
@@ -24,9 +22,7 @@ export default function ClientLayout({
       <main className={isDashboard ? 'flex-1' : 'flex-1 pt-16'}>
         {children}
       </main>
-      {!isDashboard && <WhatsAppButton nummer={whatsapp} />}
-      {!isDashboard && <AnrufButton nummer={telefon} />}
-      {!isDashboard && <StickyMobileCTA />}
+      {!isDashboard && <FloatingButtons whatsapp={whatsapp} telefon={telefon} />}
     </>
   )
 }
