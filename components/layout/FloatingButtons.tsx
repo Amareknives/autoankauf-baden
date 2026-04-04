@@ -10,18 +10,14 @@ interface Props {
 }
 
 export default function FloatingButtons({ whatsapp, telefon }: Props) {
-  const [retracted, setRetracted] = useState(false)
-  const [manualExpanded, setManualExpanded] = useState(false)
+  const [visible, setVisible] = useState(true)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
-
-  const expanded = !retracted || manualExpanded
 
   useEffect(() => {
     const handleScroll = () => {
-      setRetracted(true)
-      setManualExpanded(false)
       clearTimeout(timerRef.current)
-      timerRef.current = setTimeout(() => setRetracted(false), 2000)
+      setVisible(false)
+      timerRef.current = setTimeout(() => setVisible(true), 2000)
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => {
@@ -29,6 +25,11 @@ export default function FloatingButtons({ whatsapp, telefon }: Props) {
       clearTimeout(timerRef.current)
     }
   }, [])
+
+  const handleTabClick = () => {
+    clearTimeout(timerRef.current)
+    setVisible((v) => !v)
+  }
 
   const cleanWa = whatsapp?.replace(/[\s+\-()]/g, '') ?? ''
 
@@ -54,16 +55,16 @@ export default function FloatingButtons({ whatsapp, telefon }: Props) {
         className="md:hidden fixed bottom-5 right-0 z-40 flex items-center"
         style={{
           transition: 'transform 350ms cubic-bezier(0.4,0,0.2,1)',
-          transform: expanded ? 'translateX(0)' : 'translateX(76px)',
+          transform: visible ? 'translateX(0)' : 'translateX(76px)',
         }}
       >
         {/* Arrow Tab – immer sichtbarer Streifen */}
         <button
-          onClick={() => setManualExpanded((v) => !v)}
+          onClick={handleTabClick}
           className="flex-shrink-0 w-5 h-14 bg-[#0369A1] rounded-l-xl flex items-center justify-center shadow-md"
-          aria-label={expanded ? 'Buttons ausblenden' : 'Kontakt anzeigen'}
+          aria-label={visible ? 'Buttons ausblenden' : 'Kontakt anzeigen'}
         >
-          {expanded
+          {visible
             ? <ChevronRight size={12} color="white" strokeWidth={3} />
             : <ChevronLeft size={12} color="white" strokeWidth={3} />
           }
