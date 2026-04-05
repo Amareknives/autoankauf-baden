@@ -117,7 +117,7 @@ export default function FahrzeugeKaufenPage() {
               <div className="max-w-[580px]">
                 <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-5">
                   <span className="w-2 h-2 rounded-full bg-[#22C55E] animate-pulse flex-shrink-0" />
-                  <span className="text-white text-sm font-medium">Unser Partnerstandort · Graben-Neudorf</span>
+                  <span className="text-white text-sm font-medium">Unser Verkaufsstandort · Graben-Neudorf</span>
                 </div>
                 <h1 className="font-black text-white mb-4 leading-tight" style={{ fontSize: 'clamp(26px, 3.8vw, 42px)' }}>
                   Direkt neu kaufen –<br />Altfahrzeug verrechnen
@@ -125,8 +125,8 @@ export default function FahrzeugeKaufenPage() {
                 <p className="text-white/80 text-[15px] leading-relaxed max-w-lg mb-8">
                   Du möchtest dein Auto verkaufen und gleichzeitig ein neues finden?
                   <strong className="text-white"> AutoAnkauf Baden</strong> macht das einfach –
-                  fairer Ankauf, große Fahrzeugauswahl und Werkstattservice in unserer
-                  Verkaufsausstellung bei{' '}
+                  fairer Ankauf, große Fahrzeugauswahl und Werkstattservice –
+                  direkt bei unserem AutoAnkauf Baden Verkaufsstandort{' '}
                   <strong className="text-white">Autohaus Stern</strong> in Graben-Neudorf.
                   Alles in einem Vorgang, ein Ansprechpartner.
                 </p>
@@ -245,7 +245,7 @@ export default function FahrzeugeKaufenPage() {
             {/* Header – dunkel wie Sidebar */}
             <div className="px-6 py-6 flex items-start justify-between gap-4" style={{ backgroundColor: '#212121', borderTop: '5px solid #212121', borderBottom: '5px solid #212121' }}>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: '#EAB308' }}>Partnerstandort</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: '#EAB308' }}>Unser Verkaufsstandort</p>
                 <h2 className="text-[18px] md:text-[20px] font-extrabold leading-snug" style={{ color: '#FFFFFF' }}>{AUTOHAUS_NAME}</h2>
                 <p className="text-sm mt-0.5" style={{ color: '#FB6F6F' }}>{AUTOHAUS_ADRESSE}</p>
               </div>

@@ -179,7 +179,7 @@ const kategorien = [
       {
         frage: 'Bietet ihr auch Fahrzeuge zum Kauf an?',
         antwort:
-          'Ja! Unser Partnerstandort Autohaus Stern in Graben-Neudorf bietet eine große Auswahl an gepflegten Fahrzeugen aller Marken. Du kannst direkt vor Ort vorbeikommen und dich beraten lassen – persönlicher Service, faire Preise.',
+          'Ja! Autohaus Stern in Graben-Neudorf – unser AutoAnkauf Baden Verkaufsstandort – bietet eine große Auswahl an gepflegten Fahrzeugen aller Marken. Du kannst direkt vor Ort vorbeikommen und dich beraten lassen – persönlicher Service, faire Preise.',
       },
       {
         frage: 'Wie läuft die Inzahlungnahme genau ab?',

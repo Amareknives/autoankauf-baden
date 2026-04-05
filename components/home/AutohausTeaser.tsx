@@ -16,7 +16,7 @@ export default function AutohausTeaser() {
                 Auch auf der Suche nach einem Fahrzeug?
               </p>
               <p className="text-[12px] mt-0.5" style={{ color: 'rgba(255,255,255,0.55)' }}>
-                Ankauf & Verkauf aus einer Hand · Inzahlungnahme · Werkstatt & Service
+                Autohaus Stern – unser AutoAnkauf Baden Verkaufsstandort · Inzahlungnahme · Werkstatt
               </p>
             </div>
           </div>

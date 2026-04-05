@@ -38,7 +38,7 @@ const faqs = [
   },
   {
     question: 'Bietet ihr auch Fahrzeuge zum Kauf an oder kann ich verrechnen?',
-    answer: 'Ja! Unser Partnerstandort Autohaus Stern in Graben-Neudorf bietet eine große Auswahl an gepflegten Fahrzeugen. Direkte Inzahlungnahme deines Altfahrzeugs ist möglich. Werkstatt & Service sind ebenfalls vor Ort verfügbar. Mehr Infos: autoankauf-baden.de/fahrzeuge-kaufen',
+    answer: 'Ja! Autohaus Stern in Graben-Neudorf ist unser eigener AutoAnkauf Baden Verkaufsstandort – mit großer Fahrzeugauswahl, direkter Inzahlungnahme und Werkstatt & Service vor Ort. Mehr Infos: autoankauf-baden.de/fahrzeuge-kaufen',
   },
   {
     question: 'Wie läuft die Inzahlungnahme genau ab?',

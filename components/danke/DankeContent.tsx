@@ -102,8 +102,8 @@ export function DankeContent({ waNummerClean }: { waNummerClean: string }) {
           </div>
           <div className="px-4 py-3" style={{ backgroundColor: '#18181B' }}>
             <p className="text-xs leading-relaxed mb-2.5" style={{ color: 'rgba(255,255,255,0.6)' }}>
-              Unser Partnerstandort <strong className="text-white">{AUTOHAUS_NAME}</strong> hat eine große Auswahl –
-              direkte Inzahlungnahme deines Altfahrzeugs möglich.
+              <strong className="text-white">{AUTOHAUS_NAME}</strong> – unser AutoAnkauf Baden Verkaufsstandort in Graben-Neudorf.
+              Große Auswahl, direkte Inzahlungnahme möglich.
             </p>
             <Link
               href="/fahrzeuge-kaufen"
