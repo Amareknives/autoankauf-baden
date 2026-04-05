@@ -164,11 +164,24 @@ export function eingangsbestaetigung(params: {
     <p style="margin:0 0 16px;color:#94A3B8;font-size:13px;text-align:center;">
       Fragen? <a href="tel:+4917664179764" style="color:#0369A1;text-decoration:none;">+49 176 64179764</a>
     </p>
-    <p style="margin:0;color:#94A3B8;font-size:12px;line-height:1.7;border-top:1px solid #F1F5F9;padding-top:16px;">
+    <p style="margin:0 0 20px;color:#94A3B8;font-size:12px;line-height:1.7;border-top:1px solid #F1F5F9;padding-top:16px;">
       <strong style="color:#64748B;">Ein kurzer Hinweis:</strong> Wir prüfen deine Anfrage persönlich und melden uns schnellstmöglich.<br>
       Wir sind <strong style="color:#64748B;">Mo–Fr 6–18 Uhr</strong> und <strong style="color:#64748B;">Sa 6–13 Uhr</strong> erreichbar.
       Anfragen außerhalb dieser Zeiten werden am nächsten Werktag bearbeitet. Wir danken dir für dein Verständnis!
     </p>
+
+    <!-- P.S. Partnerhinweis -->
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td style="background:#1C1917;border-left:3px solid #EAB308;border-radius:6px;padding:12px 16px;">
+          <p style="margin:0 0 3px;color:#EAB308;font-size:11px;font-weight:700;letter-spacing:0.5px;">P.S. – Auch auf der Suche nach einem neuen Fahrzeug?</p>
+          <p style="margin:0;color:rgba(255,255,255,0.55);font-size:12px;line-height:1.6;">
+            Unser Partnerstandort <strong style="color:rgba(255,255,255,0.8);">Autohaus Stern</strong> in Graben-Neudorf bietet eine große Auswahl – Inzahlungnahme direkt möglich.<br>
+            <a href="${BASE_URL}/fahrzeuge-kaufen" style="color:#EAB308;text-decoration:none;font-weight:600;">Mehr Infos →</a>
+          </p>
+        </td>
+      </tr>
+    </table>
   `, `Deine Anfrage für ${params.marke} ${params.modell} ist eingegangen`)
 
   return { subject, html }
