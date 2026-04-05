@@ -42,7 +42,7 @@ const faqs = [
   },
   {
     question: 'Wie läuft die Inzahlungnahme genau ab?',
-    answer: 'Du bringst dein Altfahrzeug einfach mit zum Termin beim Autohaus Stern in Graben-Neudorf. Wir bewerten dein Fahrzeug fair und rechnen den Wert direkt als Anzahlung auf dein neues Auto an. Kein Umweg über privaten Verkauf, kein Stress – alles in einem Termin erledigt.',
+    answer: 'Am einfachsten: Erst online anfragen und eine kostenlose Erstbewertung für dein Altfahrzeug anfordern. So siehst du schon vorab, ob ein Ankauf in Frage kommt. Passt beides – Ankauf und ein passendes Fahrzeug bei uns – sprechen wir im nächsten Schritt über eine Verrechnung. Natürlich kannst du auch direkt bei Autohaus Stern in Graben-Neudorf vorbeikommen, aber die Online-Anfrage spart Zeit und schafft Klarheit.',
   },
   {
     question: 'Welche Werkstatt- und Serviceleistungen bietet ihr an?',
