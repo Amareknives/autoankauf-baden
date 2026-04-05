@@ -9,6 +9,7 @@ import HaendlerTeaser from '@/components/home/HaendlerTeaser'
 import StadtGrid from '@/components/home/StadtGrid'
 import FaqAccordion from '@/components/home/FaqAccordion'
 import WertRechner from '@/components/home/WertRechner'
+import AutohausTeaser from '@/components/home/AutohausTeaser'
 
 export const metadata: Metadata = {
   title: 'Autoankauf Baden – Fair & Schnell | AutoAnkauf-Baden',
@@ -126,6 +127,7 @@ export default function HomePage() {
         <HaendlerTeaser />
         <StadtGrid />
         <FaqAccordion />
+        <AutohausTeaser />
       </main>
     </>
   )

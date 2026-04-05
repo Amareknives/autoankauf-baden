@@ -5,3 +5,9 @@ export const FIRMA_EMAIL = process.env.NEXT_PUBLIC_FIRMA_EMAIL || "anfrage@autoa
 export const ADRESSE = process.env.NEXT_PUBLIC_ADRESSE || "Heidelberger Str. 4, 76676 Graben-Neudorf";
 export const INHABER = "Muhammet Demir";
 export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+
+// Partner: Autohaus Stern Graben-Neudorf (gleicher Inhaber)
+export const AUTOHAUS_URL = process.env.NEXT_PUBLIC_AUTOHAUS_URL || "https://autohausstern-graben.de/";
+export const AUTOHAUS_FAHRZEUGE_URL = process.env.NEXT_PUBLIC_AUTOHAUS_FAHRZEUGE_URL || "https://autohausstern-graben.de/fahrzeuge/";
+export const AUTOHAUS_NAME = "Autohaus Stern Graben-Neudorf";
+export const AUTOHAUS_ADRESSE = "Heidelberger Str. 4, 76676 Graben-Neudorf";

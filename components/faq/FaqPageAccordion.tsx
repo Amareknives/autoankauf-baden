@@ -174,6 +174,36 @@ const kategorien = [
     ],
   },
   {
+    titel: 'Fahrzeugkauf, Inzahlungnahme & Werkstatt',
+    items: [
+      {
+        frage: 'Bietet ihr auch Fahrzeuge zum Kauf an?',
+        antwort:
+          'Ja! Unser Partnerstandort Autohaus Stern in Graben-Neudorf bietet eine große Auswahl an gepflegten Fahrzeugen aller Marken. Du kannst direkt vor Ort vorbeikommen und dich beraten lassen – persönlicher Service, faire Preise.',
+      },
+      {
+        frage: 'Wie läuft die Inzahlungnahme genau ab?',
+        antwort:
+          'Du bringst dein Altfahrzeug einfach zum Termin beim Autohaus Stern mit. Wir bewerten es fair und rechnen den Wert direkt als Anzahlung auf dein neues Fahrzeug an. Kein Zwischenverkauf, kein Aufwand – alles in einem Termin.',
+      },
+      {
+        frage: 'Kann ich mein Auto verkaufen und direkt ein neues kaufen?',
+        antwort:
+          'Genau das ist unser Rundum-Angebot. AutoAnkauf Baden kauft dein Fahrzeug an – und beim selben Partnerstandort (Autohaus Stern, Graben-Neudorf) kannst du gleichzeitig ein neues Fahrzeug aussuchen. Ankauf, Inzahlungnahme und Beratung – alles aus einer Hand.',
+      },
+      {
+        frage: 'Welche Werkstatt- und Serviceleistungen gibt es beim Partnerstandort?',
+        antwort:
+          'In unserer Werkstatt beim Autohaus Stern in Graben-Neudorf bieten wir Ölwechsel, TÜV-Vorbereitung, Bremsen-Check und -Wechsel sowie allgemeine Wartungsarbeiten an – zu fairen Preisen mit persönlichem Ansprechpartner vor Ort.',
+      },
+      {
+        frage: 'Wo befindet sich der Partnerstandort Autohaus Stern?',
+        antwort:
+          'Autohaus Stern liegt in Graben-Neudorf, Heidelberger Str. 4 – gut erreichbar aus dem Raum Karlsruhe, Bruchsal, Speyer und Heidelberg. Öffnungszeiten: Mo–Fr 9–18 Uhr, Sa 9–14 Uhr. Mehr Infos unter: autoankauf-baden.de/fahrzeuge-kaufen',
+      },
+    ],
+  },
+  {
     titel: 'Einzugsgebiet & Abholung',
     items: [
       {

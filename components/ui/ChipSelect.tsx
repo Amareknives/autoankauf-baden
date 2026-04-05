@@ -24,6 +24,8 @@ interface ChipSelectProps {
   /** Alias-Map für Suche: { 'Eintrag': ['alias1'] } */
   aliases?: Record<string, string[]>;
   disabled?: boolean;
+  /** Hinweis statt "Keine Ergebnisse" wenn options leer (z.B. "Erst Marke wählen") */
+  emptyHint?: string;
 }
 
 export function ChipSelect({
@@ -38,6 +40,7 @@ export function ChipSelect({
   rightPanel = false,
   aliases = {},
   disabled = false,
+  emptyHint,
 }: ChipSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -45,6 +48,7 @@ export function ChipSelect({
   const [activeIndex, setActiveIndex] = useState(-1);
   const [hoveredIndex, setHoveredIndex] = useState(-1);
   const [isMobile, setIsMobile] = useState(false);
+  const [sheetBottom, setSheetBottom] = useState(0);
   // x-Position des Right Panels (berechnet beim Öffnen per getBoundingClientRect)
   const [panelLeft, setPanelLeft] = useState(0);
 
@@ -100,12 +104,27 @@ export function ChipSelect({
     }, 200);
   };
 
+  // Visual Viewport: Sheet über Tastatur schieben (iOS) oder schrumpfen (Android)
   useEffect(() => {
-    if (visible && isMobile) {
-      const t = setTimeout(() => sheetSearchRef.current?.focus(), 50);
-      return () => clearTimeout(t);
+    if (!isMobile || !isOpen) {
+      setSheetBottom(0);
+      return;
     }
-  }, [visible, isMobile]);
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const update = () => {
+      const offset = Math.max(0, window.innerHeight - vv.height - (vv.offsetTop ?? 0));
+      setSheetBottom(offset);
+    };
+    vv.addEventListener('resize', update);
+    vv.addEventListener('scroll', update);
+    update();
+    return () => {
+      vv.removeEventListener('resize', update);
+      vv.removeEventListener('scroll', update);
+      setSheetBottom(0);
+    };
+  }, [isMobile, isOpen]);
 
   useEffect(() => {
     // Schließen bei Klick außerhalb:
@@ -205,7 +224,19 @@ export function ChipSelect({
 
   // Desktop-Listeninhalt
   const renderDesktopContent = () => {
-    // Leerer Zustand
+    // Keine Optionen vorhanden (z.B. Modell ohne Marke)
+    if (allItems.length === 0 && emptyHint) {
+      return (
+        <li className="flex items-center gap-2.5 px-4 py-4 text-[14px] text-white/60">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" className="shrink-0 opacity-70">
+            <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.5"/>
+            <path d="M8 5v3.5M8 11h.01" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
+          {emptyHint}
+        </li>
+      );
+    }
+    // Leerer Zustand nach Suche
     if (filtered.length === 0 && search) {
       return <li className="px-4 py-3 text-[15px] text-white/60">Keine Ergebnisse</li>;
     }
@@ -262,15 +293,27 @@ export function ChipSelect({
     });
   };
 
-  // Mobile-Listeninhalt (immer flach, sections ignoriert)
+  // Mobile-Listeninhalt (mit Sections + Labels, bei Suche flach)
   const renderMobileContent = () => {
-    const list = search ? filtered : allItems;
-    if (list.length === 0) {
-      return <li className="px-4 py-3 text-[15px] text-white/60">Keine Ergebnisse</li>;
+    // Leerer Zustand
+    if (allItems.length === 0) {
+      const isHint = !!emptyHint;
+      return (
+        <li className="flex items-center gap-2.5 px-4 py-4 text-[14px] text-white/60">
+          {isHint && (
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" className="shrink-0 opacity-70">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.5"/>
+              <path d="M8 5v3.5M8 11h.01" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          )}
+          {isHint ? emptyHint : 'Keine Ergebnisse'}
+        </li>
+      );
     }
-    return list.map((opt, i) => (
+
+    const makeMobileItem = (opt: string, key: string) => (
       <li
-        key={`m-${opt}-${i}`}
+        key={key}
         role="option"
         aria-selected={opt === value}
         onTouchEnd={e => { e.preventDefault(); pick(opt); }}
@@ -279,7 +322,42 @@ export function ChipSelect({
       >
         {opt}
       </li>
-    ));
+    );
+
+    // Suche aktiv → flache gefilterte Liste ohne Sections
+    if (search) {
+      if (filtered.length === 0) {
+        return <li className="px-4 py-3 text-[14px] text-white/60">Keine Ergebnisse</li>;
+      }
+      return filtered.map((opt, i) => makeMobileItem(opt, `ms-${opt}-${i}`));
+    }
+
+    // Sections vorhanden → mit Labels und Trennlinien
+    if (sections) {
+      const nodes: React.ReactNode[] = [];
+      sections.forEach((section, sIdx) => {
+        if (sIdx > 0) {
+          nodes.push(
+            <li key={`mdiv-${sIdx}`} role="presentation" aria-hidden="true" className="px-4 py-1.5">
+              <div className="h-px bg-white/20" />
+            </li>
+          );
+        }
+        if (section.label) {
+          nodes.push(
+            <li key={`mlbl-${sIdx}`} role="presentation"
+              className="px-4 pb-1 pt-3 text-[10px] font-bold uppercase tracking-widest text-white/45">
+              {section.label}
+            </li>
+          );
+        }
+        section.items.forEach((opt, i) => nodes.push(makeMobileItem(opt, `m-${sIdx}-${opt}-${i}`)));
+      });
+      return nodes;
+    }
+
+    // Flache Liste ohne Sections
+    return allItems.map((opt, i) => makeMobileItem(opt, `m-${opt}-${i}`));
   };
 
   const inputDisplayValue = isOpen ? search : value;
@@ -448,9 +526,12 @@ export function ChipSelect({
           <div
             role="dialog"
             aria-modal="true"
-            className="fixed bottom-0 left-0 right-0 z-50 flex flex-col overflow-hidden rounded-t-[20px] bg-white"
+            className="fixed left-0 right-0 z-50 flex flex-col overflow-hidden rounded-t-[20px] bg-white"
             style={{
-              height: '65vh',
+              bottom: sheetBottom,
+              height: sheetBottom > 0
+                ? `calc(100vh - ${sheetBottom}px - 8px)`
+                : '65vh',
               transform: visible ? 'translateY(0)' : 'translateY(100%)',
               transition: 'transform 200ms ease',
             }}
@@ -482,7 +563,12 @@ export function ChipSelect({
               </div>
             </div>
             <div className="min-h-0 flex-1" style={{ background: PANEL_BG }}>
-              <ul ref={listRef} role="listbox" className="dropdown-scroll h-full overflow-y-auto">
+              <ul
+                ref={listRef}
+                role="listbox"
+                className="dropdown-scroll h-full overflow-y-auto"
+                style={{ touchAction: 'pan-y', paddingBottom: 'env(safe-area-inset-bottom)' }}
+              >
                 {renderMobileContent()}
               </ul>
             </div>

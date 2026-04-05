@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
 import { GTMHead, GTMBody } from '@/lib/gtm'
@@ -13,6 +13,12 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
   variable: '--font-plus-jakarta',
 })
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+}
 
 export const metadata: Metadata = {
   title: 'AutoAnkauf-Baden – Fair & Schnell | AutoAnkauf-Baden',
@@ -119,6 +125,14 @@ export default async function RootLayout({
     <html lang="de" className={`${plusJakartaSans.variable} h-full antialiased`}>
       <head>
         <GTMHead />
+        {/* iOS PWA */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="AutoAnkauf" />
+        <link rel="apple-touch-icon" href="/pwa/ios/180.png" />
+        <link rel="apple-touch-icon" sizes="152x152" href="/pwa/ios/152.png" />
+        <link rel="apple-touch-icon" sizes="167x167" href="/pwa/ios/167.png" />
+        <link rel="apple-touch-icon" sizes="1024x1024" href="/pwa/ios/1024.png" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}

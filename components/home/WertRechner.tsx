@@ -105,6 +105,7 @@ export default function WertRechner() {
                     onChange={v => setModell(v)}
                     placeholder="z.B. Golf, A4, 130i"
                     rightPanel
+                    emptyHint={!marke ? 'Bitte zuerst eine Marke wählen' : undefined}
                   />
                 </div>
 

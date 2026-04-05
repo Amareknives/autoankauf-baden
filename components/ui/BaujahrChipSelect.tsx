@@ -44,6 +44,7 @@ export function BaujahrChipSelect({
   const [search, setSearch] = useState('');
   const [activeIndex, setActiveIndex] = useState(-1);
   const [isMobile, setIsMobile] = useState(false);
+  const [sheetBottom, setSheetBottom] = useState(0);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const desktopInputRef = useRef<HTMLInputElement>(null);
@@ -81,13 +82,27 @@ export function BaujahrChipSelect({
     }, 200);
   };
 
-  // Fokus auf Sheet-Suchfeld (Mobile)
+  // Visual Viewport: Sheet über Tastatur schieben (iOS) oder schrumpfen (Android)
   useEffect(() => {
-    if (visible && isMobile) {
-      const t = setTimeout(() => sheetSearchRef.current?.focus(), 50);
-      return () => clearTimeout(t);
+    if (!isMobile || !isOpen) {
+      setSheetBottom(0);
+      return;
     }
-  }, [visible, isMobile]);
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const update = () => {
+      const offset = Math.max(0, window.innerHeight - vv.height - (vv.offsetTop ?? 0));
+      setSheetBottom(offset);
+    };
+    vv.addEventListener('resize', update);
+    vv.addEventListener('scroll', update);
+    update();
+    return () => {
+      vv.removeEventListener('resize', update);
+      vv.removeEventListener('scroll', update);
+      setSheetBottom(0);
+    };
+  }, [isMobile, isOpen]);
 
   // Fokus auf Desktop-Input wenn sich der Step ändert
   useEffect(() => {
@@ -188,12 +203,19 @@ export function BaujahrChipSelect({
     }
   };
 
-  const renderList = (maxH: string) => (
+  const renderList = (maxH: string, mobile = false) => (
     <ul
       ref={listRef}
       role="listbox"
       className="overflow-y-auto"
-      style={{ maxHeight: maxH }}
+      style={{
+        maxHeight: maxH,
+        ...(mobile && {
+          touchAction: 'pan-y',
+          paddingBottom: 'env(safe-area-inset-bottom)',
+          overscrollBehavior: 'contain',
+        }),
+      }}
     >
       {filteredOptions.length === 0 ? (
         <li className="px-4 py-3 text-[15px] text-[#64748B]">Keine Ergebnisse</li>
@@ -352,9 +374,12 @@ export function BaujahrChipSelect({
           <div
             role="dialog"
             aria-modal="true"
-            className="fixed bottom-0 left-0 right-0 z-50 flex flex-col rounded-t-[20px] bg-white"
+            className="fixed left-0 right-0 z-50 flex flex-col rounded-t-[20px] bg-white"
             style={{
-              height: '65vh',
+              bottom: sheetBottom,
+              height: sheetBottom > 0
+                ? `calc(100vh - ${sheetBottom}px - 8px)`
+                : '65vh',
               transform: visible ? 'translateY(0)' : 'translateY(100%)',
               transition: 'transform 200ms ease',
             }}
@@ -390,7 +415,7 @@ export function BaujahrChipSelect({
               </div>
             </div>
             {/* Liste */}
-            {renderList('calc(65vh - 155px)')}
+            {renderList('calc(65vh - 155px)', true)}
           </div>
         </>
       )}

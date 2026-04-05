@@ -51,7 +51,7 @@ export default function Header({ telefon }: { telefon: string }) {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/" className="flex-shrink-0" onClick={() => setIsMobileMenuOpen(false)}>
-              <Logo height={27} />
+              <Logo height={40} />
             </Link>
 
             {/* Desktop Navigation */}

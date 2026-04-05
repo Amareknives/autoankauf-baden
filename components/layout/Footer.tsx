@@ -186,6 +186,17 @@ export default async function Footer() {
                 </li>
               ))}
             </ul>
+
+            <div className="border-t border-white/10 mt-8 pt-6">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-white/40 mb-3">Autokauf</h3>
+              <ul className="space-y-2.5">
+                <li>
+                  <Link href="/fahrzeuge-kaufen" className="text-white/65 hover:text-white transition-colors duration-200 text-sm">
+                    Fahrzeuge & Inzahlungnahme
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
 
           {/* Spalte 4: Städte */}

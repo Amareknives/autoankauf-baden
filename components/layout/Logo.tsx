@@ -5,17 +5,21 @@ interface LogoProps {
   height?: number
   showText?: boolean
   className?: string
+  darkTagline?: boolean
 }
 
-export default function Logo({ variant = 'light', height = 36, showText = true, className }: LogoProps) {
+export default function Logo({ variant = 'light', height = 36, showText = true, className, darkTagline = false }: LogoProps) {
   const fillColor = variant === 'dark' ? '#fff' : undefined
+  const svgHeight = Math.round(height * 0.75)
+  const fontSize = Math.round(height * 0.33)
+  const subFontSize = Math.round(height * 0.28)
 
   return (
-    <div className={`flex items-start gap-3${className ? ' ' + className : ''}`}>
+    <div className={`flex items-center gap-3${className ? ' ' + className : ''}`}>
       <svg
         viewBox="0 0 1453.33 425.33"
-        height={32}
-        style={{ width: 'auto', flexShrink: 0, display: 'block', marginTop: '4px' }}
+        height={svgHeight}
+        style={{ width: 'auto', flexShrink: 0, display: 'block' }}
         aria-label="AutoAnkauf Baden Logo"
       >
         <path
@@ -33,16 +37,13 @@ export default function Logo({ variant = 'light', height = 36, showText = true, 
       </svg>
 
       {showText && (
-        <div
-          className="flex flex-col justify-center"
-          style={{ gap: '2px' }}
-        >
+        <div className="flex flex-col justify-center" style={{ gap: '2px' }}>
           <div className="flex items-baseline gap-0.5">
-            <span className="font-semibold" style={{ color: '#0369A1', fontSize: '14.7px' }}>auto</span>
-            <span className="font-semibold" style={{ color: '#FB6F6F', fontSize: '14.7px' }}>ankauf</span>
-            <span className="font-semibold" style={{ color: '#0EA5E9', fontSize: '14.7px', marginLeft: '2px' }}>baden</span>
+            <span className="font-semibold" style={{ color: fillColor || '#0369A1', fontSize: `${fontSize}px` }}>auto</span>
+            <span className="font-semibold" style={{ color: fillColor || '#FB6F6F', fontSize: `${fontSize}px` }}>ankauf</span>
+            <span className="font-semibold" style={{ color: fillColor || '#0EA5E9', fontSize: `${fontSize}px`, marginLeft: '2px' }}>baden</span>
           </div>
-          <span style={{ color: '#94A3B8', fontSize: '12.6px', lineHeight: 1 }}>
+          <span style={{ color: fillColor ? 'rgba(255,255,255,0.55)' : darkTagline ? 'rgba(255,255,255,0.5)' : '#94A3B8', fontSize: `${subFontSize}px`, lineHeight: 1 }}>
             Schnell. Einfach. In deiner Region.
           </span>
         </div>

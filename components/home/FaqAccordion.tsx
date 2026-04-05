@@ -36,6 +36,26 @@ const faqs = [
     question: 'In welchen Regionen seid ihr tätig?',
     answer: 'Wir sind in ganz Baden und der Pfalz tätig: Karlsruhe, Bruchsal, Heidelberg, Mannheim, Speyer, Pforzheim, Rastatt, Baden-Baden, Ludwigshafen und Germersheim – und dem gesamten Umland.',
   },
+  {
+    question: 'Bietet ihr auch Fahrzeuge zum Kauf an oder kann ich verrechnen?',
+    answer: 'Ja! Unser Partnerstandort Autohaus Stern in Graben-Neudorf bietet eine große Auswahl an gepflegten Fahrzeugen. Direkte Inzahlungnahme deines Altfahrzeugs ist möglich. Werkstatt & Service sind ebenfalls vor Ort verfügbar. Mehr Infos: autoankauf-baden.de/fahrzeuge-kaufen',
+  },
+  {
+    question: 'Wie läuft die Inzahlungnahme genau ab?',
+    answer: 'Du bringst dein Altfahrzeug einfach mit zum Termin beim Autohaus Stern in Graben-Neudorf. Wir bewerten dein Fahrzeug fair und rechnen den Wert direkt als Anzahlung auf dein neues Auto an. Kein Umweg über privaten Verkauf, kein Stress – alles in einem Termin erledigt.',
+  },
+  {
+    question: 'Welche Werkstatt- und Serviceleistungen bietet ihr an?',
+    answer: 'In unserer Werkstatt beim Autohaus Stern in Graben-Neudorf bieten wir Ölwechsel, TÜV-Vorbereitung, Bremsen-Check und -Wechsel sowie allgemeine Wartungsarbeiten an. Alles zu fairen Preisen und mit persönlichem Ansprechpartner vor Ort.',
+  },
+  {
+    question: 'Kann ich mein Auto verkaufen und direkt ein neues kaufen?',
+    answer: 'Genau das ist unser Angebot. AutoAnkauf Baden kauft dein Fahrzeug an – direkt beim selben Partnerstandort (Autohaus Stern, Graben-Neudorf) kannst du gleichzeitig ein neues Fahrzeug aussuchen. Inzahlungnahme, Beratung und Übergabe alles an einem Ort.',
+  },
+  {
+    question: 'Wo befindet sich der Partnerstandort Autohaus Stern?',
+    answer: 'Autohaus Stern liegt in Graben-Neudorf, Heidelberger Str. 4 – gut erreichbar aus dem Raum Karlsruhe, Bruchsal, Speyer und Heidelberg. Öffnungszeiten: Mo–Fr 9–18 Uhr, Sa 9–14 Uhr. Einfach vorbeikommen oder vorab auf autoankauf-baden.de/fahrzeuge-kaufen informieren.',
+  },
 ]
 
 const faqSchema = {

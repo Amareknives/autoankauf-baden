@@ -4,7 +4,8 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { clearFormAutosave } from '@/hooks/useFormAutosave';
 import Link from 'next/link';
-import { Check, CheckCircle, MessageCircle, PartyPopper } from 'lucide-react';
+import { Check, CheckCircle, MessageCircle, PartyPopper, Car } from 'lucide-react';
+import { AUTOHAUS_NAME } from '@/lib/constants';
 
 export function DankeContent({ waNummerClean }: { waNummerClean: string }) {
   const searchParams = useSearchParams();
@@ -91,6 +92,27 @@ export function DankeContent({ waNummerClean }: { waNummerClean: string }) {
             E-Mail-Anfragen können jederzeit eingereicht werden – außerhalb der Geschäftszeiten melden wir uns
             am nächsten Werktag. Danke für dein Verständnis! 🙏
           </p>
+        </div>
+
+        {/* Partnerhinweis */}
+        <div className="mt-4 rounded-xl overflow-hidden text-left" style={{ border: '1px solid #333' }}>
+          <div className="flex items-center gap-2.5 px-4 py-2.5" style={{ backgroundColor: '#212121' }}>
+            <Car size={14} style={{ color: '#EAB308', flexShrink: 0 }} />
+            <p className="text-xs font-bold text-white">Auch auf der Suche nach einem neuen Fahrzeug?</p>
+          </div>
+          <div className="px-4 py-3" style={{ backgroundColor: '#18181B' }}>
+            <p className="text-xs leading-relaxed mb-2.5" style={{ color: 'rgba(255,255,255,0.6)' }}>
+              Unser Partnerstandort <strong className="text-white">{AUTOHAUS_NAME}</strong> hat eine große Auswahl –
+              direkte Inzahlungnahme deines Altfahrzeugs möglich.
+            </p>
+            <Link
+              href="/fahrzeuge-kaufen"
+              className="inline-flex items-center gap-1.5 text-xs font-bold rounded-lg px-3 py-1.5 transition-opacity hover:opacity-80"
+              style={{ backgroundColor: '#EAB308', color: '#0F172A' }}
+            >
+              Mehr Infos →
+            </Link>
+          </div>
         </div>
 
         {/* Actions */}

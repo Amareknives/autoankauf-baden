@@ -143,6 +143,7 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
           placeholder="Modell eingeben z.B. Golf, A4..."
           rightPanel
           error={errors.modell}
+          emptyHint={!data.marke ? 'Bitte zuerst eine Marke wählen' : undefined}
         />
       </div>
 
