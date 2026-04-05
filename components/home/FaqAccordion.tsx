@@ -50,11 +50,11 @@ const faqs = [
   },
   {
     question: 'Kann ich mein Auto verkaufen und direkt ein neues kaufen?',
-    answer: 'Genau das ist unser Angebot. AutoAnkauf Baden kauft dein Fahrzeug an – direkt beim selben Partnerstandort (Autohaus Stern, Graben-Neudorf) kannst du gleichzeitig ein neues Fahrzeug aussuchen. Inzahlungnahme, Beratung und Übergabe alles an einem Ort.',
+    answer: 'Genau das ist unser Angebot. AutoAnkauf Baden kauft dein Fahrzeug an – und direkt an unserem Verkaufsstandort Autohaus Stern in Graben-Neudorf kannst du gleichzeitig ein neues Fahrzeug aussuchen. Inzahlungnahme, Beratung und Übergabe alles an einem Ort.',
   },
   {
-    question: 'Wo befindet sich der Partnerstandort Autohaus Stern?',
-    answer: 'Autohaus Stern liegt in Graben-Neudorf, Heidelberger Str. 4 – gut erreichbar aus dem Raum Karlsruhe, Bruchsal, Speyer und Heidelberg. Öffnungszeiten: Mo–Fr 9–18 Uhr, Sa 9–14 Uhr. Einfach vorbeikommen oder vorab auf autoankauf-baden.de/fahrzeuge-kaufen informieren.',
+    question: 'Wo befindet sich euer Verkaufsstandort Autohaus Stern?',
+    answer: 'Autohaus Stern – unser AutoAnkauf Baden Verkaufsstandort – liegt in Graben-Neudorf, Heidelberger Str. 4. Gut erreichbar aus dem Raum Karlsruhe, Bruchsal, Speyer und Heidelberg. Öffnungszeiten: Mo–Fr 9–18 Uhr, Sa 9–14 Uhr. Einfach vorbeikommen oder vorab auf autoankauf-baden.de/fahrzeuge-kaufen informieren.',
   },
 ]
 
