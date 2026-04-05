@@ -53,7 +53,7 @@ const jsonLd = {
       url: 'https://autoankauf-baden.de',
       image: 'https://autoankauf-baden.de/logo-export.svg',
       description:
-        'Faire Preise, kostenlose Abholung, Angebot in 2–3 Stunden. Wir kaufen alle Fahrzeuge an – egal ob Unfallwagen, defekt oder fahrbereit.',
+        'Faire Preise, kostenlose Abholung, vorläufiges Angebot in 2–3 Stunden. Wir prüfen alle Fahrzeuge – egal ob Unfallwagen, defekt oder fahrbereit. Jetzt online anfragen.',
       priceRange: '€€',
       address: {
         '@type': 'PostalAddress',

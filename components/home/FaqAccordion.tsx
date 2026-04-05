@@ -26,7 +26,7 @@ const faqs = [
   },
   {
     question: 'Welche Autos kauft ihr an?',
-    answer: 'Wir kaufen alle Marken, alle Modelle – unabhängig von Alter, Kilometerstand oder Zustand. Auch Unfallfahrzeuge, nicht fahrfähige Autos und Fahrzeuge mit Motorschaden sind willkommen.',
+    answer: 'Wir prüfen alle Marken und Modelle – egal ob Unfallfahrzeug, nicht fahrbereit oder mit hohem Kilometerstand. Am besten zuerst online anfragen: Wir machen dir ein vorläufiges Angebot auf Basis deiner Angaben. Nach der Besichtigung entscheiden wir gemeinsam. Nicht jedes Fahrzeug passt in unser Ankaufsportfolio – aber wir sagen dir ehrlich Bescheid.',
   },
   {
     question: 'Wie wird der Preis ermittelt?',

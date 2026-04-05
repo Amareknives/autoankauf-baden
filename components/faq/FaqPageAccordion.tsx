@@ -59,7 +59,7 @@ const kategorien = [
       {
         frage: 'Welche Autos kauft ihr an?',
         antwort:
-          'Wir kaufen alle Marken, alle Modelle – unabhängig von Alter, Kilometerstand oder Zustand. Auch Unfallfahrzeuge, nicht fahrtüchtige Autos, Fahrzeuge mit Motorschaden oder hohem TÜV-Aufwand sind willkommen.',
+          'Wir prüfen alle Marken und Modelle – auch Unfallfahrzeuge, nicht fahrtüchtige Autos und Fahrzeuge mit Motorschaden. Am besten zuerst online anfragen: Wir machen ein vorläufiges Angebot nach deinen Angaben. Nicht jedes Fahrzeug passt in unser Ankaufsportfolio – nach der Besichtigung sagen wir dir ehrlich, ob und zu welchem Preis wir kaufen können.',
       },
       {
         frage: 'Kauft ihr auch Autos mit Unfallschaden?',
@@ -74,7 +74,7 @@ const kategorien = [
       {
         frage: 'Kauft ihr auch sehr alte Autos oder Autos mit hohem Kilometerstand?',
         antwort:
-          'Ja. Kein Fahrzeug ist zu alt oder hat zu viele Kilometer. Der Preis richtet sich nach dem tatsächlichen Wert – aber wir kaufen grundsätzlich jedes Fahrzeug an.',
+          'Grundsätzlich schauen wir uns jedes Fahrzeug an – Alter und Kilometerstand allein sind kein Ausschlusskriterium. Der Preis richtet sich nach dem tatsächlichen Wert. Unser Tipp: Erst online anfragen, dann sehen wir nach der Besichtigung, ob und zu welchem Preis ein Ankauf möglich ist.',
       },
     ],
   },
