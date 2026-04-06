@@ -360,20 +360,24 @@ export default function TerminePage() {
       )}
 
       <div className="flex flex-wrap items-center gap-2">
-        <a
-          href={`tel:${t.telefon}`}
-          className="text-xs px-3 py-1.5 bg-[#E8F4FD] text-[#0369A1] rounded-lg font-medium hover:bg-[#0369A1] hover:text-white transition-colors"
-        >
-          📞 {t.telefon}
-        </a>
-        <a
-          href={`https://wa.me/${(t.telefon ?? '').replace(/\D/g, '')}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs px-3 py-1.5 bg-[#DCFCE7] text-[#16A34A] rounded-lg font-medium hover:bg-[#16A34A] hover:text-white transition-colors"
-        >
-          WhatsApp
-        </a>
+        {t.telefon && (
+          <>
+            <a
+              href={`tel:${t.telefon}`}
+              className="text-xs px-3 py-1.5 bg-[#E8F4FD] text-[#0369A1] rounded-lg font-medium hover:bg-[#0369A1] hover:text-white transition-colors"
+            >
+              📞 {t.telefon}
+            </a>
+            <a
+              href={`https://wa.me/${t.telefon.replace(/\D/g, '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs px-3 py-1.5 bg-[#DCFCE7] text-[#16A34A] rounded-lg font-medium hover:bg-[#16A34A] hover:text-white transition-colors"
+            >
+              WhatsApp
+            </a>
+          </>
+        )}
         <button
           onClick={() => { setEditId(t.id); setEditDatum(toDatetimeLocal(t.terminVorschlag1)) }}
           className="text-xs px-3 py-1.5 border border-[#E2EDF7] text-[#64748B] rounded-lg font-medium hover:border-[#0369A1] hover:text-[#0369A1] transition-colors"
