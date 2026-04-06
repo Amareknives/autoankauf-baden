@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Search, X } from 'lucide-react';
 
 export interface ChipSelectSection {
@@ -554,8 +555,8 @@ export function ChipSelect({
         )}
       </div>
 
-      {/* Mobile: Full-Screen Overlay (Google Maps Style) */}
-      {isMobile && isOpen && (
+      {/* Mobile: Full-Screen Overlay (Google Maps Style) – via Portal außerhalb jeder <form> */}
+      {isMobile && isOpen && createPortal(
         <div
           role="dialog"
           aria-modal="true"
@@ -627,7 +628,8 @@ export function ChipSelect({
               {renderMobileContent()}
             </ul>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {error && <span className="text-xs text-[#EF4444]">{error}</span>}
