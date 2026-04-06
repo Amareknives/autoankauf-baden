@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
 const haendlerSchema = z.object({
+  anfrageTyp: z.enum(['kooperation', 'sonstige']).default('kooperation'),
   firma: z.string().min(2),
   vorname: z.string().min(2),
   nachname: z.string().min(2),
   telefon: z.string().min(6),
   email: z.string().email(),
-  fahrzeugAnzahl: z.string().min(1),
+  fahrzeugAnzahl: z.string().optional(),
   nachricht: z.string().optional(),
   datenschutz: z.boolean().refine((v) => v === true),
 })
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
           ansprechpartner: `${data.vorname} ${data.nachname}`,
           telefon: data.telefon,
           email: data.email,
-          anzahlFahrzeuge: data.fahrzeugAnzahl,
+          anzahlFahrzeuge: data.fahrzeugAnzahl ?? '',
           fahrzeugarten: '',
           nachricht: data.nachricht ?? '',
         },
@@ -61,17 +62,19 @@ export async function POST(request: NextRequest) {
     const { sendEmail } = await import('@/lib/email')
     const { haendlerBestaetigung } = await import('@/services/emailTemplates')
 
+    const typLabel = data.anfrageTyp === 'sonstige' ? 'Sonstige Anfrage' : 'Händler-Kooperation'
+
     // Interne Benachrichtigung
     void sendEmail({
       to: process.env.NEXT_PUBLIC_FIRMA_EMAIL || 'info@autoankauf-baden.de',
-      subject: `Neue Händleranfrage: ${data.firma}`,
+      subject: `Neue Händleranfrage [${typLabel}]: ${data.firma}`,
       html: `
-        <h2 style="font-family:sans-serif;">Neue Händleranfrage</h2>
+        <h2 style="font-family:sans-serif;">Neue Händleranfrage – ${typLabel}</h2>
         <p style="font-family:sans-serif;"><strong>Firma:</strong> ${data.firma}</p>
         <p style="font-family:sans-serif;"><strong>Ansprechpartner:</strong> ${data.vorname} ${data.nachname}</p>
         <p style="font-family:sans-serif;"><strong>Telefon:</strong> ${data.telefon}</p>
         <p style="font-family:sans-serif;"><strong>E-Mail:</strong> ${data.email}</p>
-        <p style="font-family:sans-serif;"><strong>Fahrzeuge/Woche:</strong> ${data.fahrzeugAnzahl}</p>
+        ${data.fahrzeugAnzahl ? `<p style="font-family:sans-serif;"><strong>Fahrzeuge/Woche:</strong> ${data.fahrzeugAnzahl}</p>` : ''}
         ${data.nachricht ? `<p style="font-family:sans-serif;"><strong>Nachricht:</strong> ${data.nachricht}</p>` : ''}
       `,
       _typ: 'haendler_intern',
@@ -79,6 +82,7 @@ export async function POST(request: NextRequest) {
 
     // Bestätigungsmail an Händler
     const bestaetigung = haendlerBestaetigung({
+      anfrageTyp: data.anfrageTyp,
       vorname: data.vorname,
       nachname: data.nachname,
       firma: data.firma,
@@ -103,11 +107,12 @@ export async function POST(request: NextRequest) {
       const { notifyMitarbeiter } = await import('@/lib/notify')
       const { sendToAllNumbers } = await import('@/lib/callmebot')
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+      const typLabel = data.anfrageTyp === 'sonstige' ? 'Sonstige Anfrage' : 'Händler-Kooperation'
       const message =
-        `🏢 Neue Händleranfrage!\n` +
+        `🏢 Neue Händleranfrage [${typLabel}]!\n` +
         `Firma: ${data.firma}\n` +
         `Kontakt: ${data.vorname} ${data.nachname}\n` +
-        `Fahrzeuge: ${data.fahrzeugAnzahl}/Woche\n` +
+        (data.fahrzeugAnzahl ? `Fahrzeuge: ${data.fahrzeugAnzahl}/Woche\n` : '') +
         `📞 ${data.telefon}\n` +
         `👉 ${baseUrl}/dashboard`
 

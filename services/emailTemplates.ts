@@ -699,15 +699,19 @@ export function neueAnfrageIntern(params: {
   }
 }
 
-// ─── Händler-Bestätigung (an Kooperationspartner) ────────────────────────────
+// ─── Händler-Bestätigung (an Kooperationspartner oder sonstige Anfrage) ──────
 export function haendlerBestaetigung(params: {
+  anfrageTyp?: 'kooperation' | 'sonstige'
   vorname: string
   nachname: string
   firma: string
-  fahrzeugAnzahl: string
+  fahrzeugAnzahl?: string
   nachricht?: string
 }) {
-  const subject = 'Ihre Kooperationsanfrage bei AutoAnkauf-Baden'
+  const isSonstige = params.anfrageTyp === 'sonstige'
+  const subject = isSonstige
+    ? 'Ihre Anfrage bei AutoAnkauf-Baden'
+    : 'Ihre Kooperationsanfrage bei AutoAnkauf-Baden'
 
   const html = emailLayout(`
     <p style="margin:0 0 8px;color:#64748B;font-size:14px;">Guten Tag ${params.vorname} ${params.nachname},</p>
@@ -715,24 +719,28 @@ export function haendlerBestaetigung(params: {
       Ihre Anfrage ist bei uns eingegangen!
     </h2>
     <p style="margin:0 0 24px;color:#64748B;font-size:15px;line-height:1.7;">
-      Vielen Dank für Ihr Interesse an einer Zusammenarbeit mit AutoAnkauf-Baden. Wir haben Ihre Anfrage erhalten und melden uns innerhalb von <strong style="color:#0F172A;">48 Stunden (werktags)</strong> persönlich bei Ihnen.
+      ${isSonstige
+        ? 'Vielen Dank für Ihre Nachricht. Wir haben Ihre Anfrage erhalten und melden uns innerhalb von <strong style="color:#0F172A;">48 Stunden (werktags)</strong> persönlich bei Ihnen.'
+        : 'Vielen Dank für Ihr Interesse an einer Zusammenarbeit mit AutoAnkauf-Baden. Wir haben Ihre Anfrage erhalten und melden uns innerhalb von <strong style="color:#0F172A;">48 Stunden (werktags)</strong> persönlich bei Ihnen.'
+      }
     </p>
 
     <table width="100%" cellpadding="0" cellspacing="0" style="background:#F8FAFC;border:1px solid #E2EDF7;border-radius:12px;margin-bottom:28px;">
       <tr><td style="padding:20px 24px;">
-        <p style="margin:0 0 14px;color:#64748B;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">Deine Angaben</p>
+        <p style="margin:0 0 14px;color:#64748B;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">Ihre Angaben</p>
         <table width="100%" cellpadding="0" cellspacing="0">
           <tr>
             <td style="padding:5px 0;color:#64748B;font-size:13px;width:130px;">Firma</td>
             <td style="padding:5px 0;color:#0F172A;font-size:13px;font-weight:600;">${params.firma}</td>
           </tr>
+          ${!isSonstige && params.fahrzeugAnzahl ? `
           <tr>
             <td style="padding:5px 0;color:#64748B;font-size:13px;">Fahrzeuge / Woche</td>
             <td style="padding:5px 0;color:#0F172A;font-size:13px;font-weight:600;">${params.fahrzeugAnzahl}</td>
-          </tr>
+          </tr>` : ''}
           ${params.nachricht ? `
           <tr>
-            <td style="padding:5px 0;color:#64748B;font-size:13px;vertical-align:top;">Nachricht</td>
+            <td style="padding:5px 0;color:#64748B;font-size:13px;vertical-align:top;">${isSonstige ? 'Ihre Frage' : 'Nachricht'}</td>
             <td style="padding:5px 0;color:#0F172A;font-size:13px;">${params.nachricht}</td>
           </tr>` : ''}
         </table>
@@ -742,14 +750,17 @@ export function haendlerBestaetigung(params: {
     <div style="background:#E8F4FD;border-radius:10px;padding:16px 20px;margin-bottom:28px;">
       <p style="margin:0;color:#0369A1;font-size:14px;line-height:1.6;">
         <strong>Was passiert als Nächstes?</strong><br>
-        Wir schauen uns Ihre Angaben in Ruhe an und melden uns innerhalb von 1–2 Werktagen bei Ihnen.
+        ${isSonstige
+          ? 'Wir schauen uns Ihre Frage an und melden uns so schnell wie möglich – werktags innerhalb von 24–48 Stunden.'
+          : 'Wir schauen uns Ihre Angaben in Ruhe an und melden uns innerhalb von 1–2 Werktagen bei Ihnen.'
+        }
       </p>
     </div>
 
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr><td align="center">
         <a href="${BASE_URL}/haendler" style="display:inline-block;background:#0369A1;color:white;font-size:15px;font-weight:700;text-decoration:none;padding:14px 32px;border-radius:10px;">
-          Mehr zur Händler-Kooperation →
+          ${isSonstige ? 'Zurück zur Website →' : 'Mehr zur Händler-Kooperation →'}
         </a>
       </td></tr>
     </table>
