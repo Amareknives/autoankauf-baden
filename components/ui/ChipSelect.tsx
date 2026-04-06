@@ -606,8 +606,16 @@ export function ChipSelect({
               </form>
               <button
                 type="button"
-                onMouseDown={e => { e.preventDefault(); doClose(); }}
-                onTouchEnd={e => { e.preventDefault(); doClose(); }}
+                onMouseDown={e => {
+                  e.preventDefault();
+                  if (filtered.length === 1) pick(filtered[0]);
+                  else doClose();
+                }}
+                onTouchEnd={e => {
+                  e.preventDefault();
+                  if (filtered.length === 1) pick(filtered[0]);
+                  else doClose();
+                }}
                 className="shrink-0 text-[15px] font-semibold text-[#0369A1] active:opacity-60"
               >
                 Fertig
