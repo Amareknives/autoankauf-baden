@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Logo from './Logo'
 import { gtmEvents } from '@/lib/gtm'
-import { Phone, Menu, X, Car } from 'lucide-react'
+import { Phone, Menu, X, Car, Home } from 'lucide-react'
 
 export default function Header({ telefon }: { telefon: string }) {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -112,6 +112,14 @@ export default function Header({ telefon }: { telefon: string }) {
         <div className="md:hidden fixed inset-0 z-40 flex flex-col pt-16" style={{ background: 'linear-gradient(160deg, #0F172A 0%, #1a2744 100%)' }}>
           {/* Nav-Links */}
           <nav className="flex flex-col px-5 pt-4">
+            <Link
+              href="/"
+              className="flex items-center gap-3 px-3 py-3.5 rounded-xl mb-1 text-white font-semibold text-[17px] active:bg-white/10 transition-colors duration-150"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <Home size={18} strokeWidth={2} className="text-[#38BDF8] shrink-0" />
+              Startseite
+            </Link>
             {navItems.map((item) => (
               <Link
                 key={item.href}
