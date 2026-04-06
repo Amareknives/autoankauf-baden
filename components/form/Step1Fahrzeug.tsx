@@ -34,10 +34,15 @@ const MONTH_LABELS = [
 ];
 
 const THIS_YEAR = new Date().getFullYear();
-const YEAR_OPTIONS = [
-  ...Array.from({ length: THIS_YEAR - 1949 }, (_, i) => String(THIS_YEAR - i)),
-  'Vor 1950',
-  'Nie zugelassen',
+const YEAR_SECTIONS = [
+  {
+    label: 'Sonderfall',
+    items: ['Nie zugelassen', 'Vor 1950'],
+  },
+  {
+    label: 'Jahr der Erstzulassung',
+    items: Array.from({ length: THIS_YEAR - 1949 }, (_, i) => String(THIS_YEAR - i)),
+  },
 ];
 
 // Hilfsfunktionen für Erstzulassungs-Konvertierung
@@ -163,7 +168,7 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
           <ChipSelect
             label="Jahr"
             required
-            options={YEAR_OPTIONS}
+            sections={YEAR_SECTIONS}
             value={jahrToOption(data.erstzulassungJahr)}
             onChange={(v) => {
               const newJahr = optionToJahr(v);

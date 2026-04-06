@@ -4,7 +4,7 @@ import { z } from 'zod';
 const anfrageSchema = z.object({
   marke: z.string().min(1),
   modell: z.string().min(1),
-  erstzulassungMonat: z.number().min(0).max(12),
+  erstzulassungMonat: z.number().min(1).max(12).optional(), // optional bei "Vor 1950" / "Nie zugelassen"
   erstzulassungJahr: z.number().min(-1), // -1 = Nie zugelassen, 0 = Vor 1950
   kraftstoff: z.string().min(1),
   schadstoffklasse: z.string().min(1),
