@@ -9,15 +9,26 @@ interface Props {
   telefon: string
 }
 
+const SESSION_KEY = 'aab_floating_dismissed'
+
 export default function FloatingButtons({ whatsapp, telefon }: Props) {
   const [visible, setVisible] = useState(true)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const dismissedRef = useRef(false)
 
   useEffect(() => {
+    // Wurde in dieser Session manuell weggeklickt? → dauerhaft weg
+    if (sessionStorage.getItem(SESSION_KEY) === '1') {
+      dismissedRef.current = true
+      setVisible(false)
+      return
+    }
+
     const handleScroll = () => {
+      if (dismissedRef.current) return
       clearTimeout(timerRef.current)
       setVisible(false)
-      timerRef.current = setTimeout(() => setVisible(true), 2000)
+      timerRef.current = setTimeout(() => setVisible(true), 3000)
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => {
@@ -28,7 +39,13 @@ export default function FloatingButtons({ whatsapp, telefon }: Props) {
 
   const handleTabClick = () => {
     clearTimeout(timerRef.current)
-    setVisible((v) => !v)
+    const next = !visible
+    if (!next) {
+      // Manuell weggeklickt → für diese Session merken
+      dismissedRef.current = true
+      sessionStorage.setItem(SESSION_KEY, '1')
+    }
+    setVisible(next)
   }
 
   const cleanWa = whatsapp?.replace(/[\s+\-()]/g, '') ?? ''
