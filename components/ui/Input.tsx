@@ -24,6 +24,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             className="text-[11px] font-semibold text-[#0F172A] uppercase tracking-wide"
           >
             {label}
+            {required && <span className="ml-0.5 text-[#EF4444]">*</span>}
             {!required && <span className="ml-1.5 text-[10px] font-normal normal-case tracking-normal text-[#94A3B8]">(optional)</span>}
           </label>
         )}

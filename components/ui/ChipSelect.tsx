@@ -414,6 +414,7 @@ export function ChipSelect({
       {label && (
         <label className="text-[11px] font-semibold uppercase tracking-wide text-[#0F172A]">
           {label}
+          {required && <span className="ml-0.5 text-[#EF4444]">*</span>}
           {!required && <span className="ml-1.5 text-[10px] font-normal normal-case tracking-normal text-[#94A3B8]">(optional)</span>}
         </label>
       )}

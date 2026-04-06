@@ -136,7 +136,7 @@ export function Step2Zustand({ data, onChange, errors }: Step2Props) {
       {/* Optischer Zustand */}
       <div className="flex flex-col gap-2">
         <span className="text-[11px] font-semibold text-[#0F172A] uppercase tracking-wide">
-          Optischer Zustand
+          Optischer Zustand <span className="text-[#EF4444]">*</span>
         </span>
         <StarRating
           value={data.optischerZustand ?? 0}

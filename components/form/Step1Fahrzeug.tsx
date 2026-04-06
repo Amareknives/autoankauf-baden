@@ -119,7 +119,7 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
     <div className="flex flex-col gap-5">
       <div>
         <h2 className="text-xl font-bold text-[#0F172A]">Fahrzeug-Details</h2>
-        <p className="mt-1 text-sm text-[#64748B]">Felder ohne <span className="text-[#94A3B8]">(optional)</span> sind Pflichtfelder.</p>
+        <p className="mt-1 text-sm text-[#64748B]">Mit <span className="text-[#EF4444] font-bold">*</span> markierte Felder sind Pflichtfelder.</p>
       </div>
 
       {/* Marke + Modell als Chip-Auswahl */}
@@ -190,7 +190,7 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-1.5">
             <label className="text-[11px] font-semibold text-[#0F172A] uppercase tracking-wide">
-              Schadstoffklasse
+              Schadstoffklasse <span className="text-[10px] font-normal normal-case tracking-normal text-[#94A3B8]">(optional)</span>
             </label>
             <FieldTooltip text="Zu finden in Feld V.9 Ihres Fahrzeugscheins (Zulassungsbescheinigung Teil I)." />
           </div>
@@ -208,7 +208,7 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-1.5">
             <label className="text-[11px] font-semibold text-[#0F172A] uppercase tracking-wide">
-              Leistung (kW)
+              Leistung (kW) <span className="text-[10px] font-normal normal-case tracking-normal text-[#94A3B8]">(optional)</span>
             </label>
             <FieldTooltip text="Feld P.2 in Ihrem Fahrzeugschein – bitte kW angeben, nicht PS!" />
           </div>
@@ -227,7 +227,7 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-1.5">
               <label className="text-[11px] font-semibold text-[#0F172A] uppercase tracking-wide">
-                Hubraum (ccm)
+                Hubraum (ccm) <span className="text-[10px] font-normal normal-case tracking-normal text-[#94A3B8]">(optional)</span>
               </label>
               <FieldTooltip text="Feld P.1 in Ihrem Fahrzeugschein. Optional, aber hilfreich für eine genaue Bewertung." />
             </div>
@@ -323,13 +323,14 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-1.5">
           <span className="text-[11px] font-semibold uppercase tracking-wide text-[#0F172A]">
-            HU gültig bis
+            HU gültig bis <span className="text-[#EF4444]">*</span>
           </span>
           <FieldTooltip text="Aufgedruckt auf dem TÜV-Aufkleber an Ihrem Kennzeichen. Monat/Jahr." />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <ChipSelect
             label="Jahr"
+            required
             placeholder="Jahr wählen"
             value={huBisToJahr(data.huBis ?? '')}
             options={HU_JAHR_OPTIONS}
@@ -337,6 +338,7 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
           />
           <ChipSelect
             label="Monat"
+            required={!!huBisToJahr(data.huBis ?? '') && !HU_SONDER.includes(huBisToJahr(data.huBis ?? ''))}
             placeholder="Monat wählen"
             value={huBisToMonat(data.huBis ?? '')}
             options={MONTH_LABELS}
