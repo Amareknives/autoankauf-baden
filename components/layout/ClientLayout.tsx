@@ -22,7 +22,13 @@ export default function ClientLayout({
       <main className={isDashboard ? 'flex-1' : 'flex-1 pt-16'}>
         {children}
       </main>
-      {!isDashboard && <FloatingButtons whatsapp={whatsapp} telefon={telefon} />}
+      {!isDashboard && (
+        <FloatingButtons
+          whatsapp={whatsapp}
+          telefon={telefon}
+          quietMode={pathname === '/fahrzeug-verkaufen'}
+        />
+      )}
     </>
   )
 }

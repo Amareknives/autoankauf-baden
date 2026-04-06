@@ -7,16 +7,23 @@ import { gtmEvents } from '@/lib/gtm'
 interface Props {
   whatsapp: string
   telefon: string
+  quietMode?: boolean
 }
 
 const SESSION_KEY = 'aab_floating_dismissed'
 
-export default function FloatingButtons({ whatsapp, telefon }: Props) {
-  const [visible, setVisible] = useState(true)
+export default function FloatingButtons({ whatsapp, telefon, quietMode = false }: Props) {
+  const [visible, setVisible] = useState(!quietMode)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const dismissedRef = useRef(false)
 
   useEffect(() => {
+    // quietMode: versteckt starten, niemals auto-einfahren
+    if (quietMode) {
+      setVisible(false)
+      return
+    }
+
     // Wurde in dieser Session manuell weggeklickt? → dauerhaft weg
     if (sessionStorage.getItem(SESSION_KEY) === '1') {
       dismissedRef.current = true
@@ -35,13 +42,13 @@ export default function FloatingButtons({ whatsapp, telefon }: Props) {
       window.removeEventListener('scroll', handleScroll)
       clearTimeout(timerRef.current)
     }
-  }, [])
+  }, [quietMode])
 
   const handleTabClick = () => {
     clearTimeout(timerRef.current)
     const next = !visible
-    if (!next) {
-      // Manuell weggeklickt → für diese Session merken
+    if (!next && !quietMode) {
+      // Manuell weggeklickt (auf normalen Seiten) → für diese Session merken
       dismissedRef.current = true
       sessionStorage.setItem(SESSION_KEY, '1')
     }
