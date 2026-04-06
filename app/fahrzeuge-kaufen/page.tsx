@@ -243,17 +243,26 @@ export default function FahrzeugeKaufenPage() {
           <div className="bg-white rounded-2xl border border-[#E2EDF7] overflow-hidden">
 
             {/* Header – dunkel wie Sidebar */}
-            <div className="px-6 py-6 flex items-start justify-between gap-4" style={{ backgroundColor: '#212121', borderTop: '5px solid #212121', borderBottom: '5px solid #212121' }}>
+            <div className="px-6 py-6 flex flex-col md:flex-row md:items-start md:justify-between gap-4" style={{ backgroundColor: '#212121', borderTop: '5px solid #212121', borderBottom: '5px solid #212121' }}>
+              {/* Mobil: Logo oben, volle Breite */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/autohaus/logo_autuhausstern-graben.webp"
+                alt="Autohaus Stern"
+                className="md:hidden"
+                style={{ height: 40, width: 'auto', objectFit: 'contain' }}
+              />
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: '#EAB308' }}>Unser Verkaufsstandort</p>
                 <h2 className="text-[18px] md:text-[20px] font-extrabold leading-snug" style={{ color: '#FFFFFF' }}>{AUTOHAUS_NAME}</h2>
                 <p className="text-sm mt-0.5" style={{ color: '#FB6F6F' }}>{AUTOHAUS_ADRESSE}</p>
               </div>
-              {/* Logo direkt auf dunklem Hintergrund */}
+              {/* Desktop: Logo rechts */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/autohaus/logo_autuhausstern-graben.webp"
                 alt="Autohaus Stern"
+                className="hidden md:block"
                 style={{ height: 36, width: 'auto', objectFit: 'contain', flexShrink: 0 }}
               />
             </div>
