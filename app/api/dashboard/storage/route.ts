@@ -4,7 +4,7 @@ import { verifySessionToken } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
   const cookieStore = await cookies()
-  const token = cookieStore.get('session')?.value
+  const token = cookieStore.get('aab_session')?.value
   if (!token || !(await verifySessionToken(token))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
