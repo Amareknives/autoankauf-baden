@@ -483,8 +483,8 @@ function TerminFormular({
 
       {/* Buttons */}
       <div className="flex gap-2 pt-1 flex-wrap">
-        {/* Nur-Mitarbeiter-Wechsel: Intern speichern (kein Kunden-E-Mail) */}
-        {istAenderung && nurMitarbeiterGeaendert && onSaveIntern && (
+        {/* Intern speichern: bei Änderung (nur Mitarbeiter) ODER vorab vor erstem Termin */}
+        {onSaveIntern && (istAenderung ? nurMitarbeiterGeaendert : !!terminMitarbeiterId) && (
           <button type="button"
             disabled={saving}
             onClick={onSaveIntern}
@@ -1262,6 +1262,9 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
                     status: anfrage.status !== 'abgeschlossen' ? 'termin_vereinbart' : undefined,
                     terminZustaendigId: terminMitarbeiterId || null,
                   })
+                }}
+                onSaveIntern={() => {
+                  void update({ terminZustaendigId: terminMitarbeiterId || null })
                 }}
                 onAbbrechen={null}
                 onLoeschen={null}
