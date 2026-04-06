@@ -53,7 +53,7 @@ const schritte = [
     titel: 'Termin vorschlagen & kassieren',
     dauer: 'Nach deinem Wunsch',
     beschreibung:
-      'Gefällt dir das Angebot? Schick uns einfach 1–2 Terminvorschläge – wir kommen zur Besichtigung zu dir oder treffen uns an einem Wunschort. Nach kurzer Prüfung zahlen wir sofort bar.',
+      'Gefällt dir das Angebot? Schick uns einfach 1–2 Terminvorschläge – wir kommen zu dir, treffen uns an einem Wunschort oder du kommst direkt zu uns. Nach kurzer Prüfung zahlen wir sofort bar.',
     details: [
       'Du wählst Ort & Termin',
       'Kostenlose Abholung bei dir',
