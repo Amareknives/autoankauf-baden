@@ -80,6 +80,7 @@ export default function AnfragenPage() {
   const [reaktivierendId, setReaktivierendId] = useState<string | null>(null)
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [mitarbeiter, setMitarbeiter] = useState<MitarbeiterKurz[]>([])
+  const [filterBearbeiterId, setFilterBearbeiterId] = useState<string | null>(null)
   const [dropdown, setDropdown] = useState<{ anfrageId: string; x: number; y: number } | null>(null)
 
   const exportCsv = () => {
@@ -96,6 +97,7 @@ export default function AnfragenPage() {
       if (statusFilter !== 'all') params.set('status', statusFilter)
       if (search.trim()) params.set('search', search.trim())
       if (showArchiv) params.set('archiviert', 'true')
+      if (filterBearbeiterId) params.set('bearbeiterId', filterBearbeiterId)
       const res = await fetch(`/api/dashboard/anfragen?${params}`)
       if (res.ok) {
         const data = await res.json() as { anfragen: Anfrage[]; total: number }
@@ -105,7 +107,7 @@ export default function AnfragenPage() {
     } finally {
       setLoading(false)
     }
-  }, [statusFilter, search, showArchiv])
+  }, [statusFilter, search, showArchiv, filterBearbeiterId])
 
   useEffect(() => {
     const t = setTimeout(() => void load(), 300)
@@ -281,6 +283,52 @@ export default function AnfragenPage() {
           <span className="text-sm text-[#64748B] font-medium">Archiv</span>
         </label>
       </div>
+
+      {/* Mitarbeiter-Filter */}
+      {mitarbeiter.length > 1 && (
+        <div className="flex flex-wrap gap-2 mb-4">
+          <button
+            onClick={() => setFilterBearbeiterId(null)}
+            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
+              filterBearbeiterId === null
+                ? 'bg-[#0369A1] text-white'
+                : 'bg-white border border-[#E2EDF7] text-[#64748B] hover:border-[#0369A1] hover:text-[#0369A1]'
+            }`}
+          >
+            Alle
+          </button>
+          {mitarbeiter.map(m => (
+            <button
+              key={m.id}
+              onClick={() => setFilterBearbeiterId(p => p === m.id ? null : m.id)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
+                filterBearbeiterId === m.id
+                  ? 'text-white'
+                  : 'bg-white border border-[#E2EDF7] text-[#64748B] hover:border-[#0369A1] hover:text-[#0369A1]'
+              }`}
+              style={filterBearbeiterId === m.id ? { backgroundColor: m.farbe } : {}}
+            >
+              <span
+                className="w-5 h-5 rounded-full flex items-center justify-center text-white text-[9px] font-bold shrink-0"
+                style={{ backgroundColor: filterBearbeiterId === m.id ? 'rgba(255,255,255,0.3)' : m.farbe }}
+              >
+                {(m.kuerzel ?? (m.vorname[0] + m.nachname[0])).toUpperCase()}
+              </span>
+              {m.vorname}
+            </button>
+          ))}
+          <button
+            onClick={() => setFilterBearbeiterId('none')}
+            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
+              filterBearbeiterId === 'none'
+                ? 'bg-[#FB6F6F] text-white'
+                : 'bg-white border border-[#E2EDF7] text-[#64748B] hover:border-[#FB6F6F] hover:text-[#FB6F6F]'
+            }`}
+          >
+            Ohne Bearbeiter
+          </button>
+        </div>
+      )}
 
       {showArchiv && (
         <div className="bg-[#FFF7ED] border border-[#FED7AA] rounded-xl px-4 py-3 mb-4 text-sm text-[#92400E]">

@@ -63,29 +63,57 @@ export async function DELETE(
     const { id } = await params
     const { prisma } = await import('@/lib/prisma')
 
-    // Prüfen ob offene Anfragen vorhanden
-    const offeneAnfragen = await prisma.anfrage.count({
-      where: { bearbeiterId: id, archiviert: false },
-    })
+    // Prüfen ob offene Vorgänge vorhanden (Bearbeiter ODER Termin-Zuständiger)
+    const [offeneBearbeiter, offeneTermin] = await Promise.all([
+      prisma.anfrage.count({ where: { bearbeiterId: id, archiviert: false } }),
+      prisma.anfrage.count({ where: { terminZustaendigId: id, archiviert: false } }),
+    ])
+    const offeneAnfragen = offeneBearbeiter + offeneTermin
 
     // nachfolgerId aus Query-Param
     const { searchParams } = request.nextUrl
     const nachfolgerId = searchParams.get('nachfolgerId')
 
     if (offeneAnfragen > 0 && !nachfolgerId) {
-      // Nachfolger erforderlich — Liste der offenen Anfragen zurückgeben
       return NextResponse.json(
-        { error: 'transfer_required', offeneAnfragen },
+        { error: 'transfer_required', offeneAnfragen, offeneBearbeiter, offeneTermin },
         { status: 409 }
       )
     }
 
     if (nachfolgerId) {
-      // Alle Anfragen auf Nachfolger übertragen
-      await prisma.anfrage.updateMany({
-        where: { bearbeiterId: id },
-        data: { bearbeiterId: nachfolgerId },
-      })
+      // bearbeiterId und terminZustaendigId unabhängig übertragen
+      await Promise.all([
+        prisma.anfrage.updateMany({
+          where: { bearbeiterId: id },
+          data: { bearbeiterId: nachfolgerId },
+        }),
+        prisma.anfrage.updateMany({
+          where: { terminZustaendigId: id },
+          data: { terminZustaendigId: nachfolgerId },
+        }),
+      ])
+
+      // Nachfolger per WhatsApp über Übernahme informieren
+      if (offeneAnfragen > 0) {
+        try {
+          const { notifyMitarbeiter } = await import('@/lib/notify')
+          const nachfolger = await prisma.mitarbeiter.findUnique({
+            where: { id: nachfolgerId },
+            select: { vorname: true, nachname: true, telefon: true, whatsapp: true, waApiKey: true, benachrichtigungKanal: true },
+          })
+          const altMa = await prisma.mitarbeiter.findUnique({
+            where: { id },
+            select: { vorname: true, nachname: true },
+          })
+          if (nachfolger) {
+            const teile: string[] = [`👤 Vorgänge übernommen von ${altMa?.vorname ?? ''} ${altMa?.nachname ?? ''}`.trim()]
+            if (offeneBearbeiter > 0) teile.push(`📋 ${offeneBearbeiter} Anfrage${offeneBearbeiter !== 1 ? 'n' : ''} als Bearbeiter`)
+            if (offeneTermin > 0) teile.push(`📅 ${offeneTermin} Termin${offeneTermin !== 1 ? 'e' : ''} als Termin-Zuständiger`)
+            await notifyMitarbeiter(nachfolger, teile.join('\n'), '[AAB] Vorgänge übernommen', {})
+          }
+        } catch { /* Benachrichtigung ist optional */ }
+      }
     }
 
     // permanent=true → endgültig löschen (nur wenn bereits inaktiv)

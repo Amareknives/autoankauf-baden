@@ -8,17 +8,16 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '20')
     const archiviert = searchParams.get('archiviert') === 'true'
+    const bearbeiterIdFilter = searchParams.get('bearbeiterId')
     const skip = (page - 1) * limit
 
     const { prisma } = await import('@/lib/prisma')
 
-    const where: Record<string, unknown> = {
-      archiviert,
-    }
+    const where: Record<string, unknown> = { archiviert }
 
-    if (status && status !== 'all') {
-      where.status = status
-    }
+    if (status && status !== 'all') where.status = status
+    if (bearbeiterIdFilter === 'none') where.bearbeiterId = null
+    else if (bearbeiterIdFilter) where.bearbeiterId = bearbeiterIdFilter
 
     if (search) {
       where.OR = [
