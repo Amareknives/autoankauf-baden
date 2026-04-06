@@ -44,6 +44,24 @@ export async function DELETE(
   try {
     const { id } = await params
     const { prisma } = await import('@/lib/prisma')
+
+    // Fotos vor dem Löschen aus dem Dateisystem entfernen
+    const anfrage = await prisma.anfrage.findUnique({
+      where: { id },
+      select: { fotos: true },
+    })
+    if (anfrage?.fotos) {
+      const { unlink } = await import('fs/promises')
+      const path = await import('path')
+      const UPLOAD_DIR = process.env.UPLOAD_DIR
+        ? path.resolve(process.env.UPLOAD_DIR)
+        : path.join(process.cwd(), 'uploads')
+      const filenames = anfrage.fotos as string[]
+      await Promise.allSettled(
+        filenames.map((f) => unlink(path.join(UPLOAD_DIR, f)))
+      )
+    }
+
     await prisma.anfrage.delete({ where: { id } })
     return NextResponse.json({ ok: true })
   } catch {
