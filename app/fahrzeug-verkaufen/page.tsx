@@ -126,7 +126,7 @@ export default async function FahrzeugVerkaufenPage() {
 
             {/* Hinweis Reaktionszeit */}
             <p className="text-[11px] text-[#94A3B8] leading-relaxed px-1">
-              *Antwortzeit werktags 6–18 Uhr und samstags 6–13 Uhr. Wir prüfen jede Anfrage persönlich – transparent und fair.
+              *Antwortzeit werktags 7:30–18:30 Uhr und samstags 8–15 Uhr. Wir prüfen jede Anfrage persönlich – transparent und fair.
             </p>
 
             {/* Kundenstimmen */}
@@ -136,7 +136,7 @@ export default async function FahrzeugVerkaufenPage() {
             <div className="bg-[#0369A1] rounded-2xl p-5 text-center">
               <p className="text-white font-bold text-sm mb-1">Lieber direkt kontaktieren?</p>
               <div className="text-white/70 text-xs mb-3 space-y-0.5">
-                <p>📞 Telefon &amp; 💬 WhatsApp: Mo–Fr 6–18 · Sa 6–13 Uhr</p>
+                <p>📞 Telefon &amp; 💬 WhatsApp: Mo–Fr 7:30–18:30 · Sa 8–15 Uhr</p>
                 <p>✉️ E-Mail: jederzeit – Antwort innerhalb der Geschäftszeiten</p>
               </div>
               <Link

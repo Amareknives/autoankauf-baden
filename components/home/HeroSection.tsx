@@ -82,7 +82,7 @@ export default function HeroSection() {
                 ✓ Kostenlos &nbsp;·&nbsp; ✓ Unverbindlich &nbsp;·&nbsp; ✓ 2–3 Std.*
               </p>
               <p className="text-white/45 text-[11px] mt-1.5">
-                *Werktags 6–18 Uhr · Samstag 6–13 Uhr · Wir kümmern uns persönlich um dich
+                *Werktags 7:30–18:30 Uhr · Samstag 8–15 Uhr · Wir kümmern uns persönlich um dich
               </p>
             </div>
 

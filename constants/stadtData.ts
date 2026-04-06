@@ -31,7 +31,7 @@ export const STAEDTE: StadtData[] = [
     teaser: 'Auto verkaufen in Karlsruhe – schnell, fair und ohne Stress.',
     fakten: [
       'Direkte Abholung im gesamten Stadtgebiet – Nordstadt, Südstadt, Weststadt, Durlach',
-      'Angebot in 2–3 Stunden* per E-Mail oder WhatsApp (Werktags 6–18 Uhr, Sa 6–13 Uhr)',
+      'Angebot in 2–3 Stunden* per E-Mail oder WhatsApp (Werktags 7:30–18:30 Uhr, Sa 8–15 Uhr)',
       'Keine Händlerprovision – du verhandelst direkt mit uns',
     ],
     naechsteStaedte: ['bruchsal', 'rastatt', 'pforzheim'],

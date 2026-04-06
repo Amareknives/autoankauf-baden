@@ -166,7 +166,7 @@ export function eingangsbestaetigung(params: {
     </p>
     <p style="margin:0 0 20px;color:#94A3B8;font-size:12px;line-height:1.7;border-top:1px solid #F1F5F9;padding-top:16px;">
       <strong style="color:#64748B;">Ein kurzer Hinweis:</strong> Wir prüfen deine Anfrage persönlich und melden uns schnellstmöglich.<br>
-      Wir sind <strong style="color:#64748B;">Mo–Fr 6–18 Uhr</strong> und <strong style="color:#64748B;">Sa 6–13 Uhr</strong> erreichbar.
+      Wir sind <strong style="color:#64748B;">Mo–Fr 7:30–18:30 Uhr</strong> und <strong style="color:#64748B;">Sa 8–15 Uhr</strong> erreichbar.
       Anfragen außerhalb dieser Zeiten werden am nächsten Werktag bearbeitet. Wir danken dir für dein Verständnis!
     </p>
 

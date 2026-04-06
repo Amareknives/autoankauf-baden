@@ -88,7 +88,7 @@ export function DankeContent({ waNummerClean }: { waNummerClean: string }) {
           <p className="text-xs font-semibold text-[#0F172A] mb-1.5">Ein kurzer Hinweis</p>
           <p className="text-xs text-[#64748B] leading-relaxed">
             Wir prüfen deine Anfrage persönlich und melden uns schnellstmöglich.
-            Wir sind <strong>Mo–Fr 6–18 Uhr</strong> und <strong>Sa 6–13 Uhr</strong> erreichbar.
+            Wir sind <strong>Mo–Fr 7:30–18:30 Uhr</strong> und <strong style="color:#64748B;">Sa 8–15 Uhr</strong> erreichbar.
             E-Mail-Anfragen können jederzeit eingereicht werden – außerhalb der Geschäftszeiten melden wir uns
             am nächsten Werktag. Danke für dein Verständnis! 🙏
           </p>

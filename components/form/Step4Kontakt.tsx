@@ -21,7 +21,7 @@ export function Step4Kontakt({ data, onChange, errors }: Step4Props) {
           Wir melden uns innerhalb von 2–3 Stunden* persönlich mit deinem Angebot.
         </p>
         <p className="mt-0.5 text-[11px] text-[#94A3B8]">
-          *Werktags 6–18 Uhr · Samstag 6–13 Uhr
+          *Werktags 7:30–18:30 Uhr · Samstag 8–15 Uhr
         </p>
       </div>
 

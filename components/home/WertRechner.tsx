@@ -155,7 +155,7 @@ export default function WertRechner() {
               </button>
 
               <p className="text-white/60 text-[11px] mt-3">
-                *Kostenlos &amp; unverbindlich · Kein Verkaufszwang · Werktags 6–18 Uhr · Sa 6–13 Uhr
+                *Kostenlos &amp; unverbindlich · Kein Verkaufszwang · Werktags 7:30–18:30 Uhr · Sa 8–15 Uhr
               </p>
             </form>
           </div>

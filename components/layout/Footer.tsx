@@ -144,7 +144,7 @@ export default async function Footer() {
               <p className="text-white/40 text-[10px] font-semibold uppercase tracking-wider mb-2">Erreichbarkeit</p>
               <div className="space-y-1 mb-2">
                 <p className="text-white/60 text-xs">📞 Telefon &amp; 💬 WhatsApp</p>
-                <p className="text-white/45 text-xs">Mo–Fr: 6:00–18:00 Uhr &nbsp;·&nbsp; Sa: 6:00–13:00 Uhr</p>
+                <p className="text-white/45 text-xs">Mo–Fr: 7:30–18:30 Uhr &nbsp;·&nbsp; Sa: 8:00–15:00 Uhr</p>
               </div>
               <p className="text-white/60 text-xs mb-0.5">✉️ E-Mail &amp; 💬 WhatsApp: jederzeit</p>
               <p className="text-white/30 text-[10px] leading-relaxed">

@@ -9,7 +9,7 @@ const kategorien = [
       {
         frage: 'Wann seid ihr erreichbar?',
         antwort:
-          'Per Telefon und WhatsApp sind wir montags bis freitags von 6:00 bis 18:00 Uhr und samstags von 6:00 bis 13:00 Uhr erreichbar. E-Mail-Anfragen können jederzeit – also auch nachts oder am Wochenende – eingereicht werden. Wir antworten dann innerhalb der nächsten Geschäftszeiten.',
+          'Per Telefon und WhatsApp sind wir montags bis freitags von 7:30 bis 18:30 Uhr und samstags von 8:00 bis 15:00 Uhr erreichbar. E-Mail-Anfragen können jederzeit – also auch nachts oder am Wochenende – eingereicht werden. Wir antworten dann innerhalb der nächsten Geschäftszeiten.',
       },
       {
         frage: 'Ich habe außerhalb der Geschäftszeiten eine WhatsApp geschrieben – wann bekomme ich Antwort?',
@@ -34,7 +34,7 @@ const kategorien = [
       {
         frage: 'Wie schnell bekomme ich ein Angebot?',
         antwort:
-          'Du erhältst dein persönliches Angebot innerhalb von 2–3 Stunden nach der Anfrage – per E-Mail oder telefonisch. Wichtig: Das gilt werktags von 6–18 Uhr und samstags von 6–13 Uhr. Wir prüfen jede Anfrage persönlich.',
+          'Du erhältst dein persönliches Angebot innerhalb von 2–3 Stunden nach der Anfrage – per E-Mail oder telefonisch. Wichtig: Das gilt werktags von 7:30–18:30 Uhr und samstags von 8–15 Uhr. Wir prüfen jede Anfrage persönlich.',
       },
       {
         frage: 'Muss ich zum Termin kommen oder kommt ihr zu mir?',

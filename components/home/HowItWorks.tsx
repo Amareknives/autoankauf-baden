@@ -139,7 +139,7 @@ export default function HowItWorks() {
             </Link>
           </div>
           <p className="mt-3 text-[11px] text-white/45">
-            *Erreichbarkeit: Werktags 6–18 Uhr &amp; Samstag 6–13 Uhr – wir antworten persönlich
+            *Werktags 7:30–18:30 Uhr &amp; Samstag 8–15 Uhr – Anfragen außerhalb der Geschäftszeiten werden am nächsten Werktag beantwortet
           </p>
         </div>
       </div>
