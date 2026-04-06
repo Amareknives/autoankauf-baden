@@ -599,8 +599,17 @@ export function ChipSelect({
             }}
           >
             <div className="shrink-0 bg-white">
-              <div className="flex justify-center pb-2 pt-3">
+              <div className="flex items-center justify-between px-4 pb-2 pt-3">
+                <div className="w-12" />
                 <div className="h-1 w-10 rounded-full bg-[#CBD5E1]" aria-hidden="true" />
+                <button
+                  type="button"
+                  onMouseDown={e => { e.preventDefault(); doClose(); }}
+                  onTouchEnd={e => { e.preventDefault(); doClose(); }}
+                  className="w-12 text-right text-[15px] font-semibold text-[#0369A1]"
+                >
+                  Fertig
+                </button>
               </div>
               {/* Suchfeld nur wenn Optionen vorhanden – verhindert Tastatur bei leerem Hinweis */}
               {allItems.length > 0 && (
