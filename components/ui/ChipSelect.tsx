@@ -124,6 +124,15 @@ export function ChipSelect({
     }, 200);
   };
 
+  // Auto-Focus Suchfeld im Sheet nach Animation (verhindert zweiten Keyboard-Sprung)
+  useEffect(() => {
+    if (!isMobile || !isOpen || allItems.length === 0) return;
+    const timer = setTimeout(() => {
+      sheetSearchRef.current?.focus({ preventScroll: true });
+    }, 220); // nach 200ms Sheet-Animation
+    return () => clearTimeout(timer);
+  }, [isMobile, isOpen, allItems.length]);
+
   // Body-Scroll-Lock: verhindert dass iOS beim Keyboard-Öffnen die Seite hochschiebt
   useEffect(() => {
     if (!isMobile || !isOpen) return;
@@ -202,7 +211,13 @@ export function ChipSelect({
     return (aliases[opt] ?? []).some(a => a.toLowerCase().includes(s));
   });
 
-  const pick = (opt: string) => { onChange(opt); doClose(); };
+  const pick = (opt: string) => {
+    // Keyboard auf Mobile schließen
+    sheetSearchRef.current?.blur();
+    inputRef.current?.blur();
+    onChange(opt);
+    doClose();
+  };
 
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -590,10 +605,17 @@ export function ChipSelect({
               {/* Suchfeld nur wenn Optionen vorhanden – verhindert Tastatur bei leerem Hinweis */}
               {allItems.length > 0 && (
                 <div className="px-4 pb-3">
+                  {/* form onSubmit: zuverlässiges Enter/Go auf Android + iOS */}
+                  <form onSubmit={e => {
+                    e.preventDefault();
+                    if (filtered.length === 1) pick(filtered[0]);
+                    else if (filtered.length > 1 && activeIndex >= 0) pick(filtered[activeIndex]);
+                  }}>
                   <div className="relative">
                     <input
                       ref={sheetSearchRef}
-                      type="text"
+                      type="search"
+                      enterKeyHint={filtered.length === 1 ? 'done' : 'search'}
                       value={search}
                       onChange={e => { setSearch(e.target.value); setActiveIndex(-1); }}
                       onKeyDown={handleKeyDown}
@@ -605,6 +627,7 @@ export function ChipSelect({
                       <Search size={16} strokeWidth={2} />
                     </div>
                   </div>
+                  </form>
                 </div>
               )}
             </div>
