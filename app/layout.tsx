@@ -133,6 +133,19 @@ export default async function RootLayout({
         <link rel="apple-touch-icon" sizes="152x152" href="/pwa/ios/152.png" />
         <link rel="apple-touch-icon" sizes="167x167" href="/pwa/ios/167.png" />
         <link rel="apple-touch-icon" sizes="1024x1024" href="/pwa/ios/1024.png" />
+        {/* iOS Splash Screens */}
+        <link rel="apple-touch-startup-image" media="(device-width:320px) and (device-height:568px) and (-webkit-device-pixel-ratio:2) and (orientation:portrait)" href="/pwa/ios/splash/iphone-se.png" />
+        <link rel="apple-touch-startup-image" media="(device-width:375px) and (device-height:667px) and (-webkit-device-pixel-ratio:2) and (orientation:portrait)" href="/pwa/ios/splash/iphone-8.png" />
+        <link rel="apple-touch-startup-image" media="(device-width:375px) and (device-height:812px) and (-webkit-device-pixel-ratio:3) and (orientation:portrait)" href="/pwa/ios/splash/iphone-x.png" />
+        <link rel="apple-touch-startup-image" media="(device-width:414px) and (device-height:896px) and (-webkit-device-pixel-ratio:2) and (orientation:portrait)" href="/pwa/ios/splash/iphone-xr.png" />
+        <link rel="apple-touch-startup-image" media="(device-width:390px) and (device-height:844px) and (-webkit-device-pixel-ratio:3) and (orientation:portrait)" href="/pwa/ios/splash/iphone-12.png" />
+        <link rel="apple-touch-startup-image" media="(device-width:393px) and (device-height:852px) and (-webkit-device-pixel-ratio:3) and (orientation:portrait)" href="/pwa/ios/splash/iphone-14-pro.png" />
+        <link rel="apple-touch-startup-image" media="(device-width:428px) and (device-height:926px) and (-webkit-device-pixel-ratio:3) and (orientation:portrait)" href="/pwa/ios/splash/iphone-14-plus.png" />
+        <link rel="apple-touch-startup-image" media="(device-width:430px) and (device-height:932px) and (-webkit-device-pixel-ratio:3) and (orientation:portrait)" href="/pwa/ios/splash/iphone-14-pro-max.png" />
+        <link rel="apple-touch-startup-image" media="(device-width:744px) and (device-height:1133px) and (-webkit-device-pixel-ratio:2) and (orientation:portrait)" href="/pwa/ios/splash/ipad-mini.png" />
+        <link rel="apple-touch-startup-image" media="(device-width:820px) and (device-height:1180px) and (-webkit-device-pixel-ratio:2) and (orientation:portrait)" href="/pwa/ios/splash/ipad-air.png" />
+        <link rel="apple-touch-startup-image" media="(device-width:834px) and (device-height:1194px) and (-webkit-device-pixel-ratio:2) and (orientation:portrait)" href="/pwa/ios/splash/ipad-pro-11.png" />
+        <link rel="apple-touch-startup-image" media="(device-width:1024px) and (device-height:1366px) and (-webkit-device-pixel-ratio:2) and (orientation:portrait)" href="/pwa/ios/splash/ipad-pro-129.png" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
