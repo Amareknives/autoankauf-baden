@@ -342,55 +342,27 @@ export async function PATCH(
           }
         }
 
-        // ── Bearbeiter-Wechsel: nur intern benachrichtigen, kein Kunden-Mail ──
-        if (data.bearbeiterId && data.bearbeiterId !== alt?.bearbeiterId && bearbeiter) {
-          // Nur "Fall zugewiesen" – Termin-Info nur wenn kein Termin-Zuständiger gesetzt ist
-          const hatTerminZust = !!(updated.terminZustaendigId)
-          if (!hatTerminZust && alt?.terminVorschlag1) {
-            // Kein terminZustaendig gesetzt aber Termin vorhanden → Bearbeiter auch für Termin zuständig
-            const adresse = updated.abholadresse || `${settings.strasse}, ${settings.plz_firma} ${settings.ort}`
-            const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(adresse)}`
-            const terminStr = new Date(alt.terminVorschlag1).toLocaleString('de-DE', {
-              weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric',
-              hour: '2-digit', minute: '2-digit',
-            })
-            const msg = [
-              `👤 Dir wurde ein Fall übertragen!`,
-              `📅 Termin am: ${terminStr} Uhr`,
-              `👤 ${updated.vorname} ${updated.nachname}`,
-              `🚗 ${updated.marke} ${updated.modell}`,
-              `📍 ${adresse}`,
-              `🗺 ${mapsUrl}`,
-            ].join('\n')
-            await notifyMitarbeiter(bearbeiter, msg, `[AAB] Fall übertragen: ${updated.vorname} ${updated.nachname}`, { anfrageId: id })
-          } else {
-            const msg = `👋 Dir wurde ein Fall zugewiesen\n👤 ${updated.vorname} ${updated.nachname}\n🚗 ${updated.marke} ${updated.modell}\nStatus: ${updated.status}`
-            await notifyMitarbeiter(bearbeiter, msg, `[AAB] Zuweisung: ${updated.vorname} ${updated.nachname}`, { anfrageId: id })
-          }
-        }
+        // ── Bearbeiter-Wechsel: nur Verlauf, kein WhatsApp ───────────────
+        // (kein notifyMitarbeiter — interner Vorgang, nur im Verlauf sichtbar)
 
-        // ── Termin-Zuständiger gewechselt: intern benachrichtigen ─────────
-        if (data.terminZustaendigId && data.terminZustaendigId !== alt?.terminZustaendigId && terminZust) {
-          if (alt?.terminVorschlag1) {
-            const adresse = updated.abholadresse || `${settings.strasse}, ${settings.plz_firma} ${settings.ort}`
-            const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(adresse)}`
-            const terminStr = new Date(alt.terminVorschlag1).toLocaleString('de-DE', {
-              weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric',
-              hour: '2-digit', minute: '2-digit',
-            })
-            const msg = [
-              `📅 Dir wurde ein Termin übertragen!`,
-              `👤 ${updated.vorname} ${updated.nachname}`,
-              `🚗 ${updated.marke} ${updated.modell}`,
-              `🗓 ${terminStr} Uhr`,
-              `📍 ${adresse}`,
-              `🗺 ${mapsUrl}`,
-            ].join('\n')
-            await notifyMitarbeiter(terminZust, msg, `[AAB] Termin übertragen: ${updated.vorname} ${updated.nachname}`, { anfrageId: id })
-          } else {
-            const msg = `📅 Du wurdest als Termin-Zuständiger eingetragen\n👤 ${updated.vorname} ${updated.nachname}\n🚗 ${updated.marke} ${updated.modell}`
-            await notifyMitarbeiter(terminZust, msg, `[AAB] Termin-Zuweisung: ${updated.vorname} ${updated.nachname}`, { anfrageId: id })
-          }
+        // ── Termin-Zuständiger gewechselt MIT laufendem Termin → WhatsApp ─
+        // Ohne Termin: kein WhatsApp (nur Verlauf)
+        if (data.terminZustaendigId && data.terminZustaendigId !== alt?.terminZustaendigId && terminZust && alt?.terminVorschlag1) {
+          const adresse = updated.abholadresse || `${settings.strasse}, ${settings.plz_firma} ${settings.ort}`
+          const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(adresse)}`
+          const terminStr = new Date(alt.terminVorschlag1).toLocaleString('de-DE', {
+            weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric',
+            hour: '2-digit', minute: '2-digit',
+          })
+          const msg = [
+            `📅 Dir wurde ein Termin übertragen!`,
+            `👤 ${updated.vorname} ${updated.nachname}`,
+            `🚗 ${updated.marke} ${updated.modell}`,
+            `🗓 ${terminStr} Uhr`,
+            `📍 ${adresse}`,
+            `🗺 ${mapsUrl}`,
+          ].join('\n')
+          await notifyMitarbeiter(terminZust, msg, `[AAB] Termin übertragen: ${updated.vorname} ${updated.nachname}`, { anfrageId: id })
         }
 
         // ── Termin-Mails (kundenbezogen) ──────────────────────────────────
