@@ -60,7 +60,7 @@
 6. `npm run dev` muss auch ohne .env starten
 7. Keine hardcodierten Secrets
 8. Rechtliche Texte immer mit Anwalt-Hinweis
-9. Fotos: nur jpg/png/webp, max 5MB
+9. Fotos: nur jpg/png/webp, max 8MB, max 8 Fotos
 10. Social Links: nur anzeigen wenn in DB gesetzt
 11. DSGVO Checkbox PFLICHT, nie vorausgefüllt
 12. IP nicht speichern

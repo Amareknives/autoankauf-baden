@@ -26,7 +26,7 @@ export function FileDropzone({
   onFilesChange,
   onFilesSelected,
   maxFiles = 10,
-  maxSizeMB = 5,
+  maxSizeMB = 8,
   accept = DEFAULT_ACCEPT,
 }: FileDropzoneProps) {
   const [error, setError] = useState<string | null>(null);
