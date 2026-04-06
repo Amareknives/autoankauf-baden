@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnfrageFormData } from '@/types/anfrage';
-import { useFormAutosave, loadFormAutosave } from '@/hooks/useFormAutosave';
+import { useFormAutosave, loadFormAutosave, clearFormAutosave } from '@/hooks/useFormAutosave';
 import { gtmEvents } from '@/lib/gtm';
 import { ProgressBar } from '@/components/form/ProgressBar';
 import { Step1Fahrzeug } from '@/components/form/Step1Fahrzeug';
@@ -11,7 +11,7 @@ import { Step2Zustand } from '@/components/form/Step2Zustand';
 import { Step3Ausstattung } from '@/components/form/Step3Ausstattung';
 import { Step4Kontakt } from '@/components/form/Step4Kontakt';
 import { Button } from '@/components/ui/Button';
-import { Send } from 'lucide-react';
+import { Send, RotateCcw } from 'lucide-react';
 
 type FormErrors = Partial<Record<keyof AnfrageFormData, string>>;
 
@@ -76,6 +76,7 @@ export function AngebotForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [autosaveEnabled, setAutosaveEnabled] = useState(false);
+  const [resetConfirm, setResetConfirm] = useState(false);
   const formStartedRef = useRef(false);
   const formRef = useRef<HTMLDivElement>(null);
 
@@ -113,6 +114,17 @@ export function AngebotForm() {
 
   const scrollToTop = () => {
     formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const handleReset = () => {
+    clearFormAutosave();
+    setFormData(DEFAULT_DATA);
+    setErrors({});
+    setCurrentStep(1);
+    setMaxReachedStep(1);
+    setResetConfirm(false);
+    formStartedRef.current = false;
+    scrollToTop();
   };
 
   const handleNext = () => {
@@ -240,7 +252,42 @@ export function AngebotForm() {
         {/* Form Content */}
         <div className="px-6 pb-6 sm:px-10 sm:pb-10">
           {currentStep === 1 && (
-            <Step1Fahrzeug data={formData} onChange={handleChange} errors={errors} />
+            <>
+              {/* Reset-Button – nur sichtbar wenn Felder befüllt */}
+              {(formData.marke || formData.modell || formData.kilometerstand) && (
+                <div className="flex justify-end mb-4 -mt-2">
+                  {resetConfirm ? (
+                    <div className="flex items-center gap-2 bg-[#FFF7ED] border border-[#FED7AA] rounded-xl px-3 py-2">
+                      <span className="text-xs text-[#92400E] font-medium">Formular wirklich zurücksetzen?</span>
+                      <button
+                        type="button"
+                        onClick={handleReset}
+                        className="text-xs font-bold text-white bg-[#FB6F6F] hover:bg-[#f95c5c] px-2.5 py-1 rounded-lg transition-colors"
+                      >
+                        Ja, zurücksetzen
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setResetConfirm(false)}
+                        className="text-xs font-medium text-[#64748B] hover:text-[#0F172A] transition-colors"
+                      >
+                        Abbrechen
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setResetConfirm(true)}
+                      className="flex items-center gap-1.5 text-xs text-[#94A3B8] hover:text-[#64748B] transition-colors py-1 px-2 rounded-lg hover:bg-[#F8FAFC]"
+                    >
+                      <RotateCcw size={13} strokeWidth={2.5} />
+                      Formular zurücksetzen
+                    </button>
+                  )}
+                </div>
+              )}
+              <Step1Fahrzeug data={formData} onChange={handleChange} errors={errors} />
+            </>
           )}
           {currentStep === 2 && (
             <Step2Zustand data={formData} onChange={handleChange} errors={errors} />
