@@ -60,6 +60,33 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
+async function moveTempToUpload(filenames: string[]) {
+  if (!filenames.length) return
+  const { rename, mkdir } = await import('fs/promises')
+  const path = await import('path')
+  const uploadDir = process.env.UPLOAD_DIR
+    ? path.resolve(process.env.UPLOAD_DIR)
+    : path.join(process.cwd(), 'uploads')
+  await mkdir(uploadDir, { recursive: true })
+  await Promise.allSettled(
+    filenames.map((f) =>
+      rename(path.join(uploadDir, 'temp', f), path.join(uploadDir, f))
+    )
+  )
+}
+
+async function deleteTempFiles(filenames: string[]) {
+  if (!filenames.length) return
+  const { unlink } = await import('fs/promises')
+  const path = await import('path')
+  const uploadDir = process.env.UPLOAD_DIR
+    ? path.resolve(process.env.UPLOAD_DIR)
+    : path.join(process.cwd(), 'uploads')
+  await Promise.allSettled(
+    filenames.map((f) => unlink(path.join(uploadDir, 'temp', f)))
+  )
+}
+
 export async function POST(request: NextRequest) {
   const forwardedFor = request.headers.get('x-forwarded-for');
   const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : 'unknown';
@@ -70,9 +97,12 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  let fotoFilenames: string[] = []
+
   try {
     const body = await request.json();
     const data = anfrageSchema.parse(body);
+    fotoFilenames = data.fotos
 
     const { prisma } = await import('@/lib/prisma');
     const { getSiteSettings } = await import('@/lib/siteSettings');
@@ -82,6 +112,9 @@ export async function POST(request: NextRequest) {
       : data;
     const anfrage = await prisma.anfrage.create({ data: createData });
     const anfrageId = anfrage.id;
+
+    // Fotos aus temp/ in permanenten Ordner verschieben
+    await moveTempToUpload(fotoFilenames)
 
     // Newsletter-Anmeldung dauerhaft speichern (unabhängig von der Anfrage)
     if (data.newsletter) {
@@ -145,6 +178,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, id: anfrageId });
   } catch (error) {
+    // Temp-Fotos aufräumen wenn Anfrage nicht gespeichert werden konnte
+    await deleteTempFiles(fotoFilenames)
+
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: 'Ungueltige Daten', details: error.issues }, { status: 400 });
     }

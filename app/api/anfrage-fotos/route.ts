@@ -7,6 +7,9 @@ const UPLOAD_DIR = process.env.UPLOAD_DIR
   ? path.resolve(process.env.UPLOAD_DIR)
   : path.join(process.cwd(), 'uploads')
 
+// Temporärer Ordner – Dateien bleiben hier bis das Formular abgesendet wird
+const TEMP_DIR = path.join(UPLOAD_DIR, 'temp')
+
 const MAX_SIZE = 8 * 1024 * 1024 // 8 MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 const MAX_FILES = 8
@@ -51,14 +54,14 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    await mkdir(UPLOAD_DIR, { recursive: true })
+    await mkdir(TEMP_DIR, { recursive: true })
 
     const filenames: string[] = []
     for (const file of files) {
       const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg'
       const filename = `${randomUUID()}.${ext}`
       const buffer = Buffer.from(await file.arrayBuffer())
-      await writeFile(path.join(UPLOAD_DIR, filename), buffer)
+      await writeFile(path.join(TEMP_DIR, filename), buffer)
       filenames.push(filename)
     }
 
