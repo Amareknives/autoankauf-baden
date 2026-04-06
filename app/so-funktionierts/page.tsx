@@ -189,7 +189,7 @@ export default function SoFunktioniertSPage() {
         </div>
 
         {/* Vorteile */}
-        <div className="mt-20 pt-10 border-t border-[#E2EDF7]">
+        <div className="mt-14">
           <h2 className="text-2xl font-bold text-[#0F172A] text-center mb-2">
             Warum AutoAnkauf-Baden?
           </h2>
