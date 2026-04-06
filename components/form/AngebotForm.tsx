@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { flushSync } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { AnfrageFormData } from '@/types/anfrage';
 import { useFormAutosave, loadFormAutosave, clearFormAutosave } from '@/hooks/useFormAutosave';
@@ -169,7 +170,7 @@ export function AngebotForm() {
       return;
     }
 
-    setIsSubmitting(true);
+    flushSync(() => setIsSubmitting(true));
 
     try {
       // Fotos auf Server hochladen – Dateinamen statt Base64 speichern
