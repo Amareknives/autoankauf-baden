@@ -107,9 +107,10 @@ export async function POST(request: NextRequest) {
     const { prisma } = await import('@/lib/prisma');
     const { getSiteSettings } = await import('@/lib/siteSettings');
     const settings = await getSiteSettings();
+    const baseData = { ...data, erstzulassungMonat: data.erstzulassungMonat ?? 0 };
     const createData = settings.defaultBearbeiterId
-      ? { ...data, bearbeiterId: settings.defaultBearbeiterId }
-      : data;
+      ? { ...baseData, bearbeiterId: settings.defaultBearbeiterId }
+      : baseData;
     const anfrage = await prisma.anfrage.create({ data: createData });
     const anfrageId = anfrage.id;
 
