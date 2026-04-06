@@ -20,7 +20,7 @@ interface Termin {
   nachname: string
   marke: string
   modell: string
-  telefon: string
+  telefon: string | null
   email: string
   plz: string
   terminVorschlag1: string
@@ -367,7 +367,7 @@ export default function TerminePage() {
           📞 {t.telefon}
         </a>
         <a
-          href={`https://wa.me/${t.telefon.replace(/\D/g, '')}`}
+          href={`https://wa.me/${(t.telefon ?? '').replace(/\D/g, '')}`}
           target="_blank"
           rel="noopener noreferrer"
           className="text-xs px-3 py-1.5 bg-[#DCFCE7] text-[#16A34A] rounded-lg font-medium hover:bg-[#16A34A] hover:text-white transition-colors"
