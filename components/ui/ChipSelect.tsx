@@ -133,23 +133,6 @@ export function ChipSelect({
     return () => cancelAnimationFrame(frame);
   }, [isMobile, isOpen, allItems.length]);
 
-  // Body-Scroll-Lock: verhindert dass iOS beim Keyboard-Öffnen die Seite hochschiebt
-  useEffect(() => {
-    if (!isMobile || !isOpen) return;
-    const scrollY = window.scrollY;
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = '100%';
-    return () => {
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      window.scrollTo(0, scrollY);
-    };
-  }, [isMobile, isOpen]);
-
   // Visual Viewport: Sheet über Tastatur schieben (iOS) oder schrumpfen (Android)
   useEffect(() => {
     if (!isMobile || !isOpen) {
