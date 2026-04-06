@@ -1,5 +1,8 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
+
 interface Props {
   title?: string
   subtitle?: string
@@ -9,8 +12,11 @@ export default function EmailPreviewLader({
   title = 'Vorschau wird erstellt…',
   subtitle = 'E-Mail wird für dich gerendert',
 }: Props) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => { setMounted(true) }, [])
+
+  const content = (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl px-10 py-8 flex flex-col items-center gap-5 min-w-[280px]">
 
         {/* Auto-Animation */}
@@ -128,4 +134,7 @@ export default function EmailPreviewLader({
       `}</style>
     </div>
   )
+
+  if (!mounted) return null
+  return createPortal(content, document.body)
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { flushSync } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { AnfrageFormData } from '@/types/anfrage';
 import { useFormAutosave, loadFormAutosave, clearFormAutosave } from '@/hooks/useFormAutosave';
@@ -170,7 +169,9 @@ export function AngebotForm() {
       return;
     }
 
-    flushSync(() => setIsSubmitting(true));
+    setIsSubmitting(true);
+    // Einen Frame warten – React rendert den Overlay bevor der Fetch startet
+    await new Promise<void>(r => setTimeout(r, 50));
 
     try {
       // Fotos auf Server hochladen – Dateinamen statt Base64 speichern
