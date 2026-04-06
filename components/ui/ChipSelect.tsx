@@ -82,10 +82,11 @@ export function ChipSelect({
 
   const doOpenRef = useRef<() => void>(() => {});
 
-  // autoOpen: Element in Sicht scrollen + Dropdown sofort öffnen
+  // autoOpen: Element in Sicht scrollen + Dropdown sofort öffnen (nur Desktop)
   useEffect(() => {
     if (!autoOpen) return;
     const timer = setTimeout(() => {
+      if (window.innerWidth < 768) return; // Mobil: kein Auto-Open
       containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       doOpenRef.current();
     }, 350);
