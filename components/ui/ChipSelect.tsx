@@ -124,6 +124,23 @@ export function ChipSelect({
     }, 200);
   };
 
+  // Body-Scroll-Lock: verhindert dass iOS beim Keyboard-Öffnen die Seite hochschiebt
+  useEffect(() => {
+    if (!isMobile || !isOpen) return;
+    const scrollY = window.scrollY;
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      window.scrollTo(0, scrollY);
+    };
+  }, [isMobile, isOpen]);
+
   // Visual Viewport: Sheet über Tastatur schieben (iOS) oder schrumpfen (Android)
   useEffect(() => {
     if (!isMobile || !isOpen) {
@@ -554,9 +571,10 @@ export function ChipSelect({
             className="fixed left-0 right-0 z-50 flex flex-col overflow-hidden rounded-t-[20px] bg-white"
             style={{
               bottom: sheetBottom,
-              height: sheetBottom > 0
-                ? `calc(100vh - ${sheetBottom}px - 8px)`
-                : '65vh',
+              height: '65vh',
+              maxHeight: sheetBottom > 0
+                ? `calc(100vh - ${sheetBottom + 80}px)`
+                : '90vh',
               transform: visible ? 'translateY(0)' : 'translateY(100%)',
               transition: 'transform 200ms ease',
             }}
