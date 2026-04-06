@@ -100,7 +100,7 @@ export async function DELETE(
           const { notifyMitarbeiter } = await import('@/lib/notify')
           const nachfolger = await prisma.mitarbeiter.findUnique({
             where: { id: nachfolgerId },
-            select: { vorname: true, nachname: true, telefon: true, whatsapp: true, waApiKey: true, benachrichtigungKanal: true },
+            select: { id: true, vorname: true, nachname: true, email: true, telefon: true, whatsapp: true, waApiKey: true, benachrichtigungKanal: true },
           })
           const altMa = await prisma.mitarbeiter.findUnique({
             where: { id },
