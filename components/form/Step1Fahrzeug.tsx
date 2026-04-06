@@ -37,18 +37,25 @@ const THIS_YEAR = new Date().getFullYear();
 const YEAR_OPTIONS = [
   ...Array.from({ length: THIS_YEAR - 1949 }, (_, i) => String(THIS_YEAR - i)),
   'Vor 1950',
+  'Nie zugelassen',
 ];
 
 // Hilfsfunktionen für Erstzulassungs-Konvertierung
 function jahrToOption(jahr: number | undefined): string {
   if (jahr === undefined) return '';
   if (jahr === 0) return 'Vor 1950';
+  if (jahr === -1) return 'Nie zugelassen';
   return String(jahr);
 }
 function optionToJahr(opt: string): number | undefined {
   if (!opt) return undefined;
   if (opt === 'Vor 1950') return 0;
+  if (opt === 'Nie zugelassen') return -1;
   return Number(opt);
+}
+/** Kein Monat bei "Vor 1950" oder "Nie zugelassen" */
+function jahrBrauchtKeinenMonat(jahr: number | undefined): boolean {
+  return jahr === 0 || jahr === -1;
 }
 function monatToOption(monat: number | undefined): string {
   if (!monat) return '';
@@ -133,7 +140,6 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
           placeholder="Marke eingeben z.B. BMW, VW..."
           rightPanel
           error={errors.marke}
-          autoOpen
         />
         <ChipSelect
           label="Modell"
@@ -159,7 +165,14 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
             required
             options={YEAR_OPTIONS}
             value={jahrToOption(data.erstzulassungJahr)}
-            onChange={(v) => onChange({ erstzulassungJahr: optionToJahr(v) })}
+            onChange={(v) => {
+              const newJahr = optionToJahr(v);
+              onChange({
+                erstzulassungJahr: newJahr,
+                // Monat zurücksetzen wenn kein Monat nötig
+                ...(jahrBrauchtKeinenMonat(newJahr) ? { erstzulassungMonat: undefined } : {}),
+              });
+            }}
             placeholder="Jahr wählen"
             rightPanel
             error={errors.erstzulassungJahr}
@@ -170,6 +183,8 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
             value={monatToOption(data.erstzulassungMonat)}
             onChange={(v) => onChange({ erstzulassungMonat: optionToMonat(v) })}
             placeholder="Monat (optional)"
+            disabled={data.erstzulassungJahr === undefined || jahrBrauchtKeinenMonat(data.erstzulassungJahr)}
+            emptyHint={data.erstzulassungJahr === undefined ? 'Bitte zuerst ein Jahr wählen' : undefined}
           />
         </div>
       </div>

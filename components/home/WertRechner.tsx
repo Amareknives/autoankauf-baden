@@ -16,6 +16,7 @@ const THIS_YEAR = new Date().getFullYear()
 const YEAR_OPTIONS = [
   ...Array.from({ length: THIS_YEAR - 1949 }, (_, i) => String(THIS_YEAR - i)),
   'Vor 1950',
+  'Nie zugelassen',
 ]
 
 export default function WertRechner() {
@@ -42,7 +43,7 @@ export default function WertRechner() {
           ...existing,
           marke,
           modell,
-          erstzulassungJahr: jahr === 'Vor 1950' ? 0 : Number(jahr),
+          erstzulassungJahr: jahr === 'Vor 1950' ? 0 : jahr === 'Nie zugelassen' ? -1 : Number(jahr),
           kilometerstand: Number(km),
         })
       )
