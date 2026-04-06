@@ -1675,7 +1675,8 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
               nachricht_gesendet:       { label: 'Nachricht gesendet',                    icon: '✉',  dotColor: '#0F172A', isMail: true },
               bearbeiter_mail_gesendet: { label: 'Ansprechpartner-Wechsel gesendet',      icon: '👤', dotColor: '#0369A1', isMail: true },
               notiz_gespeichert:        { label: 'Interne Notiz',                         icon: '📝', dotColor: '#F59E0B' },
-              bearbeiter_zugewiesen:    { label: 'Bearbeiter zugewiesen',                 icon: '👤', dotColor: '#0369A1' },
+              bearbeiter_zugewiesen:        { label: 'Bearbeiter zugewiesen',               icon: '👤', dotColor: '#0369A1' },
+              termin_zustaendig_geaendert:  { label: 'Termin-Zuständiger geändert',         icon: '📅', dotColor: '#7C3AED' },
             }
             return (
               <div className="bg-white rounded-2xl border border-[#E2EDF7] p-6">
