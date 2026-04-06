@@ -1,6 +1,14 @@
 'use client'
 
-export default function EmailPreviewLader() {
+interface Props {
+  title?: string
+  subtitle?: string
+}
+
+export default function EmailPreviewLader({
+  title = 'Vorschau wird erstellt…',
+  subtitle = 'E-Mail wird für dich gerendert',
+}: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl px-10 py-8 flex flex-col items-center gap-5 min-w-[280px]">
@@ -76,8 +84,8 @@ export default function EmailPreviewLader() {
 
         {/* Text */}
         <div className="text-center">
-          <p className="text-sm font-bold text-[#0F172A]">Vorschau wird erstellt…</p>
-          <p className="text-xs text-[#94A3B8] mt-1">E-Mail wird für dich gerendert</p>
+          <p className="text-sm font-bold text-[#0F172A]">{title}</p>
+          <p className="text-xs text-[#94A3B8] mt-1">{subtitle}</p>
         </div>
 
         {/* Lade-Punkte */}

@@ -12,6 +12,7 @@ import { Step3Ausstattung } from '@/components/form/Step3Ausstattung';
 import { Step4Kontakt } from '@/components/form/Step4Kontakt';
 import { Button } from '@/components/ui/Button';
 import { Send, RotateCcw } from 'lucide-react';
+import EmailPreviewLader from '@/components/dashboard/EmailPreviewLader';
 
 type FormErrors = Partial<Record<keyof AnfrageFormData, string>>;
 
@@ -244,6 +245,7 @@ export function AngebotForm() {
   const STEP_NAMES = ['Fahrzeug', 'Zustand', 'Ausstattung', 'Kontakt'];
 
   return (
+    <>
     <div ref={formRef} className="max-w-[760px] mx-auto">
       <div className="bg-white rounded-[20px] shadow-sm border border-[#E2EDF7]">
         {/* Progress Bar */}
@@ -362,6 +364,14 @@ export function AngebotForm() {
         </div>
       </div>
     </div>
+
+    {isSubmitting && (
+      <EmailPreviewLader
+        title="Anfrage wird gesendet…"
+        subtitle="Bitte einen Moment Geduld"
+      />
+    )}
+    </>
   );
 }
 
