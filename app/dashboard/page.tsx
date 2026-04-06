@@ -3,7 +3,7 @@
 import { useState, useEffect, type ReactNode } from 'react'
 import Link from 'next/link'
 import { DashboardStats } from '@/types/dashboard'
-import { Inbox, BarChart2, ClipboardList, Calendar, Archive, Handshake } from 'lucide-react'
+import { Inbox, BarChart2, ClipboardList, Calendar, Archive, Handshake, Database } from 'lucide-react'
 
 interface StatCard {
   label: string
@@ -40,19 +40,29 @@ export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [recentAnfragen, setRecentAnfragen] = useState<AnfragePreview[]>([])
   const [loading, setLoading] = useState(true)
+  const [storageData, setStorageData] = useState<{
+    dbSizeBytes: number
+    dbSizePretty: string
+    fotosSizeBytes: number
+    fotosSizePretty: string
+    anfragenMitFotos: number
+    anfragenGesamt: number
+  } | null>(null)
 
   useEffect(() => {
     async function load() {
       try {
-        const [statsRes, anfragenRes] = await Promise.all([
+        const [statsRes, anfragenRes, storageRes] = await Promise.all([
           fetch('/api/dashboard/stats'),
           fetch('/api/dashboard/anfragen?limit=5'),
+          fetch('/api/dashboard/storage'),
         ])
         if (statsRes.ok) setStats(await statsRes.json() as DashboardStats)
         if (anfragenRes.ok) {
           const data = await anfragenRes.json() as { anfragen: AnfragePreview[] }
           setRecentAnfragen(data.anfragen)
         }
+        if (storageRes.ok) setStorageData(await storageRes.json())
       } finally {
         setLoading(false)
       }
@@ -178,6 +188,42 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Speicherplatz */}
+      {storageData && (() => {
+        const SUPABASE_FREE_BYTES = 500 * 1024 * 1024 // 500 MB
+        const usedPct = Math.min(100, (storageData.dbSizeBytes / SUPABASE_FREE_BYTES) * 100)
+        const barColor = usedPct >= 80 ? '#FB6F6F' : usedPct >= 50 ? '#F59E0B' : '#16A34A'
+        const textColor = usedPct >= 80 ? 'text-[#FB6F6F]' : usedPct >= 50 ? 'text-amber-500' : 'text-[#16A34A]'
+        const fotosAnteil = storageData.dbSizeBytes > 0
+          ? Math.round((storageData.fotosSizeBytes / storageData.dbSizeBytes) * 100)
+          : 0
+
+        return (
+          <div className="mt-4 bg-white rounded-2xl border border-[#E2EDF7] p-5">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <span className="w-8 h-8 bg-[#F1F5F9] rounded-xl flex items-center justify-center">
+                  <Database size={16} strokeWidth={2.2} className="text-[#64748B]" />
+                </span>
+                <span className="text-sm font-semibold text-[#0F172A]">Datenbank – Supabase Free (500 MB)</span>
+              </div>
+              <span className={`text-sm font-bold ${textColor}`}>{storageData.dbSizePretty} / 500 MB</span>
+            </div>
+            <div className="w-full h-2 bg-[#F1F5F9] rounded-full overflow-hidden mb-3">
+              <div
+                className="h-full rounded-full transition-all duration-500"
+                style={{ width: `${usedPct}%`, background: barColor }}
+              />
+            </div>
+            <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-[#64748B]">
+              <span>Fotos: <strong className="text-[#0F172A]">{storageData.fotosSizePretty}</strong> ({fotosAnteil}% der DB)</span>
+              <span>Anfragen mit Fotos: <strong className="text-[#0F172A]">{storageData.anfragenMitFotos}</strong> von {storageData.anfragenGesamt}</span>
+              <span>Fotos gespeichert als Base64 in PostgreSQL (Supabase)</span>
+            </div>
+          </div>
+        )
+      })()}
     </div>
   )
 }
