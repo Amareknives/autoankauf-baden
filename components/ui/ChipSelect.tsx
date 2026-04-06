@@ -124,13 +124,13 @@ export function ChipSelect({
     }, 200);
   };
 
-  // Auto-Focus Suchfeld im Sheet nach Animation (verhindert zweiten Keyboard-Sprung)
+  // Auto-Focus Suchfeld: sofort nach erstem Render (Keyboard erscheint mit Sheet-Animation)
   useEffect(() => {
     if (!isMobile || !isOpen || allItems.length === 0) return;
-    const timer = setTimeout(() => {
+    const frame = requestAnimationFrame(() => {
       sheetSearchRef.current?.focus({ preventScroll: true });
-    }, 220); // nach 200ms Sheet-Animation
-    return () => clearTimeout(timer);
+    });
+    return () => cancelAnimationFrame(frame);
   }, [isMobile, isOpen, allItems.length]);
 
   // Body-Scroll-Lock: verhindert dass iOS beim Keyboard-Öffnen die Seite hochschiebt
@@ -586,10 +586,10 @@ export function ChipSelect({
             className="fixed left-0 right-0 z-50 flex flex-col overflow-hidden rounded-t-[20px] bg-white"
             style={{
               bottom: sheetBottom,
-              height: '65vh',
+              height: '35vh',
               maxHeight: sheetBottom > 0
-                ? `calc(100vh - ${sheetBottom + 80}px)`
-                : '90vh',
+                ? `calc(100vh - ${sheetBottom + 60}px)`
+                : '50vh',
               transform: visible ? 'translateY(0)' : 'translateY(100%)',
               transition: 'transform 200ms ease',
             }}
