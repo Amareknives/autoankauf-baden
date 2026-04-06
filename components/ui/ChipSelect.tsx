@@ -60,7 +60,8 @@ export function ChipSelect({
   const sheetSearchRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const touchStartY = useRef(0);
+  const touchStartY = useRef(0);       // Sheet swipe-to-close
+  const itemTouchY = useRef(0);        // Item tap vs. scroll
 
   // Alle Einträge flach – basis für Filterung und Tastatur-Navigation
   const allItems: string[] = sections ? sections.flatMap(s => s.items) : options;
@@ -334,7 +335,11 @@ export function ChipSelect({
         key={key}
         role="option"
         aria-selected={opt === value}
-        onTouchEnd={e => { e.preventDefault(); pick(opt); }}
+        onTouchStart={e => { itemTouchY.current = e.touches[0].clientY; }}
+        onTouchEnd={e => {
+          const moved = Math.abs(e.changedTouches[0].clientY - itemTouchY.current);
+          if (moved < 8) { e.preventDefault(); pick(opt); }
+        }}
         className="flex min-h-[48px] cursor-pointer items-center px-4 text-[15px] text-white transition-colors duration-100"
         style={{ backgroundColor: opt === value ? 'rgba(255,255,255,0.22)' : 'transparent' }}
       >
