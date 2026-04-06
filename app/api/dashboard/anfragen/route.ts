@@ -59,6 +59,8 @@ export async function GET(request: NextRequest) {
           angebotspreis: true,
           bearbeiterId: true,
           bearbeiter: { select: { id: true, vorname: true, nachname: true, kuerzel: true, farbe: true } },
+          terminZustaendigId: true,
+          terminZustaendig: { select: { id: true, vorname: true, nachname: true, kuerzel: true, farbe: true } },
           aktivitaeten: {
             orderBy: { createdAt: 'desc' },
             take: 1,

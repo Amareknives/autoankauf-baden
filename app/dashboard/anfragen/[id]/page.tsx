@@ -83,6 +83,8 @@ interface Anfrage {
   aktivitaeten: AktivitaetsLog[]
   bearbeiterId: string | null
   bearbeiter: { id: string; vorname: string; nachname: string; kuerzel: string | null; farbe: string; telefon: string | null; whatsapp: string | null } | null
+  terminZustaendigId: string | null
+  terminZustaendig: { id: string; vorname: string; nachname: string; kuerzel: string | null; farbe: string; telefon: string | null; whatsapp: string | null } | null
 }
 
 const STATUS_CONFIG: Record<string, { label: string; bg: string; text: string }> = {
@@ -691,8 +693,8 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
           setAngebotNachricht(data.angebotNachricht ?? '')
           setAbholadresse(data.abholadresse ?? '')
           setAbholAdresseZusatz(data.abholAdresseZusatz ?? '')
-          // Vorhandenen Bearbeiter übernehmen, sonst eingeloggten User als Default
-          setTerminMitarbeiterId(data.bearbeiterId ?? meId ?? '')
+          // Termin-Zuständigen übernehmen; falls noch nicht gesetzt → Bearbeiter als Vorschlag
+          setTerminMitarbeiterId(data.terminZustaendigId ?? data.bearbeiterId ?? '')
         }
         if (mitarbeiterRes.ok) {
           const mData = await mitarbeiterRes.json() as MitarbeiterOption[]
@@ -1244,8 +1246,7 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
                     abholadresse: abholadresse || undefined,
                     abholAdresseZusatz: abholAdresseZusatz || null,
                     status: anfrage.status !== 'abgeschlossen' ? 'termin_vereinbart' : undefined,
-                    bearbeiterId: terminMitarbeiterId || null,
-                    terminBearbeiterWechsel: true,
+                    terminZustaendigId: terminMitarbeiterId || null,
                   }
                   void holeVorschau(
                     { typ: 'termin_bestaetigung', termin: terminVorschlag, adresse: abholadresse || undefined, adresseZusatz: abholAdresseZusatz || null, terminMitarbeiterId: terminMitarbeiterId || null },
@@ -1259,7 +1260,7 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
                     abholadresse: abholadresse || undefined,
                     abholAdresseZusatz: abholAdresseZusatz || null,
                     status: anfrage.status !== 'abgeschlossen' ? 'termin_vereinbart' : undefined,
-                    bearbeiterId: terminMitarbeiterId || null,
+                    terminZustaendigId: terminMitarbeiterId || null,
                   })
                 }}
                 onAbbrechen={null}
@@ -1313,10 +1314,10 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
                   terminVorschlag !== new Date(anfrage.terminVorschlag1).toISOString().slice(0, 16) ||
                   abholadresse !== (anfrage.abholadresse ?? '') ||
                   abholAdresseZusatz !== (anfrage.abholAdresseZusatz ?? '') ||
-                  terminMitarbeiterId !== (anfrage.bearbeiterId ?? '')
+                  terminMitarbeiterId !== (anfrage.terminZustaendigId ?? '')
                 }
                 nurMitarbeiterGeaendert={
-                  terminMitarbeiterId !== (anfrage.bearbeiterId ?? '') &&
+                  terminMitarbeiterId !== (anfrage.terminZustaendigId ?? '') &&
                   terminVorschlag === new Date(anfrage.terminVorschlag1).toISOString().slice(0, 16) &&
                   abholadresse === (anfrage.abholadresse ?? '') &&
                   abholAdresseZusatz === (anfrage.abholAdresseZusatz ?? '')
@@ -1328,8 +1329,7 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
                     abholadresse: abholadresse || undefined,
                     abholAdresseZusatz: abholAdresseZusatz || null,
                     status: anfrage.status !== 'abgeschlossen' ? 'termin_vereinbart' : undefined,
-                    bearbeiterId: terminMitarbeiterId || null,
-                    terminBearbeiterWechsel: true,
+                    terminZustaendigId: terminMitarbeiterId || null,
                   }
                   void holeVorschau(
                     { typ: 'termin_verschoben', termin: terminVorschlag, alterTermin: anfrage.terminVorschlag1, adresse: abholadresse || undefined, adresseZusatz: abholAdresseZusatz || null, terminMitarbeiterId: terminMitarbeiterId || null },
@@ -1342,12 +1342,12 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
                     terminVorschlag1: terminVorschlag || undefined,
                     abholadresse: abholadresse || undefined,
                     abholAdresseZusatz: abholAdresseZusatz || null,
-                    bearbeiterId: terminMitarbeiterId || null,
+                    terminZustaendigId: terminMitarbeiterId || null,
                   })
                   setEditingTermin(false)
                 }}
                 onSaveIntern={() => {
-                  void update({ bearbeiterId: terminMitarbeiterId || null })
+                  void update({ terminZustaendigId: terminMitarbeiterId || null })
                   setEditingTermin(false)
                 }}
                 onAbbrechen={() => setEditingTermin(false)}
@@ -1366,7 +1366,7 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
                 disabled={sendingTerminMail || loadingPreview}
                 onClick={() => {
                   void holeVorschau(
-                    { typ: 'termin_bestaetigung', terminMitarbeiterId: anfrage.bearbeiterId ?? null },
+                    { typ: 'termin_bestaetigung', terminMitarbeiterId: anfrage.terminZustaendigId ?? anfrage.bearbeiterId ?? null },
                     async () => {
                       setSendingTerminMail(true)
                       try {

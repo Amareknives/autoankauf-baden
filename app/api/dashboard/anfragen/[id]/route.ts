@@ -18,11 +18,12 @@ const updateSchema = z.object({
   ersatztermin1: z.string().nullable().optional(),
   ersatztermin2: z.string().nullable().optional(),
   terminKommentar: z.string().nullable().optional(),
+  // Bearbeiter: wer den Vorgang bearbeitet (unabhängig vom Termin)
   bearbeiterId: z.string().nullable().optional(),
+  // Termin-Zuständiger: wer den Termin wahrnimmt (unabhängig vom Bearbeiter)
+  terminZustaendigId: z.string().nullable().optional(),
   abschlussPreis: z.number().nullable().optional(),
   ablehnungsGrund: z.string().nullable().optional(),
-  // Wenn true: bearbeiterId-Änderung kommt vom Termin-Formular → kein "Ansprechpartner geändert"-Mail
-  terminBearbeiterWechsel: z.boolean().optional(),
 })
 
 /** Holt die mitarbeiterId aus dem Session-Cookie (optional — null wenn kein Session) */
@@ -92,6 +93,12 @@ export async function GET(
             kuerzel: true, farbe: true, telefon: true, whatsapp: true,
           },
         },
+        terminZustaendig: {
+          select: {
+            id: true, vorname: true, nachname: true,
+            kuerzel: true, farbe: true, telefon: true, whatsapp: true,
+          },
+        },
       },
     })
 
@@ -135,8 +142,10 @@ export async function PATCH(
         abholadresse: true,
         abholAdresseZusatz: true,
         bearbeiterId: true,
+        terminZustaendigId: true,
         notizen: true,
         bearbeiter: { select: { vorname: true, nachname: true, kuerzel: true } },
+        terminZustaendig: { select: { vorname: true, nachname: true, kuerzel: true } },
       },
     })
 
@@ -156,8 +165,15 @@ export async function PATCH(
     }
     if (data.abholadresse !== undefined) updateData.abholadresse = data.abholadresse
     if (data.abholAdresseZusatz !== undefined) updateData.abholAdresseZusatz = data.abholAdresseZusatz
-    if (data.archiviert !== undefined) updateData.archiviert = data.archiviert
+    if (data.archiviert !== undefined) {
+      updateData.archiviert = data.archiviert
+      // Beim manuellen Archivieren: Termin aus Kalender entfernen wenn noch auf termin_vereinbart
+      if (data.archiviert === true && alt?.status === 'termin_vereinbart') {
+        updateData.terminVorschlag1 = null
+      }
+    }
     if (data.bearbeiterId !== undefined) updateData.bearbeiterId = data.bearbeiterId
+    if (data.terminZustaendigId !== undefined) updateData.terminZustaendigId = data.terminZustaendigId
     if (data.abschlussPreis !== undefined) updateData.abschlussPreis = data.abschlussPreis
     if (data.ablehnungsGrund !== undefined) updateData.ablehnungsGrund = data.ablehnungsGrund
 
@@ -165,7 +181,20 @@ export async function PATCH(
       where: { id },
       data: updateData,
       include: {
-        bearbeiter: { select: { id: true, vorname: true, nachname: true, email: true, telefon: true, whatsapp: true, waApiKey: true, kuerzel: true, benachrichtigungKanal: true } },
+        bearbeiter: {
+          select: {
+            id: true, vorname: true, nachname: true, email: true,
+            telefon: true, whatsapp: true, waApiKey: true,
+            kuerzel: true, benachrichtigungKanal: true,
+          },
+        },
+        terminZustaendig: {
+          select: {
+            id: true, vorname: true, nachname: true, email: true,
+            telefon: true, whatsapp: true, waApiKey: true,
+            kuerzel: true, benachrichtigungKanal: true,
+          },
+        },
       },
     })
 
@@ -181,7 +210,7 @@ export async function PATCH(
       })
     }
 
-    // ── Aktivitätslog: Bearbeiter-Zuweisung ───────────────────────────────────
+    // ── Aktivitätslog: Bearbeiter-Zuweisung (intern, kein Kunden-Mail) ────────
     if (data.bearbeiterId !== undefined && data.bearbeiterId !== alt?.bearbeiterId) {
       const neuerBearbeiter = updated.bearbeiter
       const alterName = alt?.bearbeiter
@@ -198,6 +227,28 @@ export async function PATCH(
           anfrageId: id,
           mitarbeiterId: data.bearbeiterId ?? mitarbeiterId,
           aktion: 'bearbeiter_zugewiesen',
+          details,
+        },
+      })
+    }
+
+    // ── Aktivitätslog: Termin-Zuständiger geändert (intern) ───────────────────
+    if (data.terminZustaendigId !== undefined && data.terminZustaendigId !== alt?.terminZustaendigId) {
+      const neuerZust = updated.terminZustaendig
+      const alterName = alt?.terminZustaendig
+        ? (alt.terminZustaendig.kuerzel ?? `${alt.terminZustaendig.vorname} ${alt.terminZustaendig.nachname}`)
+        : null
+      const neuerName = neuerZust
+        ? (neuerZust.kuerzel ?? `${neuerZust.vorname} ${neuerZust.nachname}`)
+        : null
+      const details = neuerName
+        ? (alterName ? `${alterName} → ${neuerName}` : `Zugewiesen an ${neuerName}`)
+        : 'Zuweisung entfernt'
+      await prisma.aktivitaetsLog.create({
+        data: {
+          anfrageId: id,
+          mitarbeiterId: data.terminZustaendigId ?? mitarbeiterId,
+          aktion: 'termin_zustaendig_geaendert',
           details,
         },
       })
@@ -238,18 +289,14 @@ export async function PATCH(
         const settings = await getSiteSettings()
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://autoankauf-baden.de'
         const bearbeiter = updated.bearbeiter
+        const terminZust = updated.terminZustaendig
 
-        // ── Helfer: Bearbeiter per konfiguriertem Kanal benachrichtigen ──
+        // ── Helfer: Mitarbeiter per konfiguriertem Kanal benachrichtigen ──
         const { notifyMitarbeiter } = await import('@/lib/notify')
-        const notifyBearbeiter = async (betreff: string, text: string) => {
-          if (!bearbeiter) return
-          await notifyMitarbeiter(bearbeiter, text, betreff, { anfrageId: id })
-        }
 
         // ── Angebots-Mail an Kunden ────────────────────────────────────────
         if (data.sendeAngebotMail && updated.angebotspreis) {
           const { angebotEmail } = await import('@/services/emailTemplates')
-          // Signatur: Bearbeiter hat Vorrang, Fallback auf eingeloggten User
           let angebotBearbeiterName: string | null = null
           if (bearbeiter) {
             angebotBearbeiterName = `${bearbeiter.vorname} ${bearbeiter.nachname}`
@@ -280,7 +327,7 @@ export async function PATCH(
           })
         }
 
-        // ── Status-Benachrichtigung an Bearbeiter ─────────────────────────
+        // ── Status-Benachrichtigung an Bearbeiter (intern) ────────────────
         if (data.status && alt?.status !== data.status && bearbeiter) {
           const statusLabels: Record<string, string> = {
             termin_vereinbart: 'Termin vereinbart',
@@ -291,43 +338,39 @@ export async function PATCH(
           const label = statusLabels[data.status]
           if (label) {
             const msg = `📋 ${label}\n👤 ${updated.vorname} ${updated.nachname}\n🚗 ${updated.marke} ${updated.modell}`
-            await notifyBearbeiter(`[AAB] ${label}: ${updated.vorname} ${updated.nachname}`, msg)
+            await notifyMitarbeiter(bearbeiter, msg, `[AAB] ${label}: ${updated.vorname} ${updated.nachname}`, { anfrageId: id })
           }
         }
 
-        // ── Bearbeiter-Wechsel: E-Mail an Kunden ─────────────────────────
-        // Nicht senden wenn der Wechsel über das Termin-Formular kam (terminBearbeiterWechsel=true),
-        // da der Termin selbst die Kontaktdaten bereits enthält.
-        if (
-          data.bearbeiterId !== undefined &&
-          data.bearbeiterId !== alt?.bearbeiterId &&
-          data.bearbeiterId &&
-          bearbeiter &&
-          !data.terminBearbeiterWechsel
-        ) {
-          const { bearbeiterGeaendert } = await import('@/services/emailTemplates')
-          const mail = bearbeiterGeaendert({
-            vorname: updated.vorname,
-            marke: updated.marke,
-            modell: updated.modell,
-            bearbeiterVorname: bearbeiter.vorname,
-            bearbeiterNachname: bearbeiter.nachname,
-            bearbeiterTelefon: bearbeiter.telefon ?? null,
-            bearbeiterWhatsapp: bearbeiter.whatsapp ?? null,
-          })
-          await sendEmail({ to: updated.email, ...mail, _typ: 'bearbeiter_geaendert', _anfrageId: id })
-          await prisma.aktivitaetsLog.create({
-            data: {
-              anfrageId: id,
-              mitarbeiterId,
-              aktion: 'bearbeiter_mail_gesendet',
-              details: `Ansprechpartner-Wechsel gesendet: ${bearbeiter.vorname} ${bearbeiter.nachname}`,
-            },
-          })
+        // ── Bearbeiter-Wechsel: nur intern benachrichtigen, kein Kunden-Mail ──
+        if (data.bearbeiterId && data.bearbeiterId !== alt?.bearbeiterId && bearbeiter) {
+          // Nur "Fall zugewiesen" – Termin-Info nur wenn kein Termin-Zuständiger gesetzt ist
+          const hatTerminZust = !!(updated.terminZustaendigId)
+          if (!hatTerminZust && alt?.terminVorschlag1) {
+            // Kein terminZustaendig gesetzt aber Termin vorhanden → Bearbeiter auch für Termin zuständig
+            const adresse = updated.abholadresse || `${settings.strasse}, ${settings.plz_firma} ${settings.ort}`
+            const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(adresse)}`
+            const terminStr = new Date(alt.terminVorschlag1).toLocaleString('de-DE', {
+              weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric',
+              hour: '2-digit', minute: '2-digit',
+            })
+            const msg = [
+              `👤 Dir wurde ein Fall übertragen!`,
+              `📅 Termin am: ${terminStr} Uhr`,
+              `👤 ${updated.vorname} ${updated.nachname}`,
+              `🚗 ${updated.marke} ${updated.modell}`,
+              `📍 ${adresse}`,
+              `🗺 ${mapsUrl}`,
+            ].join('\n')
+            await notifyMitarbeiter(bearbeiter, msg, `[AAB] Fall übertragen: ${updated.vorname} ${updated.nachname}`, { anfrageId: id })
+          } else {
+            const msg = `👋 Dir wurde ein Fall zugewiesen\n👤 ${updated.vorname} ${updated.nachname}\n🚗 ${updated.marke} ${updated.modell}\nStatus: ${updated.status}`
+            await notifyMitarbeiter(bearbeiter, msg, `[AAB] Zuweisung: ${updated.vorname} ${updated.nachname}`, { anfrageId: id })
+          }
         }
 
-        // ── Bearbeiter-Zuweisung Benachrichtigung ─────────────────────────
-        if (data.bearbeiterId && data.bearbeiterId !== alt?.bearbeiterId && bearbeiter) {
+        // ── Termin-Zuständiger gewechselt: intern benachrichtigen ─────────
+        if (data.terminZustaendigId && data.terminZustaendigId !== alt?.terminZustaendigId && terminZust) {
           if (alt?.terminVorschlag1) {
             const adresse = updated.abholadresse || `${settings.strasse}, ${settings.plz_firma} ${settings.ort}`
             const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(adresse)}`
@@ -343,14 +386,14 @@ export async function PATCH(
               `📍 ${adresse}`,
               `🗺 ${mapsUrl}`,
             ].join('\n')
-            await notifyMitarbeiter(bearbeiter, msg, `[AAB] Termin übertragen: ${updated.vorname} ${updated.nachname}`, { anfrageId: id })
+            await notifyMitarbeiter(terminZust, msg, `[AAB] Termin übertragen: ${updated.vorname} ${updated.nachname}`, { anfrageId: id })
           } else {
-            const msg = `👋 Dir wurde ein Fall zugewiesen\n👤 ${updated.vorname} ${updated.nachname}\n🚗 ${updated.marke} ${updated.modell}\nStatus: ${updated.status}`
-            await notifyMitarbeiter(bearbeiter, msg, `[AAB] Zuweisung: ${updated.vorname} ${updated.nachname}`, { anfrageId: id })
+            const msg = `📅 Du wurdest als Termin-Zuständiger eingetragen\n👤 ${updated.vorname} ${updated.nachname}\n🚗 ${updated.marke} ${updated.modell}`
+            await notifyMitarbeiter(terminZust, msg, `[AAB] Termin-Zuweisung: ${updated.vorname} ${updated.nachname}`, { anfrageId: id })
           }
         }
 
-        // ── Termin-Mails ───────────────────────────────────────────────────
+        // ── Termin-Mails (kundenbezogen) ──────────────────────────────────
         if (data.terminVorschlag1 !== undefined) {
           const altTermin = alt?.terminVorschlag1 ?? null
           const neuerTermin = updated.terminVorschlag1 ?? null
@@ -367,6 +410,9 @@ export async function PATCH(
           )
           const istGeloescht = !!altTermin && !neuerTermin
 
+          // Für Termin-Mails: Termin-Zuständiger hat Vorrang vor Bearbeiter
+          const terminAnsprechpartner = terminZust ?? bearbeiter
+
           if (istNeu && neuerTermin) {
             const { terminBestaetigung } = await import('@/services/emailTemplates')
             const icsAdresse = updated.abholadresse || `${settings.strasse}, ${settings.plz_firma} ${settings.ort}`
@@ -380,7 +426,9 @@ export async function PATCH(
               marke: updated.marke,
               modell: updated.modell,
               kilometerstand: updated.kilometerstand,
-              bearbeiterName: bearbeiter ? `${bearbeiter.vorname} ${bearbeiter.nachname}` : undefined,
+              bearbeiterName: terminAnsprechpartner
+                ? `${terminAnsprechpartner.vorname} ${terminAnsprechpartner.nachname}`
+                : undefined,
               location: icsAdresse,
             })
             const mail = terminBestaetigung({
@@ -391,7 +439,14 @@ export async function PATCH(
               adresse: updated.abholadresse || `${settings.strasse}, ${settings.plz_firma} ${settings.ort}`,
               adresseZusatz: updated.abholAdresseZusatz,
               telefon: settings.telefon,
-              bearbeiter: bearbeiter ? { vorname: bearbeiter.vorname, nachname: bearbeiter.nachname, telefon: bearbeiter.telefon ?? null, whatsapp: bearbeiter.whatsapp ?? null } : null,
+              bearbeiter: terminAnsprechpartner
+                ? {
+                    vorname: terminAnsprechpartner.vorname,
+                    nachname: terminAnsprechpartner.nachname,
+                    telefon: terminAnsprechpartner.telefon ?? null,
+                    whatsapp: terminAnsprechpartner.whatsapp ?? null,
+                  }
+                : null,
             })
             await sendEmail({
               to: updated.email,
@@ -406,13 +461,15 @@ export async function PATCH(
                 mitarbeiterId,
                 aktion: 'termin_bestaetigt',
                 details: [
-                  bearbeiter ? `${bearbeiter.kuerzel ?? bearbeiter.vorname} → ${updated.vorname} ${updated.nachname}` : `→ ${updated.vorname} ${updated.nachname}`,
+                  terminAnsprechpartner
+                    ? `${terminAnsprechpartner.kuerzel ?? terminAnsprechpartner.vorname} → ${updated.vorname} ${updated.nachname}`
+                    : `→ ${updated.vorname} ${updated.nachname}`,
                   new Date(neuerTermin).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
                 ].join(' | '),
               },
             })
-            // Bearbeiter benachrichtigen (Kanal-abhängig)
-            if (bearbeiter) {
+            // Termin-Zuständigen benachrichtigen (oder Bearbeiter als Fallback)
+            if (terminAnsprechpartner) {
               const adresse = updated.abholadresse || `${settings.strasse}, ${settings.plz_firma} ${settings.ort}`
               const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(adresse)}`
               const terminStr = new Date(neuerTermin).toLocaleString('de-DE', {
@@ -427,7 +484,7 @@ export async function PATCH(
                 `📍 ${adresse}`,
                 `🗺 ${mapsUrl}`,
               ].join('\n')
-              await notifyMitarbeiter(bearbeiter, msg, `[AAB] Neuer Termin: ${updated.vorname} ${updated.nachname}`, { anfrageId: id })
+              await notifyMitarbeiter(terminAnsprechpartner, msg, `[AAB] Neuer Termin: ${updated.vorname} ${updated.nachname}`, { anfrageId: id })
             }
 
           } else if (istGeaendert && altTermin && neuerTermin) {
@@ -436,14 +493,16 @@ export async function PATCH(
             const icsContent = generateIcs({
               dtstart: new Date(neuerTermin),
               uid: id,
-              sequence: Math.floor(Date.now() / 1000) % 10000, // steigt mit jeder Änderung
+              sequence: Math.floor(Date.now() / 1000) % 10000,
               method: 'REQUEST',
               kundeVorname: updated.vorname,
               kundeNachname: updated.nachname,
               marke: updated.marke,
               modell: updated.modell,
               kilometerstand: updated.kilometerstand,
-              bearbeiterName: bearbeiter ? `${bearbeiter.vorname} ${bearbeiter.nachname}` : undefined,
+              bearbeiterName: terminAnsprechpartner
+                ? `${terminAnsprechpartner.vorname} ${terminAnsprechpartner.nachname}`
+                : undefined,
               location: icsAdresse,
             })
             const mail = terminVerschoben({
@@ -455,13 +514,20 @@ export async function PATCH(
               adresse: updated.abholadresse || `${settings.strasse}, ${settings.plz_firma} ${settings.ort}`,
               adresseZusatz: updated.abholAdresseZusatz,
               telefon: settings.telefon,
-              bearbeiter: bearbeiter ? { vorname: bearbeiter.vorname, nachname: bearbeiter.nachname, telefon: bearbeiter.telefon ?? null, whatsapp: bearbeiter.whatsapp ?? null } : null,
+              bearbeiter: terminAnsprechpartner
+                ? {
+                    vorname: terminAnsprechpartner.vorname,
+                    nachname: terminAnsprechpartner.nachname,
+                    telefon: terminAnsprechpartner.telefon ?? null,
+                    whatsapp: terminAnsprechpartner.whatsapp ?? null,
+                  }
+                : null,
             })
             await sendEmail({
               to: updated.email,
               ...mail,
               attachments: [{ filename: 'termin.ics', content: icsContent, contentType: 'text/calendar' }],
-              _typ: 'termin_verschoben',  // Korrekt: 'termin_verschoben', nicht 'termin_bestaetigung'
+              _typ: 'termin_verschoben',
               _anfrageId: id,
             })
             await prisma.aktivitaetsLog.create({
@@ -472,8 +538,8 @@ export async function PATCH(
                 details: `${new Date(altTermin).toLocaleString('de-DE')} → ${new Date(neuerTermin).toLocaleString('de-DE')}`,
               },
             })
-            // Bearbeiter benachrichtigen (Kanal-abhängig)
-            if (bearbeiter) {
+            // Termin-Zuständigen benachrichtigen
+            if (terminAnsprechpartner) {
               const adresse = updated.abholadresse || `${settings.strasse}, ${settings.plz_firma} ${settings.ort}`
               const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(adresse)}`
               const neuerTerminStr = new Date(neuerTermin).toLocaleString('de-DE', {
@@ -493,14 +559,15 @@ export async function PATCH(
                 `📍 ${adresse}`,
                 `🗺 ${mapsUrl}`,
               ].join('\n')
-              await notifyMitarbeiter(bearbeiter, msg, `[AAB] Termin geändert: ${updated.vorname} ${updated.nachname}`, { anfrageId: id })
+              await notifyMitarbeiter(terminAnsprechpartner, msg, `[AAB] Termin geändert: ${updated.vorname} ${updated.nachname}`, { anfrageId: id })
             }
 
           } else if (istGeloescht && altTermin) {
             const grund = data.terminLoeschenGrund ?? 'wir_sagen_ab'
 
-            // Bearbeiter benachrichtigen: Termin fällt weg
-            if (bearbeiter) {
+            // Termin-Zuständigen benachrichtigen: Termin fällt weg
+            const zuBenachrichtigen = terminAnsprechpartner
+            if (zuBenachrichtigen) {
               const terminStr = new Date(altTermin).toLocaleString('de-DE', {
                 weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric',
                 hour: '2-digit', minute: '2-digit',
@@ -517,7 +584,7 @@ export async function PATCH(
                 `🗓 War: ${terminStr} Uhr`,
                 `ℹ️ ${grundTexte[grund] ?? grund}`,
               ].join('\n')
-              await notifyMitarbeiter(bearbeiter, msg, `[AAB] Termin abgesagt: ${updated.vorname} ${updated.nachname}`, { anfrageId: id })
+              await notifyMitarbeiter(zuBenachrichtigen, msg, `[AAB] Termin abgesagt: ${updated.vorname} ${updated.nachname}`, { anfrageId: id })
             }
 
             if (grund === 'kein_interesse') {
@@ -540,7 +607,6 @@ export async function PATCH(
                 ersatztermin2: data.ersatztermin2 ? new Date(data.ersatztermin2) : null,
                 kommentar: data.terminKommentar,
               })
-              // Cancel-ICS → löscht Termin direkt aus dem Kalender des Kunden
               const cancelIcs = generateIcs({
                 dtstart: new Date(altTermin),
                 uid: id,
@@ -591,6 +657,7 @@ export async function PATCH(
 
         // ── Termin-Mail erneut senden ─────────────────────────────────────
         if (data.sendeTerminMail && updated.terminVorschlag1) {
+          const terminAnsprechpartner = terminZust ?? bearbeiter
           const { terminBestaetigung } = await import('@/services/emailTemplates')
           const icsAdresse = updated.abholadresse || `${settings.strasse}, ${settings.plz_firma} ${settings.ort}`
           const icsContent = generateIcs({
@@ -603,7 +670,9 @@ export async function PATCH(
             marke: updated.marke,
             modell: updated.modell,
             kilometerstand: updated.kilometerstand,
-            bearbeiterName: bearbeiter ? `${bearbeiter.vorname} ${bearbeiter.nachname}` : undefined,
+            bearbeiterName: terminAnsprechpartner
+              ? `${terminAnsprechpartner.vorname} ${terminAnsprechpartner.nachname}`
+              : undefined,
             location: icsAdresse,
           })
           const mail = terminBestaetigung({
@@ -614,7 +683,14 @@ export async function PATCH(
             adresse: updated.abholadresse || `${settings.strasse}, ${settings.plz_firma} ${settings.ort}`,
             adresseZusatz: updated.abholAdresseZusatz,
             telefon: settings.telefon,
-            bearbeiter: bearbeiter ? { vorname: bearbeiter.vorname, nachname: bearbeiter.nachname, telefon: bearbeiter.telefon ?? null, whatsapp: bearbeiter.whatsapp ?? null } : null,
+            bearbeiter: terminAnsprechpartner
+              ? {
+                  vorname: terminAnsprechpartner.vorname,
+                  nachname: terminAnsprechpartner.nachname,
+                  telefon: terminAnsprechpartner.telefon ?? null,
+                  whatsapp: terminAnsprechpartner.whatsapp ?? null,
+                }
+              : null,
           })
           await sendEmail({
             to: updated.email,

@@ -24,7 +24,8 @@ model Mitarbeiter {
   istDefault            Boolean          @default(false)
   aktiv                 Boolean          @default(true)
   benachrichtigungKanal String           @default("beide")
-  anfragen              Anfrage[]
+  anfragen              Anfrage[]        @relation("Bearbeiter")
+  terminAnfragen        Anfrage[]        @relation("TerminZustaendig")
   aktivitaeten AktivitaetsLog[]
 }
 
@@ -95,7 +96,9 @@ model Anfrage {
   notizen              String?
   archiviert           Boolean   @default(false)
   bearbeiterId         String?
-  bearbeiter           Mitarbeiter? @relation(fields: [bearbeiterId], references: [id])
+  bearbeiter           Mitarbeiter? @relation("Bearbeiter", fields: [bearbeiterId], references: [id])
+  terminZustaendigId   String?
+  terminZustaendig     Mitarbeiter? @relation("TerminZustaendig", fields: [terminZustaendigId], references: [id])
   zweiteMailGesendetAm DateTime?
   aktivitaeten         AktivitaetsLog[]
   @@index([status])

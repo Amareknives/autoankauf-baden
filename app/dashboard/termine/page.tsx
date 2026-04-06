@@ -27,6 +27,7 @@ interface Termin {
   abholadresse: string | null
   status: string
   bearbeiter: Mitarbeiter | null
+  terminZustaendig: Mitarbeiter | null
 }
 
 // ─── Mini-Kalender ────────────────────────────────────────────────────────────
@@ -197,7 +198,7 @@ export default function TerminePage() {
       const res = await fetch(`/api/dashboard/anfragen/${transferTermin.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bearbeiterId: transferZiel }),
+        body: JSON.stringify({ terminZustaendigId: transferZiel }),
       })
       if (res.ok) {
         const neuerMA = mitarbeiterListe.find(m => m.id === transferZiel)
@@ -238,8 +239,12 @@ export default function TerminePage() {
   }
 
   const heute = new Date()
+  // Filter: zeigt Termin wenn Mitarbeiter Termin-Zuständiger ODER Bearbeiter ist
   const gefilterteTermine = filterMitarbeiterId
-    ? termine.filter(t => t.bearbeiter?.id === filterMitarbeiterId)
+    ? termine.filter(t =>
+        t.terminZustaendig?.id === filterMitarbeiterId ||
+        (!t.terminZustaendig && t.bearbeiter?.id === filterMitarbeiterId)
+      )
     : termine
   const termineHeute = gefilterteTermine.filter(t => new Date(t.terminVorschlag1).toDateString() === heute.toDateString())
   const termineKuenftig = gefilterteTermine
@@ -262,21 +267,42 @@ export default function TerminePage() {
     <div className="bg-white rounded-2xl border border-[#E2EDF7] p-5 hover:border-[#0369A1] transition-colors">
       <div className="flex items-start justify-between gap-4 mb-3">
         <div className="flex items-start gap-3 min-w-0">
-          {t.bearbeiter && (
-            <div
-              className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0 mt-0.5"
-              style={{ backgroundColor: t.bearbeiter.farbe }}
-              title={`${t.bearbeiter.vorname} ${t.bearbeiter.nachname}`}
-            >
-              {t.bearbeiter.kuerzel ?? (t.bearbeiter.vorname[0] + t.bearbeiter.nachname[0]).toUpperCase()}
-            </div>
-          )}
+          {/* Avatar-Stack: Bearbeiter + Termin-Zuständiger */}
+          <div className="flex shrink-0 mt-0.5">
+            {t.bearbeiter && (
+              <div
+                className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[10px] font-bold border-2 border-white"
+                style={{ backgroundColor: t.bearbeiter.farbe }}
+                title={`Bearbeiter: ${t.bearbeiter.vorname} ${t.bearbeiter.nachname}`}
+              >
+                {t.bearbeiter.kuerzel ?? (t.bearbeiter.vorname[0] + t.bearbeiter.nachname[0]).toUpperCase()}
+              </div>
+            )}
+            {t.terminZustaendig && t.terminZustaendig.id !== t.bearbeiter?.id && (
+              <div
+                className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[10px] font-bold border-2 border-white -ml-2"
+                style={{ backgroundColor: t.terminZustaendig.farbe }}
+                title={`Termin-Zuständig: ${t.terminZustaendig.vorname} ${t.terminZustaendig.nachname}`}
+              >
+                {t.terminZustaendig.kuerzel ?? (t.terminZustaendig.vorname[0] + t.terminZustaendig.nachname[0]).toUpperCase()}
+              </div>
+            )}
+          </div>
           <div className="min-w-0">
             <p className="font-bold text-[#0F172A]">{t.vorname} {t.nachname}</p>
             <p className="text-sm text-[#64748B]">{t.marke} {t.modell}</p>
-            {t.bearbeiter && (
-              <p className="text-xs text-[#94A3B8] mt-0.5">Bearbeiter: {t.bearbeiter.vorname} {t.bearbeiter.nachname}</p>
-            )}
+            <div className="flex flex-wrap gap-x-3 mt-0.5">
+              {t.bearbeiter && (
+                <p className="text-xs text-[#94A3B8]">
+                  B: {t.bearbeiter.kuerzel ?? `${t.bearbeiter.vorname[0]}${t.bearbeiter.nachname[0]}`}
+                </p>
+              )}
+              {t.terminZustaendig && (
+                <p className="text-xs text-[#0369A1] font-semibold">
+                  T: {t.terminZustaendig.kuerzel ?? `${t.terminZustaendig.vorname[0]}${t.terminZustaendig.nachname[0]}`}
+                </p>
+              )}
+            </div>
           </div>
         </div>
         <p className="text-sm font-semibold text-[#0369A1] text-right whitespace-nowrap shrink-0">
@@ -446,7 +472,10 @@ export default function TerminePage() {
             Alle ({termine.length})
           </button>
           {mitarbeiterListe.map(m => {
-            const anzahl = termine.filter(t => t.bearbeiter?.id === m.id).length
+            const anzahl = termine.filter(t =>
+              t.terminZustaendig?.id === m.id ||
+              (!t.terminZustaendig && t.bearbeiter?.id === m.id)
+            ).length
             return (
               <button
                 key={m.id}
@@ -522,7 +551,11 @@ export default function TerminePage() {
             >
               <option value="">— Mitarbeiter auswählen —</option>
               {mitarbeiterListe
-                .filter(m => m.id !== termine.find(t => t.id === transferTermin.id)?.bearbeiter?.id)
+                .filter(m => {
+                  const termin = termine.find(t => t.id === transferTermin.id)
+                  const aktuellId = termin?.terminZustaendig?.id ?? termin?.bearbeiter?.id
+                  return m.id !== aktuellId
+                })
                 .map(m => (
                   <option key={m.id} value={m.id}>{m.vorname} {m.nachname}</option>
                 ))}
