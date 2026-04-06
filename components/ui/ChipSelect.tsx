@@ -569,23 +569,26 @@ export function ChipSelect({
               <div className="flex justify-center pb-2 pt-3">
                 <div className="h-1 w-10 rounded-full bg-[#CBD5E1]" aria-hidden="true" />
               </div>
-              <div className="px-4 pb-3">
-                <div className="relative">
-                  <input
-                    ref={sheetSearchRef}
-                    type="text"
-                    value={search}
-                    onChange={e => { setSearch(e.target.value); setActiveIndex(-1); }}
-                    onKeyDown={handleKeyDown}
-                    placeholder={placeholder}
-                    autoComplete="off"
-                    className="w-full rounded-[10px] border border-[#E2EDF7] py-3 pl-4 pr-10 text-[15px] text-[#0F172A] placeholder-[#94A3B8] focus:border-[#0369A1] focus:outline-none"
-                  />
-                  <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#94A3B8]" aria-hidden="true">
-                    <Search size={16} strokeWidth={2} />
+              {/* Suchfeld nur wenn Optionen vorhanden – verhindert Tastatur bei leerem Hinweis */}
+              {allItems.length > 0 && (
+                <div className="px-4 pb-3">
+                  <div className="relative">
+                    <input
+                      ref={sheetSearchRef}
+                      type="text"
+                      value={search}
+                      onChange={e => { setSearch(e.target.value); setActiveIndex(-1); }}
+                      onKeyDown={handleKeyDown}
+                      placeholder={placeholder}
+                      autoComplete="off"
+                      className="w-full rounded-[10px] border border-[#E2EDF7] py-3 pl-4 pr-10 text-[15px] text-[#0F172A] placeholder-[#94A3B8] focus:border-[#0369A1] focus:outline-none"
+                    />
+                    <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#94A3B8]" aria-hidden="true">
+                      <Search size={16} strokeWidth={2} />
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
             <div className="min-h-0 flex-1" style={{ background: PANEL_BG }}>
               <ul
