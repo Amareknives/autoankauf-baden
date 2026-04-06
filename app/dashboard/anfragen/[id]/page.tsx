@@ -344,7 +344,7 @@ function TerminFormular({
   terminMitarbeiterId, setTerminMitarbeiterId,
   mitarbeiterListe, firmaAdresse,
   saving, istAenderung, hatAenderung, nurMitarbeiterGeaendert,
-  onSave, onSaveIntern, onSaveOnly, onAbbrechen, onLoeschen,
+  onSave, onSaveIntern, onAbbrechen, onLoeschen,
 }: {
   terminVorschlag: string
   setTerminVorschlag: (v: string) => void
@@ -362,7 +362,6 @@ function TerminFormular({
   nurMitarbeiterGeaendert?: boolean
   onSave: () => void
   onSaveIntern?: () => void
-  onSaveOnly?: () => void
   onAbbrechen: (() => void) | null
   onLoeschen: (() => void) | null
 }) {
@@ -504,15 +503,6 @@ function TerminFormular({
               className="flex-1 px-4 py-2.5 bg-[#0369A1] hover:bg-[#0284c7] disabled:bg-[#94A3B8] disabled:cursor-not-allowed text-white text-sm font-semibold rounded-xl transition-colors">
               {saving ? '…' : istAenderung ? (hatAenderung ? '📅 Termin ändern & Senden' : '📧 E-Mail erneut senden') : 'Termin speichern & Senden'}
             </button>
-            {onSaveOnly && (
-              <button type="button"
-                disabled={saving || !terminVorschlag || !abholadresse.trim()}
-                onClick={onSaveOnly}
-                title="Termin speichern ohne E-Mail an Kunden"
-                className="px-4 py-2.5 bg-[#F1F5F9] hover:bg-[#E2EDF7] disabled:opacity-50 text-[#0F172A] text-sm font-semibold rounded-xl transition-colors border border-[#E2EDF7] whitespace-nowrap">
-                {saving ? '…' : 'Nur speichern'}
-              </button>
-            )}
           </>
         )}
         {onLoeschen && (
@@ -1253,16 +1243,6 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
                     () => void update(updateParams)
                   )
                 }}
-                onSaveOnly={() => {
-                  if (!abholadresse.trim()) { setShowOhneAdresseWarnung(true); return }
-                  void update({
-                    terminVorschlag1: terminVorschlag || undefined,
-                    abholadresse: abholadresse || undefined,
-                    abholAdresseZusatz: abholAdresseZusatz || null,
-                    status: anfrage.status !== 'abgeschlossen' ? 'termin_vereinbart' : undefined,
-                    terminZustaendigId: terminMitarbeiterId || null,
-                  })
-                }}
                 onSaveIntern={() => {
                   void update({ terminZustaendigId: terminMitarbeiterId || null })
                 }}
@@ -1338,16 +1318,6 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
                     { typ: 'termin_verschoben', termin: terminVorschlag, alterTermin: anfrage.terminVorschlag1, adresse: abholadresse || undefined, adresseZusatz: abholAdresseZusatz || null, terminMitarbeiterId: terminMitarbeiterId || null },
                     () => { void update(updateParams); setEditingTermin(false) }
                   )
-                }}
-                onSaveOnly={() => {
-                  if (!abholadresse.trim()) { setShowOhneAdresseWarnung(true); return }
-                  void update({
-                    terminVorschlag1: terminVorschlag || undefined,
-                    abholadresse: abholadresse || undefined,
-                    abholAdresseZusatz: abholAdresseZusatz || null,
-                    terminZustaendigId: terminMitarbeiterId || null,
-                  })
-                  setEditingTermin(false)
                 }}
                 onSaveIntern={() => {
                   void update({ terminZustaendigId: terminMitarbeiterId || null })
