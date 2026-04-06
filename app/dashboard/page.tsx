@@ -190,22 +190,40 @@ export default function DashboardPage() {
       </div>
 
       {/* Speicherplatz */}
-      {storageData && (
-        <div className="mt-4 bg-white rounded-2xl border border-[#E2EDF7] p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="w-8 h-8 bg-[#F1F5F9] rounded-xl flex items-center justify-center">
-              <Database size={16} strokeWidth={2.2} className="text-[#64748B]" />
-            </span>
-            <span className="text-sm font-semibold text-[#0F172A]">Foto-Speicher – IONOS Server</span>
+      {storageData && (() => {
+        const MAX_BYTES = 100 * 1024 * 1024 * 1024 // 100 GB
+        const pct = Math.min((storageData.fotosDiskBytes / MAX_BYTES) * 100, 100)
+        const barColor = pct >= 80 ? '#FB6F6F' : pct >= 50 ? '#F59E0B' : '#0369A1'
+        return (
+          <div className="mt-4 bg-white rounded-2xl border border-[#E2EDF7] p-5">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <span className="w-8 h-8 bg-[#F1F5F9] rounded-xl flex items-center justify-center">
+                  <Database size={16} strokeWidth={2.2} className="text-[#64748B]" />
+                </span>
+                <span className="text-sm font-semibold text-[#0F172A]">Foto-Speicher – IONOS Server</span>
+              </div>
+              <span className="text-xs font-semibold" style={{ color: barColor }}>
+                {pct.toFixed(1)} %
+              </span>
+            </div>
+            {/* Fortschrittsbalken */}
+            <div className="w-full h-2.5 bg-[#F1F5F9] rounded-full mb-3 overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all duration-500"
+                style={{ width: `${pct}%`, backgroundColor: barColor }}
+              />
+            </div>
+            <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-[#64748B]">
+              <span>Belegt: <strong className="text-[#0F172A]">{storageData.fotosDiskPretty}</strong></span>
+              <span>Maximum: <strong className="text-[#0F172A]">100 GB</strong></span>
+              <span>Dateien: <strong className="text-[#0F172A]">{storageData.fotosAnzahl}</strong></span>
+              <span>Anfragen mit Fotos: <strong className="text-[#0F172A]">{storageData.anfragenMitFotos}</strong> von {storageData.anfragenGesamt}</span>
+              <span className="text-[#94A3B8] break-all">{storageData.uploadDir}</span>
+            </div>
           </div>
-          <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-[#64748B]">
-            <span>Belegt: <strong className="text-[#0F172A]">{storageData.fotosDiskPretty}</strong></span>
-            <span>Dateien: <strong className="text-[#0F172A]">{storageData.fotosAnzahl}</strong></span>
-            <span>Anfragen mit Fotos: <strong className="text-[#0F172A]">{storageData.anfragenMitFotos}</strong> von {storageData.anfragenGesamt}</span>
-            <span className="text-[#94A3B8] break-all">{storageData.uploadDir}</span>
-          </div>
-        </div>
-      )}
+        )
+      })()}
     </div>
   )
 }
