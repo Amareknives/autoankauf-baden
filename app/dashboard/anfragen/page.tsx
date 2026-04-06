@@ -353,7 +353,7 @@ export default function AnfragenPage() {
                 <div className="flex items-start justify-between gap-2 mb-3">
                   <div>
                     <p className="font-bold text-[#0F172A]">{a.vorname} {a.nachname}</p>
-                    <p className="text-xs text-[#64748B] mt-0.5">{a.telefon}</p>
+                    {a.telefon && <p className="text-xs text-[#64748B] mt-0.5">{a.telefon}</p>}
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
                     <button
@@ -444,7 +444,7 @@ export default function AnfragenPage() {
                     <td className="px-5 py-4">
                       <p className="font-semibold text-[#0F172A]">{a.vorname} {a.nachname}</p>
                       <p className="text-xs text-[#64748B] mt-0.5">{a.email}</p>
-                      <p className="text-xs text-[#64748B]">{a.telefon} · PLZ {a.plz}</p>
+                      <p className="text-xs text-[#64748B]">{a.telefon ? `${a.telefon} · ` : ''}PLZ {a.plz}</p>
                     </td>
                     <td className="px-5 py-4">
                       <p className="font-semibold text-[#0F172A]">{a.marke} {a.modell}</p>
