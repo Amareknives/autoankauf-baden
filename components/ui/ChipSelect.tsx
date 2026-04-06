@@ -554,56 +554,36 @@ export function ChipSelect({
         )}
       </div>
 
-      {/* Mobile Bottom Sheet */}
+      {/* Mobile: Full-Screen Overlay (Google Maps Style) */}
       {isMobile && isOpen && (
-        <>
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-x-0 top-0 z-[9999] flex flex-col bg-white"
+          style={{
+            height: sheetBottom > 0 ? `calc(100vh - ${sheetBottom}px)` : '100vh',
+            opacity: visible ? 1 : 0,
+            transform: visible ? 'translateY(0)' : 'translateY(-6px)',
+            transition: 'opacity 150ms ease, transform 150ms ease',
+          }}
+        >
+          {/* Suchzeile – mit Safe-Area für Notch/Dynamic Island */}
           <div
-            aria-hidden="true"
-            className="fixed inset-0 z-40 bg-black"
-            style={{ opacity: visible ? 0.5 : 0, transition: 'opacity 200ms ease' }}
-            onClick={doClose}
-          />
-          <div
-            role="dialog"
-            aria-modal="true"
-            className="fixed left-0 right-0 z-50 flex flex-col overflow-hidden rounded-t-[20px] bg-white"
-            style={{
-              bottom: sheetBottom,
-              height: '35vh',
-              maxHeight: sheetBottom > 0
-                ? `calc(100vh - ${sheetBottom + 60}px)`
-                : '50vh',
-              transform: visible ? 'translateY(0)' : 'translateY(100%)',
-              transition: 'transform 200ms ease',
-            }}
-            onTouchStart={e => { touchStartY.current = e.touches[0].clientY; }}
-            onTouchEnd={e => {
-              if (e.changedTouches[0].clientY - touchStartY.current > 60) doClose();
-            }}
+            className="shrink-0 bg-white"
+            style={{ paddingTop: 'max(14px, env(safe-area-inset-top))' }}
           >
-            <div className="shrink-0 bg-white">
-              <div className="flex items-center justify-between px-4 pb-2 pt-3">
-                <div className="w-12" />
-                <div className="h-1 w-10 rounded-full bg-[#CBD5E1]" aria-hidden="true" />
-                <button
-                  type="button"
-                  onMouseDown={e => { e.preventDefault(); doClose(); }}
-                  onTouchEnd={e => { e.preventDefault(); doClose(); }}
-                  className="w-12 text-right text-[15px] font-semibold text-[#0369A1]"
-                >
-                  Fertig
-                </button>
-              </div>
-              {/* Suchfeld nur wenn Optionen vorhanden – verhindert Tastatur bei leerem Hinweis */}
-              {allItems.length > 0 && (
-                <div className="px-4 pb-3">
-                  {/* form onSubmit: zuverlässiges Enter/Go auf Android + iOS */}
-                  <form onSubmit={e => {
-                    e.preventDefault();
-                    if (filtered.length === 1) pick(filtered[0]);
-                    else if (filtered.length > 1 && activeIndex >= 0) pick(filtered[activeIndex]);
-                  }}>
-                  <div className="relative">
+            <div className="flex items-center gap-3 px-4 pb-3">
+              {/* form onSubmit: zuverlässiges Enter/Go auf Android + iOS */}
+              <form
+                className="relative min-w-0 flex-1"
+                onSubmit={e => {
+                  e.preventDefault();
+                  if (filtered.length === 1) pick(filtered[0]);
+                  else if (filtered.length > 1 && activeIndex >= 0) pick(filtered[activeIndex]);
+                }}
+              >
+                {allItems.length > 0 ? (
+                  <>
                     <input
                       ref={sheetSearchRef}
                       type="search"
@@ -613,28 +593,41 @@ export function ChipSelect({
                       onKeyDown={handleKeyDown}
                       placeholder={placeholder}
                       autoComplete="off"
-                      className="w-full rounded-[10px] border border-[#E2EDF7] py-3 pl-4 pr-10 text-[15px] text-[#0F172A] placeholder-[#94A3B8] focus:border-[#0369A1] focus:outline-none"
+                      className="w-full rounded-[10px] border border-[#E2EDF7] bg-[#F8FAFC] py-3 pl-4 pr-10 text-[15px] text-[#0F172A] placeholder-[#94A3B8] focus:border-[#0369A1] focus:outline-none"
                     />
                     <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#94A3B8]" aria-hidden="true">
                       <Search size={16} strokeWidth={2} />
                     </div>
-                  </div>
-                  </form>
-                </div>
-              )}
-            </div>
-            <div className="min-h-0 flex-1" style={{ background: PANEL_BG }}>
-              <ul
-                ref={listRef}
-                role="listbox"
-                className="dropdown-scroll h-full overflow-y-auto"
-                style={{ touchAction: 'pan-y', paddingBottom: 'env(safe-area-inset-bottom)' }}
+                  </>
+                ) : (
+                  <p className="py-3 text-[15px] text-[#94A3B8]">{emptyHint ?? placeholder}</p>
+                )}
+              </form>
+              <button
+                type="button"
+                onMouseDown={e => { e.preventDefault(); doClose(); }}
+                onTouchEnd={e => { e.preventDefault(); doClose(); }}
+                className="shrink-0 text-[15px] font-semibold text-[#0369A1] active:opacity-60"
               >
-                {renderMobileContent()}
-              </ul>
+                Fertig
+              </button>
             </div>
+            {/* Dezenter Schatten trennt weißen Suchbereich vom blauen Listenbereich */}
+            <div className="h-px bg-[#E2EDF7]" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }} />
           </div>
-        </>
+
+          {/* Ergebnisliste */}
+          <div className="min-h-0 flex-1" style={{ background: PANEL_BG }}>
+            <ul
+              ref={listRef}
+              role="listbox"
+              className="dropdown-scroll h-full overflow-y-auto"
+              style={{ touchAction: 'pan-y', paddingBottom: 'env(safe-area-inset-bottom)' }}
+            >
+              {renderMobileContent()}
+            </ul>
+          </div>
+        </div>
       )}
 
       {error && <span className="text-xs text-[#EF4444]">{error}</span>}
