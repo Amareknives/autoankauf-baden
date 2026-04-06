@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDropzone, FileRejection } from 'react-dropzone';
 import type { Accept } from 'react-dropzone';
 import { Upload, X } from 'lucide-react';
@@ -31,13 +31,27 @@ export function FileDropzone({
 }: FileDropzoneProps) {
   const [error, setError] = useState<string | null>(null);
 
+  // Stabile Blob-URLs: werden nur neu erzeugt wenn sich `files` ändert
+  const previewUrls = useMemo(
+    () => files.map((file) => URL.createObjectURL(file)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [files]
+  );
+
+  // Alte URLs aufräumen wenn neue erzeugt werden oder Komponente unmountet
+  useEffect(() => {
+    return () => {
+      previewUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [previewUrls]);
+
   const onDrop = useCallback(
     (acceptedFiles: File[], fileRejections: FileRejection[]) => {
       if (fileRejections.length > 0) {
         const rejection = fileRejections[0];
         const code = rejection.errors[0]?.code;
         if (code === 'file-too-large') {
-          setError(`Datei zu gross. Max. ${maxSizeMB}MB erlaubt.`);
+          setError(`Datei zu groß. Max. ${maxSizeMB} MB erlaubt.`);
         } else if (code === 'file-invalid-type') {
           setError('Nur JPG, PNG und WebP sind erlaubt.');
         } else {
@@ -90,7 +104,7 @@ export function FileDropzone({
                 Bilder hochladen oder hierher ziehen
               </p>
               <p className="text-xs text-[#64748B]">
-                JPG, PNG, WebP &middot; max. {maxSizeMB}MB pro Bild &middot; max. {maxFiles} Bilder
+                JPG, PNG, WebP &middot; max. {maxSizeMB} MB pro Bild &middot; max. {maxFiles} Bilder
               </p>
             </>
           )}
@@ -101,28 +115,25 @@ export function FileDropzone({
 
       {files.length > 0 && (
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
-          {files.map((file, index) => {
-            const url = URL.createObjectURL(file);
-            return (
-              <div key={index} className="relative group">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={url}
-                  alt={file.name}
-                  className="h-20 w-full rounded-lg object-cover border border-[#E2EDF7]"
-                  onLoad={() => URL.revokeObjectURL(url)}
-                />
-                <button
-                  type="button"
-                  onClick={() => removeFile(index)}
-                  className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#EF4444] text-white opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow"
-                  aria-label="Bild entfernen"
-                >
-                  <X size={12} strokeWidth={2.5} />
-                </button>
-              </div>
-            );
-          })}
+          {files.map((file, index) => (
+            <div key={`${file.name}-${file.size}-${index}`} className="relative group">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={previewUrls[index]}
+                alt={file.name}
+                className="h-20 w-full rounded-lg object-cover border border-[#E2EDF7]"
+              />
+              {/* Löschen: auf Mobil immer sichtbar, auf Desktop nur bei Hover */}
+              <button
+                type="button"
+                onClick={() => removeFile(index)}
+                className="absolute -top-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-[#EF4444] text-white shadow transition-opacity duration-150 opacity-100 md:opacity-0 md:group-hover:opacity-100"
+                aria-label="Bild entfernen"
+              >
+                <X size={13} strokeWidth={2.5} />
+              </button>
+            </div>
+          ))}
         </div>
       )}
 

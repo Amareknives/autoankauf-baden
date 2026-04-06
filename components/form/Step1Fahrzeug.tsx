@@ -329,19 +329,20 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
         </div>
         <div className="grid grid-cols-2 gap-4">
           <ChipSelect
-            label="Monat"
-            placeholder="Monat wählen"
-            value={huBisToMonat(data.huBis ?? '')}
-            options={MONTH_LABELS}
-            disabled={HU_SONDER.includes(huBisToJahr(data.huBis ?? ''))}
-            onChange={(v) => onChange({ huBis: buildHuBis(huBisToJahr(data.huBis ?? ''), v) })}
-          />
-          <ChipSelect
             label="Jahr"
             placeholder="Jahr wählen"
             value={huBisToJahr(data.huBis ?? '')}
             options={HU_JAHR_OPTIONS}
             onChange={(v) => onChange({ huBis: buildHuBis(v, HU_SONDER.includes(v) ? '' : huBisToMonat(data.huBis ?? '')) })}
+          />
+          <ChipSelect
+            label="Monat"
+            placeholder="Monat wählen"
+            value={huBisToMonat(data.huBis ?? '')}
+            options={MONTH_LABELS}
+            disabled={!huBisToJahr(data.huBis ?? '') || HU_SONDER.includes(huBisToJahr(data.huBis ?? ''))}
+            emptyHint={!huBisToJahr(data.huBis ?? '') ? 'Bitte zuerst ein Jahr wählen' : undefined}
+            onChange={(v) => onChange({ huBis: buildHuBis(huBisToJahr(data.huBis ?? ''), v) })}
           />
         </div>
         {errors.huBis && <span className="text-xs text-[#EF4444]">{errors.huBis}</span>}
