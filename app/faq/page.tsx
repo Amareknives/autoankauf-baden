@@ -8,7 +8,8 @@ import { TELEFON } from '@/lib/constants'
 export const metadata: Metadata = {
   title: 'FAQ – Häufige Fragen zum Autoankauf | AutoAnkauf-Baden',
   description:
-    'Alle Antworten zum Autoankauf in Baden: Wie funktioniert der Prozess, wie schnell bekomme ich ein Angebot, was kostet es? Jetzt informieren.',
+    'Alle Antworten zum Autoankauf in Baden: Ablauf, Angebot in 2–3 Stunden per E-Mail, kostenlose Abholung, Unfallfahrzeuge, Finanzierung & mehr. Seit 6 Jahren fair & transparent.',
+  alternates: { canonical: '/faq' },
 }
 
 export default function FaqPage() {

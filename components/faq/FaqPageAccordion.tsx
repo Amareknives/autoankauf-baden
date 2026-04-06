@@ -29,17 +29,17 @@ const kategorien = [
       {
         frage: 'Wie funktioniert der Autoankauf bei euch?',
         antwort:
-          'Ganz einfach in 3 Schritten: Du füllst unser Online-Formular aus (dauert ca. 2 Minuten), wir melden uns innerhalb von 2–3 Stunden persönlich mit einem vorläufigen Angebot zurück. Bei Zusage vereinbaren wir einen Termin – wir kommen zu dir, prüfen das Fahrzeug kurz und zahlen sofort bar. Kein Stress, kein Aufwand.',
+          'Ganz einfach in 3 Schritten: Du füllst unser Online-Formular aus (dauert ca. 2 Minuten). Wir schicken dir innerhalb von 2–3 Stunden dein persönliches Angebot per E-Mail. Gefällt es dir? Dann schick uns 1–2 Terminvorschläge – wir kommen zu dir, treffen uns an einem Wunschort oder du kommst direkt zu uns. Nach kurzer Prüfung zahlen wir sofort bar. Kein Stress, kein Aufwand.',
       },
       {
         frage: 'Wie schnell bekomme ich ein Angebot?',
         antwort:
-          'Du erhältst dein persönliches Angebot innerhalb von 2–3 Stunden nach der Anfrage – per E-Mail oder telefonisch. Wichtig: Das gilt werktags von 7:30–18:30 Uhr und samstags von 8–15 Uhr. Wir prüfen jede Anfrage persönlich.',
+          'Du erhältst dein persönliches Angebot innerhalb von 2–3 Stunden nach der Anfrage per E-Mail. Wichtig: Das gilt werktags von 7:30–18:30 Uhr und samstags von 8–15 Uhr. Wir prüfen jede Anfrage persönlich – kein Automat, kein Callcenter.',
       },
       {
         frage: 'Muss ich zum Termin kommen oder kommt ihr zu mir?',
         antwort:
-          'Wir kommen zu dir! Kostenlose Abholung bei dir zuhause, am Arbeitsplatz oder an einem anderen Wunschort. Du bestimmst Datum und Uhrzeit – wir sind flexibel.',
+          'Wir kommen zu dir – nach Hause, an den Arbeitsplatz oder einen anderen Wunschort. Du kannst auch direkt zu uns kommen. Die Abholung ist kostenlos, du bestimmst Datum und Uhrzeit – wir sind flexibel.',
       },
       {
         frage: 'Wie läuft die Fahrzeugübergabe ab?',

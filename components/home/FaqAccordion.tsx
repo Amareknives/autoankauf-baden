@@ -6,7 +6,7 @@ import { TELEFON } from '@/lib/constants'
 const faqs = [
   {
     question: 'Wie funktioniert der Autoankauf?',
-    answer: 'Einfach das Formular ausfüllen (dauert 2 Minuten), wir melden uns innerhalb von 2–3 Stunden* persönlich mit einem Angebot zurück. Bei Zusage vereinbaren wir einen Abholtermin und zahlen sofort bar. (*Werktags 7:30–18:30 Uhr, Samstag 8–15 Uhr)',
+    answer: 'Einfach das Formular ausfüllen (dauert 2 Minuten), wir schicken dir innerhalb von 2–3 Stunden* dein persönliches Angebot per E-Mail. Gefällt es dir? Dann schick uns 1–2 Terminvorschläge – wir kommen zu dir, treffen uns an einem Wunschort oder du kommst direkt zu uns. Nach kurzer Prüfung zahlen wir sofort bar. (*Werktags 7:30–18:30 Uhr, Samstag 8–15 Uhr)',
   },
   {
     question: 'Was kostet der Service?',
@@ -18,7 +18,7 @@ const faqs = [
   },
   {
     question: 'Wie wird das Auto abgeholt?',
-    answer: 'Wir holen dein Fahrzeug kostenlos bei dir zuhause oder an einem anderen Wunschort ab. Du bestimmst Datum und Uhrzeit – wir sind flexibel.',
+    answer: 'Wir kommen zu dir – nach Hause, an den Arbeitsplatz oder einen anderen Wunschort. Du kannst auch direkt zu uns kommen. Die Abholung ist kostenlos, du bestimmst Datum und Uhrzeit – wir sind flexibel.',
   },
   {
     question: 'Was passiert wenn das Auto finanziert ist?',
