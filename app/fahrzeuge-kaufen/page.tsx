@@ -156,7 +156,7 @@ export default function FahrzeugeKaufenPage() {
         {/* ─── Logo-Bar ─── */}
         <div style={{ backgroundColor: '#212121' }}>
           <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-4xl">
-            <div className="flex items-center justify-center md:justify-start gap-8 py-5">
+            <div className="flex flex-col items-center gap-4 py-5 md:flex-row md:items-center md:gap-8">
               <Logo variant="light" height={45} showText darkTagline />
               <div className="hidden md:block h-10 w-px" style={{ backgroundColor: 'rgba(255,255,255,0.15)' }} />
               {/* eslint-disable-next-line @next/next/no-img-element */}
