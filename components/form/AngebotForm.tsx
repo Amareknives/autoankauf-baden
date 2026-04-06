@@ -159,22 +159,23 @@ export function AngebotForm() {
     setIsSubmitting(true);
 
     try {
-      // Fotos in Base64 konvertieren
-      const fotoBase64: string[] = await Promise.all(
-        (formData.fotos ?? []).map(
-          (file) =>
-            new Promise<string>((resolve, reject) => {
-              const reader = new FileReader();
-              reader.onload = () => resolve(reader.result as string);
-              reader.onerror = reject;
-              reader.readAsDataURL(file);
-            })
-        )
-      );
+      // Fotos auf Server hochladen – Dateinamen statt Base64 speichern
+      let fotoFilenames: string[] = []
+      const fotoFiles = formData.fotos ?? []
+      if (fotoFiles.length > 0) {
+        const fd = new FormData()
+        fotoFiles.forEach((f) => fd.append('files', f))
+        const uploadRes = await fetch('/api/anfrage-fotos', { method: 'POST', body: fd })
+        if (uploadRes.ok) {
+          const { filenames } = await uploadRes.json() as { filenames: string[] }
+          fotoFilenames = filenames
+        }
+        // Schlägt Upload fehl → Formular trotzdem ohne Fotos absenden
+      }
 
       const payload = {
         ...formData,
-        fotos: fotoBase64,
+        fotos: fotoFilenames,
         erstzulassungMonat: formData.erstzulassungMonat ?? 1,
         erstzulassungJahr: formData.erstzulassungJahr ?? new Date().getFullYear(),
         schadstoffklasse: formData.schadstoffklasse ?? 'Keine',

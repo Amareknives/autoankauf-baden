@@ -1,6 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { verifySessionToken } from '@/lib/auth'
+import { unlink } from 'fs/promises'
+import path from 'path'
+
+const UPLOAD_DIR = process.env.UPLOAD_DIR
+  ? path.resolve(process.env.UPLOAD_DIR)
+  : path.join(process.cwd(), 'uploads')
+
+async function deleteFotoFiles(fotos: unknown) {
+  if (!Array.isArray(fotos)) return
+  for (const f of fotos as string[]) {
+    // Nur Dateinamen löschen (nicht Base64-Strings)
+    if (typeof f === 'string' && !f.startsWith('data:') && f.length < 100) {
+      try {
+        await unlink(path.join(UPLOAD_DIR, f))
+      } catch {
+        // Datei bereits gelöscht oder nicht gefunden – kein Fehler
+      }
+    }
+  }
+}
 
 /**
  * Datenschutz-Löschkonzept gemäß DSGVO + § 147 AO
@@ -71,7 +91,7 @@ export async function POST(request: NextRequest) {
       createdAt: { lt: cutoff24Monate },
       status: { notIn: ['abgeschlossen'] },
     },
-    select: { id: true },
+    select: { id: true, fotos: true },
   })
 
   // ── Phase 2: Abgeschlossene Käufe älter als 10 Jahre anonymisieren ───────────
@@ -96,8 +116,11 @@ export async function POST(request: NextRequest) {
   const leadIds = zuLoeschendeLeads.map((a: { id: string }) => a.id)
   const kaufIds = zuAnonymisierendeKaeufe.map((a: { id: string }) => a.id)
 
-  // Phase 1: Leads vollständig löschen (Cascade löscht Logs)
+  // Phase 1: Fotos vom Server löschen, dann DB-Einträge entfernen
   if (leadIds.length > 0) {
+    await Promise.allSettled(
+      zuLoeschendeLeads.map((a: { id: string; fotos: unknown }) => deleteFotoFiles(a.fotos))
+    )
     await prisma.anfrage.deleteMany({ where: { id: { in: leadIds } } })
   }
 

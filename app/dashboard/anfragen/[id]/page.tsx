@@ -568,6 +568,12 @@ function findMatchingMailLog(aktLog: AktivitaetsLog, typ: string, mailLogs: Mail
   return best
 }
 
+/** Base64-Legacy oder neuer Dateiname → Anzeige-URL */
+function fotoSrc(s: string): string {
+  if (s.startsWith('data:') || s.startsWith('http')) return s
+  return `/api/fotos/${s}`
+}
+
 export default function AnfrageDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
@@ -1042,7 +1048,7 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={src}
+                      src={fotoSrc(src)}
                       alt={`Foto ${i + 1}`}
                       className="w-full h-24 object-cover rounded-xl border border-[#E2EDF7] group-hover:border-[#0369A1] transition-colors"
                     />
@@ -1822,7 +1828,7 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
         <div className="flex flex-col items-center gap-4 px-14 sm:px-20 max-w-5xl w-full" onClick={e => e.stopPropagation()}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={anfrage.fotos[galerieFotoIndex]}
+            src={fotoSrc(anfrage.fotos[galerieFotoIndex])}
             alt={`Foto ${galerieFotoIndex + 1}`}
             className="max-h-[75vh] max-w-full object-contain rounded-xl shadow-2xl"
           />
@@ -1836,7 +1842,7 @@ export default function AnfrageDetailPage({ params }: { params: Promise<{ id: st
                 className={`shrink-0 w-14 h-14 rounded-lg overflow-hidden border-2 transition-colors ${i === galerieFotoIndex ? 'border-white' : 'border-transparent opacity-50 hover:opacity-80'}`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={src} alt={`Thumb ${i + 1}`} className="w-full h-full object-cover" />
+                <img src={fotoSrc(src)} alt={`Thumb ${i + 1}`} className="w-full h-full object-cover" />
               </button>
             ))}
           </div>

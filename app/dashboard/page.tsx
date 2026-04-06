@@ -41,12 +41,12 @@ export default function DashboardPage() {
   const [recentAnfragen, setRecentAnfragen] = useState<AnfragePreview[]>([])
   const [loading, setLoading] = useState(true)
   const [storageData, setStorageData] = useState<{
-    dbSizeBytes: number
-    dbSizePretty: string
-    fotosSizeBytes: number
-    fotosSizePretty: string
+    fotosDiskBytes: number
+    fotosDiskPretty: string
+    fotosAnzahl: number
     anfragenMitFotos: number
     anfragenGesamt: number
+    uploadDir: string
   } | null>(null)
 
   useEffect(() => {
@@ -190,45 +190,22 @@ export default function DashboardPage() {
       </div>
 
       {/* Speicherplatz */}
-      {storageData && (() => {
-        const SUPABASE_FREE_BYTES = 500 * 1024 * 1024 // 500 MB
-        const hasDbSize = storageData.dbSizeBytes > 0
-        const usedPct = hasDbSize ? Math.min(100, (storageData.dbSizeBytes / SUPABASE_FREE_BYTES) * 100) : 0
-        const barColor = usedPct >= 80 ? '#FB6F6F' : usedPct >= 50 ? '#F59E0B' : '#16A34A'
-        const textColor = usedPct >= 80 ? 'text-[#FB6F6F]' : usedPct >= 50 ? 'text-amber-500' : 'text-[#16A34A]'
-        const fotosAnteil = hasDbSize
-          ? Math.round((storageData.fotosSizeBytes / storageData.dbSizeBytes) * 100)
-          : 0
-
-        return (
-          <div className="mt-4 bg-white rounded-2xl border border-[#E2EDF7] p-5">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <span className="w-8 h-8 bg-[#F1F5F9] rounded-xl flex items-center justify-center">
-                  <Database size={16} strokeWidth={2.2} className="text-[#64748B]" />
-                </span>
-                <span className="text-sm font-semibold text-[#0F172A]">Speicherplatz – Supabase</span>
-              </div>
-              {hasDbSize && (
-                <span className={`text-sm font-bold ${textColor}`}>{storageData.dbSizePretty} / 500 MB</span>
-              )}
-            </div>
-            {hasDbSize && (
-              <div className="w-full h-2 bg-[#F1F5F9] rounded-full overflow-hidden mb-3">
-                <div
-                  className="h-full rounded-full transition-all duration-500"
-                  style={{ width: `${usedPct}%`, background: barColor }}
-                />
-              </div>
-            )}
-            <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-[#64748B]">
-              <span>Fotos: <strong className="text-[#0F172A]">{storageData.fotosSizePretty}</strong>{hasDbSize ? ` (${fotosAnteil}% der DB)` : ''}</span>
-              <span>Anfragen mit Fotos: <strong className="text-[#0F172A]">{storageData.anfragenMitFotos}</strong> von {storageData.anfragenGesamt}</span>
-              <span>Gespeichert als Base64 in PostgreSQL</span>
-            </div>
+      {storageData && (
+        <div className="mt-4 bg-white rounded-2xl border border-[#E2EDF7] p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="w-8 h-8 bg-[#F1F5F9] rounded-xl flex items-center justify-center">
+              <Database size={16} strokeWidth={2.2} className="text-[#64748B]" />
+            </span>
+            <span className="text-sm font-semibold text-[#0F172A]">Foto-Speicher – IONOS Server</span>
           </div>
-        )
-      })()}
+          <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-[#64748B]">
+            <span>Belegt: <strong className="text-[#0F172A]">{storageData.fotosDiskPretty}</strong></span>
+            <span>Dateien: <strong className="text-[#0F172A]">{storageData.fotosAnzahl}</strong></span>
+            <span>Anfragen mit Fotos: <strong className="text-[#0F172A]">{storageData.anfragenMitFotos}</strong> von {storageData.anfragenGesamt}</span>
+            <span className="text-[#94A3B8] break-all">{storageData.uploadDir}</span>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
