@@ -123,9 +123,11 @@ export default function FahrzeugeKaufenPage() {
                   Direkt neu kaufen –<br />Altfahrzeug verrechnen
                 </h1>
                 <p className="text-white/80 text-[15px] leading-relaxed max-w-lg mb-8">
-                  <strong className="text-white">AutoAnkauf Baden</strong> ist mit eigenem Ausstellungsstandort direkt bei{' '}
-                  <strong className="text-white">Autohaus Stern</strong> in Graben-Neudorf vertreten –
-                  Ankauf, Fahrzeugkauf und Werkstatt aus einer Hand.
+                  Auto verkaufen und direkt neu kaufen?{' '}
+                  <strong className="text-white">AutoAnkauf Baden</strong> macht es möglich –
+                  fairer Ankauf, große Fahrzeugauswahl und Werkstatt direkt bei unserem Ausstellungsstandort{' '}
+                  <strong className="text-white">Autohaus Stern</strong> in Graben-Neudorf.
+                  Ein Vorgang, ein Ansprechpartner.
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <a
