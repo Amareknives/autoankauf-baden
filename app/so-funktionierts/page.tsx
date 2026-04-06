@@ -35,11 +35,11 @@ const schritte = [
     titel: 'Persönliches Angebot per E-Mail',
     dauer: '2–3 Stunden*',
     beschreibung:
-      'Wir prüfen deine Angaben persönlich und erstellen auf Basis aktueller Marktdaten ein faires, individuelles Angebot. Du erhältst das Angebot direkt per E-Mail inkl. zwei Terminvorschlägen zur Besichtigung.',
+      'Wir prüfen deine Angaben persönlich und erstellen auf Basis aktueller Marktdaten ein faires, individuelles Angebot – kein Callcenter, kein Automatismus. Du erhältst dein Angebot direkt per E-Mail.',
     details: [
       'Angebot per E-Mail in 2–3 Stunden*',
       'Faire Preisermittlung nach Marktdaten',
-      'Terminvorschläge zur Besichtigung',
+      'Individuell geprüft – kein Automat',
       'Angebot gilt 7 Tage – kein Druck',
     ],
     cta: null,
@@ -50,15 +50,15 @@ const schritte = [
   {
     num: '03',
     icon: <Banknote size={32} strokeWidth={2.5} />,
-    titel: 'Termin bestätigen & kassieren',
+    titel: 'Termin vorschlagen & kassieren',
     dauer: 'Nach deinem Wunsch',
     beschreibung:
-      'Du stimmst dem Angebot zu? Wir bestätigen deinen Wunschtermin, kommen zu dir oder einem vereinbarten Ort, prüfen das Fahrzeug kurz – und zahlen sofort bar.',
+      'Gefällt dir das Angebot? Schick uns einfach 1–2 Terminvorschläge – wir kommen zur Besichtigung zu dir oder treffen uns an einem Wunschort. Nach kurzer Prüfung zahlen wir sofort bar.',
     details: [
+      'Du wählst Ort & Termin',
       'Kostenlose Abholung bei dir',
-      'Barzahlung vor Ort',
-      'Kaufvertrag vor Ort erledigt',
-      'Abmeldung inklusive',
+      'Barzahlung direkt vor Ort',
+      'Kaufvertrag & Abmeldung inklusive',
     ],
     cta: null,
     farbe: 'bg-[#FB6F6F]',
@@ -82,13 +82,12 @@ export default function SoFunktioniertSPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
 
-      {/* Hero Banner – gleiche Struktur wie /fahrzeug-verkaufen */}
+      {/* Hero */}
       <section className="relative overflow-hidden flex items-center" style={{ minHeight: 'clamp(280px, 40vw, 380px)' }}>
         <div className="absolute inset-0 bg-[#0369A1]">
           <HeroImage src={heroSrc} position="top" />
           <div className="absolute inset-0 hero-overlay" />
         </div>
-
         <div className="relative z-10 w-full">
           <div className="container mx-auto px-5 md:px-6 lg:px-8 py-14 md:py-16">
             <div className="max-w-[560px]">
@@ -96,18 +95,12 @@ export default function SoFunktioniertSPage() {
                 <span className="w-2 h-2 rounded-full bg-[#22C55E] animate-pulse flex-shrink-0" />
                 <span className="text-white text-sm font-medium">Einfach & transparent</span>
               </div>
-
-              <h1
-                className="font-black text-white mb-4 leading-tight"
-                style={{ fontSize: 'clamp(26px, 3.5vw, 38px)' }}
-              >
+              <h1 className="font-black text-white mb-4 leading-tight" style={{ fontSize: 'clamp(26px, 3.5vw, 38px)' }}>
                 In 3 Schritten zum Angebot
               </h1>
-
               <p className="text-white/85 text-base leading-relaxed max-w-lg mb-7">
                 Kein Inserieren, kein Stress. Formular ausfüllen – Angebot per E-Mail – fertig.
               </p>
-
               <Link
                 href="/fahrzeug-verkaufen"
                 className="inline-flex items-center justify-center px-7 py-3.5 bg-[#FB6F6F] hover:bg-[#f95c5c] text-white font-bold rounded-xl transition-colors duration-200 text-sm min-h-[48px]"
@@ -120,28 +113,37 @@ export default function SoFunktioniertSPage() {
       </section>
 
       {/* Steps */}
-      <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-4xl py-16">
-        <div className="space-y-8">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-4xl py-14">
+        <div className="space-y-6 md:space-y-8">
           {schritte.map((schritt, i) => (
             <div key={schritt.num} className="relative">
-              {/* Connector */}
+              {/* Connector line desktop */}
               {i < schritte.length - 1 && (
-                <div className="hidden md:block absolute left-[52px] top-[104px] w-0.5 h-[calc(100%+32px)] bg-[#E2EDF7] z-0" />
+                <div className="hidden md:block absolute left-[52px] top-[104px] w-0.5 h-[calc(100%+24px)] bg-[#E2EDF7] z-0" />
               )}
 
-              <div className="relative z-10 bg-white rounded-2xl border border-[#E2EDF7] overflow-hidden">
+              <div className="relative z-10 bg-white rounded-2xl border border-[#E2EDF7] overflow-hidden shadow-sm">
                 <div className="flex flex-col md:flex-row">
+
                   {/* Left: Number + Icon */}
-                  <div className={`${schritt.hellfarbe} p-8 md:p-10 flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-2 md:min-w-[160px]`}>
-                    <span className={`text-[40px] font-black ${schritt.textfarbe} leading-none`}>
+                  <div className={`${schritt.hellfarbe} px-6 py-5 md:p-10 flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-3 md:min-w-[160px]`}>
+                    <span className={`text-[40px] md:text-[44px] font-black ${schritt.textfarbe} leading-none`}>
                       {schritt.num}
                     </span>
                     <div className={schritt.textfarbe}>{schritt.icon}</div>
+                    {/* Mobile: Titel & Badge inline */}
+                    <div className="md:hidden flex-1 min-w-0">
+                      <p className="font-bold text-[#0F172A] text-base leading-snug">{schritt.titel}</p>
+                      <span className={`inline-block mt-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${schritt.hellfarbe} ${schritt.textfarbe} border border-current/20`}>
+                        {schritt.dauer}
+                      </span>
+                    </div>
                   </div>
 
                   {/* Right: Content */}
-                  <div className="p-8 flex-1">
-                    <div className="flex flex-wrap items-start gap-3 mb-3">
+                  <div className="p-6 md:p-8 flex-1">
+                    {/* Desktop: Titel & Badge */}
+                    <div className="hidden md:flex flex-wrap items-start gap-3 mb-3">
                       <h2 className="text-xl font-bold text-[#0F172A]">{schritt.titel}</h2>
                       <span className={`text-xs font-semibold px-3 py-1 rounded-full ${schritt.hellfarbe} ${schritt.textfarbe}`}>
                         {schritt.dauer}
@@ -175,15 +177,27 @@ export default function SoFunktioniertSPage() {
           ))}
         </div>
 
+        {/* * Fußnote */}
+        <div className="mt-6 rounded-xl border border-[#E2EDF7] bg-white px-5 py-4">
+          <p className="text-xs text-[#64748B] leading-relaxed">
+            <span className="font-semibold text-[#0F172A]">* Reaktionszeit:</span>{' '}
+            Wir bearbeiten Anfragen persönlich –{' '}
+            <strong className="text-[#0F172A]">Mo–Fr 7:30–18:30 Uhr</strong> und{' '}
+            <strong className="text-[#0F172A]">Sa 8:00–15:00 Uhr</strong>.
+            Außerhalb der Geschäftszeiten eingereichte Anfragen werden am nächsten Werktag bearbeitet.
+          </p>
+        </div>
+
         {/* Vorteile */}
-        <div className="mt-16">
-          <h2 className="text-2xl font-bold text-[#0F172A] text-center mb-8">
+        <div className="mt-14">
+          <h2 className="text-2xl font-bold text-[#0F172A] text-center mb-2">
             Warum AutoAnkauf-Baden?
           </h2>
+          <p className="text-sm text-[#64748B] text-center mb-8">Seit 6 Jahren fair, schnell und zuverlässig in der Region.</p>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
             {vorteile.map(v => (
-              <div key={v.titel} className="bg-white rounded-xl border border-[#E2EDF7] p-5 flex gap-4">
-                <span className="flex-shrink-0">{v.icon}</span>
+              <div key={v.titel} className="bg-white rounded-xl border border-[#E2EDF7] p-5 flex gap-4 shadow-sm">
+                <span className="flex-shrink-0 mt-0.5">{v.icon}</span>
                 <div>
                   <p className="font-semibold text-[#0F172A] text-sm mb-0.5">{v.titel}</p>
                   <p className="text-xs text-[#64748B] leading-relaxed">{v.text}</p>
@@ -194,7 +208,7 @@ export default function SoFunktioniertSPage() {
         </div>
 
         {/* FAQ Teaser */}
-        <div className="mt-12 bg-[#E8F4FD] rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-4 justify-between">
+        <div className="mt-10 bg-[#E8F4FD] rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-4 justify-between">
           <div>
             <p className="font-bold text-[#0F172A] mb-1">Noch Fragen?</p>
             <p className="text-sm text-[#64748B]">In unserer FAQ findest du alle Antworten.</p>
