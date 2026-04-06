@@ -91,6 +91,7 @@ export default function WertRechner() {
                     onChange={v => { setMarke(v); setModell('') }}
                     placeholder="z.B. VW, BMW"
                     rightPanel
+                    autoOpen
                   />
                 </div>
 

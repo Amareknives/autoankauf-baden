@@ -26,6 +26,8 @@ interface ChipSelectProps {
   disabled?: boolean;
   /** Hinweis statt "Keine Ergebnisse" wenn options leer (z.B. "Erst Marke wählen") */
   emptyHint?: string;
+  /** Dropdown sofort beim Mounten öffnen und Element in den sichtbaren Bereich scrollen */
+  autoOpen?: boolean;
 }
 
 export function ChipSelect({
@@ -41,6 +43,7 @@ export function ChipSelect({
   aliases = {},
   disabled = false,
   emptyHint,
+  autoOpen = false,
 }: ChipSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -76,6 +79,19 @@ export function ChipSelect({
     return () => window.removeEventListener('resize', check);
   }, []);
 
+  const doOpenRef = useRef<() => void>(() => {});
+
+  // autoOpen: Element in Sicht scrollen + Dropdown sofort öffnen
+  useEffect(() => {
+    if (!autoOpen) return;
+    const timer = setTimeout(() => {
+      containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      doOpenRef.current();
+    }, 350);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const doOpen = () => {
     if (disabled) return;
     clearTimeout(closeTimer.current);
@@ -95,6 +111,8 @@ export function ChipSelect({
     setIsOpen(true);
     requestAnimationFrame(() => requestAnimationFrame(() => setVisible(true)));
   };
+
+  doOpenRef.current = doOpen;
 
   const doClose = () => {
     setVisible(false);

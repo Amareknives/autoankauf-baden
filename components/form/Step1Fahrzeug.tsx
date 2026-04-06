@@ -133,6 +133,7 @@ export function Step1Fahrzeug({ data, onChange, errors }: Step1Props) {
           placeholder="Marke eingeben z.B. BMW, VW..."
           rightPanel
           error={errors.marke}
+          autoOpen
         />
         <ChipSelect
           label="Modell"
