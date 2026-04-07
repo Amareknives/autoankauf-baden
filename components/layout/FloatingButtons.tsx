@@ -67,7 +67,7 @@ export default function FloatingButtons({ whatsapp, telefon, quietMode = false }
           target="_blank"
           rel="noopener noreferrer"
           aria-label="WhatsApp Chat öffnen"
-          className="hidden md:flex fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full bg-[#25D366] items-center justify-center shadow-lg hover:scale-105 transition-transform duration-200"
+          className="hidden lg:flex fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full bg-[#25D366] items-center justify-center shadow-lg hover:scale-105 transition-transform duration-200"
           style={{ boxShadow: '0 4px 12px rgba(37,211,102,0.4)' }}
         >
           <MessageCircle size={26} strokeWidth={2.5} color="white" fill="white" />
@@ -76,7 +76,7 @@ export default function FloatingButtons({ whatsapp, telefon, quietMode = false }
 
       {/* Mobile: Smart Peek Container */}
       <div
-        className="md:hidden fixed bottom-5 right-0 z-40 flex items-center"
+        className="lg:hidden fixed bottom-5 right-0 z-40 flex items-center"
         style={{
           transition: 'transform 350ms cubic-bezier(0.4,0,0.2,1)',
           transform: visible ? 'translateX(0)' : 'translateX(76px)',
