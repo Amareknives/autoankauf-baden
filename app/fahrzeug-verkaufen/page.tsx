@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   title: 'Auto verkaufen – Kostenlos Angebot holen | AutoAnkauf-Baden',
   description:
     'Jetzt Auto verkaufen in Baden: Formular ausfüllen, in 2–3h Angebot erhalten, kostenlose Abholung.',
+  openGraph: { images: [{ url: '/og/og-verkaufen.webp', width: 1200, height: 630 }] },
+  twitter: { card: 'summary_large_image', images: ['/og/og-verkaufen.webp'] },
 };
 
 const vorteile = [

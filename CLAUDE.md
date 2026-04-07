@@ -76,7 +76,7 @@ npx prisma studio  # Datenbank-GUI
 ```
 
 ## Stadtseiten (10 — EINZIGARTIGER Content, kein Duplicate!)
-Karlsruhe, Bruchsal, Heidelberg, Mannheim, Speyer, Pforzheim, Rastatt, Baden-Baden, Ludwigshafen, Germersheim
+Karlsruhe, Bruchsal, Heidelberg, Mannheim, Speyer, Pforzheim, Rastatt, Baden-Baden, Ludwigshafen, Stuttgart
 
 ## Status-Flow Anfragen
 neu → kontaktiert → angebot_gesendet → termin_vereinbart → abgeschlossen → abgelehnt

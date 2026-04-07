@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   description:
     'Auto verkaufen in Baden: Kostenlos bewerten, Angebot in 2–3h, kostenlose Abholung. Seit 6 Jahren in Karlsruhe, Bruchsal, Heidelberg, Mannheim, Speyer.',
   keywords:
-    'Auto verkaufen, Baden, Karlsruhe, Bruchsal, Heidelberg, Mannheim, Speyer, Pforzheim, Rastatt, Baden-Baden, Ludwigshafen, Germersheim',
+    'Auto verkaufen, Baden, Karlsruhe, Bruchsal, Heidelberg, Mannheim, Speyer, Pforzheim, Rastatt, Baden-Baden, Ludwigshafen, Stuttgart',
   authors: [{ name: 'AutoAnkauf-Baden' }],
   creator: 'AutoAnkauf-Baden',
   publisher: 'AutoAnkauf-Baden',
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/opengraph-image',
+        url: '/og/og-home.webp',
         width: 1200,
         height: 630,
         alt: 'AutoAnkauf Baden – Auto verkaufen, fair & schnell',
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     description:
       'Auto verkaufen in Baden: Kostenlos bewerten, Angebot in 2–3h, kostenlose Abholung.',
     creator: '@autoankaufbaden',
-    images: ['/opengraph-image'],
+    images: ['/og/og-home.webp'],
   },
   robots: {
     index: true,
@@ -102,7 +102,7 @@ export default async function RootLayout({
     areaServed: [
       'Karlsruhe', 'Bruchsal', 'Heidelberg', 'Mannheim',
       'Speyer', 'Pforzheim', 'Rastatt', 'Baden-Baden',
-      'Ludwigshafen', 'Germersheim',
+      'Ludwigshafen', 'Stuttgart',
     ],
     priceRange: '€€',
     openingHoursSpecification: [

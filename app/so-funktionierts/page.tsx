@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   title: 'So funktioniert der Autoankauf | AutoAnkauf-Baden',
   description:
     'In 3 einfachen Schritten zum Angebot: Formular ausfüllen, persönliches Angebot per E-Mail erhalten, Termin & Barzahlung. Autoankauf in Baden – fair & unkompliziert.',
+  openGraph: { images: [{ url: '/og/og-so-funktionierts.webp', width: 1200, height: 630 }] },
+  twitter: { card: 'summary_large_image', images: ['/og/og-so-funktionierts.webp'] },
 }
 
 const schritte = [

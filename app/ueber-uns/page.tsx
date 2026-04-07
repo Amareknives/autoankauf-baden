@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   title: 'Über uns – AutoAnkauf-Baden | Dein Autoankauf in Bruchsal',
   description:
     'AutoAnkauf-Baden – seit 6 Jahren fairer Autoankauf in Bruchsal und der ganzen Region Baden. Persönlich, transparent und ohne Umwege.',
+  openGraph: { images: [{ url: '/og/og-ueber-uns.webp', width: 1200, height: 630 }] },
+  twitter: { card: 'summary_large_image', images: ['/og/og-ueber-uns.webp'] },
 }
 
 const werte = [

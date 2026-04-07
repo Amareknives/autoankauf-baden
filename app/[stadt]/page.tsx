@@ -18,12 +18,24 @@ export async function generateMetadata({ params }: { params: Promise<{ stadt: st
   const stadtData = STAEDTE.find((s) => s.slug === stadt)
   if (!stadtData) return {}
 
+  const ogImage = `/og/og-${stadtData.slug}.webp`
+
   return {
     title: `Autoankauf ${stadtData.name} – Fair & Schnell | AutoAnkauf-Baden`,
     description: `Auto verkaufen in ${stadtData.name}: Kostenlose Bewertung, Angebot in 2–3h, kostenlose Abholung. Seit 6 Jahren dein Autoankauf in ${stadtData.region}. ${stadtData.beschreibung}`,
     keywords: `Auto verkaufen ${stadtData.name}, Autoankauf ${stadtData.name}, Gebrauchtwagen ${stadtData.name}, Auto bewerten ${stadtData.name}, KFZ Ankauf ${stadtData.region}`,
     alternates: {
       canonical: `https://autoankauf-baden.de/${stadtData.slug}`,
+    },
+    openGraph: {
+      title: `Autoankauf ${stadtData.name} – Fair & Schnell`,
+      description: `Auto verkaufen in ${stadtData.name}: Kostenlose Bewertung, Angebot in 2–3h, kostenlose Abholung.`,
+      url: `https://autoankauf-baden.de/${stadtData.slug}`,
+      images: [{ url: ogImage, width: 1200, height: 630, alt: `Autoankauf ${stadtData.name}` }],
+    },
+    twitter: {
+      card: 'summary_large_image' as const,
+      images: [ogImage],
     },
   }
 }

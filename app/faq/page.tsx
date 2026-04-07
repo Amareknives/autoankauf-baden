@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   description:
     'Alle Antworten zum Autoankauf in Baden: Ablauf, Angebot in 2–3 Stunden per E-Mail, kostenlose Abholung, Unfallfahrzeuge, Finanzierung & mehr. Seit 6 Jahren fair & transparent.',
   alternates: { canonical: '/faq' },
+  openGraph: { images: [{ url: '/og/og-faq.webp', width: 1200, height: 630 }] },
+  twitter: { card: 'summary_large_image', images: ['/og/og-faq.webp'] },
 }
 
 export default function FaqPage() {

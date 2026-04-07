@@ -15,6 +15,8 @@ export const metadata: Metadata = {
     'Fahrzeug verkaufen und direkt neu kaufen – beim Partnerstandort Autohaus Stern in Graben-Neudorf. Inzahlungnahme, große Auswahl, faire Werkstattpreise. Alles aus einer Hand.',
   robots: { index: true, follow: true },
   alternates: { canonical: '/fahrzeuge-kaufen' },
+  openGraph: { images: [{ url: '/og/og-kaufen.webp', width: 1200, height: 630 }] },
+  twitter: { card: 'summary_large_image', images: ['/og/og-kaufen.webp'] },
 }
 
 const jsonLd = {
