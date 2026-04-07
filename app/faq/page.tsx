@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import HeroImage from '@/components/ui/HeroImage'
-import { getRandomHeroSrc } from '@/lib/heroImages'
+import HeroImageRandom from '@/components/ui/HeroImageRandom'
 import FaqPageAccordion from '@/components/faq/FaqPageAccordion'
 import { TELEFON } from '@/lib/constants'
 
@@ -15,15 +14,13 @@ export const metadata: Metadata = {
 }
 
 export default function FaqPage() {
-  const heroSrc = getRandomHeroSrc()
-
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
 
       {/* Hero Banner – gleiche Struktur wie /so-funktionierts */}
       <section className="relative overflow-hidden flex items-center" style={{ minHeight: 'clamp(280px, 40vw, 380px)' }}>
         <div className="absolute inset-0 bg-[#0369A1]">
-          <HeroImage src={heroSrc} position="top" />
+          <HeroImageRandom position="top" />
           <div className="absolute inset-0 hero-overlay" />
         </div>
 

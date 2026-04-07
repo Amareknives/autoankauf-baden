@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import HeroImage from '@/components/ui/HeroImage'
-import { getRandomHeroSrc } from '@/lib/heroImages'
+import HeroImageRandom from '@/components/ui/HeroImageRandom'
 import { ClipboardList, MessageCircle, Banknote, Zap, BadgeEuro, Gift, Car, Handshake, FileText, Check } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -79,15 +78,13 @@ const vorteile = [
 ]
 
 export default function SoFunktioniertSPage() {
-  const heroSrc = getRandomHeroSrc()
-
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
 
       {/* Hero */}
       <section className="relative overflow-hidden flex items-center" style={{ minHeight: 'clamp(280px, 40vw, 380px)' }}>
         <div className="absolute inset-0 bg-[#0369A1]">
-          <HeroImage src={heroSrc} position="top" />
+          <HeroImageRandom position="top" />
           <div className="absolute inset-0 hero-overlay" />
         </div>
         <div className="relative z-10 w-full">

@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Handshake, Zap, Heart, MapPin } from 'lucide-react'
-import HeroImage from '@/components/ui/HeroImage'
-import { getRandomHeroSrc } from '@/lib/heroImages'
+import HeroImageRandom from '@/components/ui/HeroImageRandom'
 
 export const metadata: Metadata = {
   title: 'Über uns – AutoAnkauf-Baden | Dein Autoankauf in Bruchsal',
@@ -43,14 +42,12 @@ const zahlen = [
 ]
 
 export default function UeberUnsPage() {
-  const heroSrc = getRandomHeroSrc()
-
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       {/* Hero */}
       <section className="relative overflow-hidden flex items-center" style={{ minHeight: 'clamp(280px, 40vw, 380px)' }}>
         <div className="absolute inset-0 bg-[#0369A1]">
-          <HeroImage src={heroSrc} position="top" />
+          <HeroImageRandom position="top" />
           <div className="absolute inset-0 hero-overlay" />
         </div>
         <div className="relative z-10 w-full py-16">
