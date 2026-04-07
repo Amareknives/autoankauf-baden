@@ -53,6 +53,7 @@ export function ChipSelect({
   const [hoveredIndex, setHoveredIndex] = useState(-1);
   const [isMobile, setIsMobile] = useState(false);
   const [sheetBottom, setSheetBottom] = useState(0);
+  const [sheetTop, setSheetTop] = useState(0);
   // x-Position des Right Panels (berechnet beim Öffnen per getBoundingClientRect)
   const [panelLeft, setPanelLeft] = useState(0);
 
@@ -138,12 +139,15 @@ export function ChipSelect({
   useEffect(() => {
     if (!isMobile || !isOpen) {
       setSheetBottom(0);
+      setSheetTop(0);
       return;
     }
     const vv = window.visualViewport;
     if (!vv) return;
     const update = () => {
-      const offset = Math.max(0, window.innerHeight - vv.height - (vv.offsetTop ?? 0));
+      const vvTop = vv.offsetTop ?? 0;
+      const offset = Math.max(0, window.innerHeight - vv.height - vvTop);
+      setSheetTop(vvTop);
       setSheetBottom(offset);
     };
     vv.addEventListener('resize', update);
@@ -560,9 +564,12 @@ export function ChipSelect({
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-x-0 top-0 z-[9999] flex flex-col bg-white"
+          className="fixed inset-x-0 z-[9999] flex flex-col bg-white"
           style={{
-            height: sheetBottom > 0 ? `calc(100vh - ${sheetBottom}px)` : '100vh',
+            top: sheetTop,
+            height: (sheetBottom > 0 || sheetTop > 0)
+              ? `calc(100vh - ${sheetBottom + sheetTop}px)`
+              : '100vh',
             opacity: visible ? 1 : 0,
             transform: visible ? 'translateY(0)' : 'translateY(-6px)',
             transition: 'opacity 150ms ease, transform 150ms ease',

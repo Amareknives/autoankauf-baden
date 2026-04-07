@@ -55,7 +55,7 @@ export default function Header({ telefon }: { telefon: string }) {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-8">
+            <nav className="hidden xl:flex items-center space-x-8">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
@@ -75,14 +75,14 @@ export default function Header({ telefon }: { telefon: string }) {
                 <a
                   href={`tel:${telefon}`}
                   onClick={handlePhoneClick}
-                  className="hidden sm:flex items-center space-x-2 text-[#0F172A] hover:text-[#0369A1] transition-colors duration-200 font-medium text-sm"
+                  className="hidden lg:flex items-center space-x-2 text-[#0F172A] hover:text-[#0369A1] transition-colors duration-200 font-medium text-sm"
                 >
                   <Phone size={20} strokeWidth={2.5} color="#0369A1" />
                   <span>{telefon}</span>
                 </a>
               )}
 
-              {/* CTA Button */}
+              {/* CTA Button – immer sichtbar ab sm (640px), auch auf Tablet) */}
               <Link
                 href="/fahrzeug-verkaufen"
                 onClick={() => gtmEvents.form_start({ page: 'header' })}
@@ -91,10 +91,10 @@ export default function Header({ telefon }: { telefon: string }) {
                 Auto jetzt verkaufen
               </Link>
 
-              {/* Mobile Menu Button */}
+              {/* Hamburger – bis 1279px sichtbar */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors min-w-[48px] min-h-[48px] flex items-center justify-center"
+                className="xl:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors min-w-[48px] min-h-[48px] flex items-center justify-center"
                 aria-label={isMobileMenuOpen ? 'Menü schließen' : 'Menü öffnen'}
               >
                 {isMobileMenuOpen
@@ -109,7 +109,7 @@ export default function Header({ telefon }: { telefon: string }) {
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-40 flex flex-col pt-16" style={{ background: 'linear-gradient(160deg, #0F172A 0%, #1a2744 100%)' }}>
+        <div className="xl:hidden fixed inset-0 z-40 flex flex-col pt-16" style={{ background: 'linear-gradient(160deg, #0F172A 0%, #1a2744 100%)' }}>
           {/* Nav-Links */}
           <nav className="flex flex-col px-5 pt-4">
             <Link
